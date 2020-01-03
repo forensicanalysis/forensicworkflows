@@ -1,0 +1,13 @@
+{%- if data is not none and data|length > 0 %}
+{%- set headers = args.get("headers", data[0].keys() | list) %}
+{{ headers | join('|') }}
+{% for header in headers %} --- {% if not loop.last %}|{% endif %}{% endfor -%}
+{% for item in data %}
+{% for header in headers %}
+    {{- item[header] -}}
+    {% if not loop.last -%}
+        |
+    {%- endif -%}
+{% endfor %}
+{%- endfor %}
+{% endif %}

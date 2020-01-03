@@ -1,0 +1,41 @@
+{%- set roles = {
+  "0": "Standalone Workstation",
+  "1": "Member Workstation",
+  "2": "Standalone Server",
+  "3": "Member Server",
+  "4": "Backup Domain Controller",
+  "5": "Primary Domain Controller",
+} %}
+
+# Host
+- **Hostname**: {{ data["OS"]["Hostname"]|default("-") }}
+- **Domain**: {{ data["OS"]["Domain"]|default("-") }}
+
+# OS
+- **Windows**: {{ data["OS"]["ProductName"]|default("-") }}
+- **Version**: {{ data["OS"]["Version"]|default("-") }} {{ data["OS"]["Release"]|default("") }}
+- **Install Date**: {{ data["OS"]["InstallTime"]|default("-") }}
+- **System Root**: {{ data["OS"]["Systemroot"]|default("-") }}
+- **Timezone**: {{ data["OS"]["Timezone"]|default("-") }}
+{%- if "UCMS" in data %}
+- **System Drive Disk**: {{ data["UCMS"]["DriveInfo"]["SystemDriveDisk"]|default("-") }}
+- **Last Systemstart**: {{ data["UCMS"]["Client"]["LastSystemstart"]|default("-") }}
+{%- endif %}
+
+
+{%- if "UCMS" in data %}
+# User
+- **Owner GID**: {{ data["UCMS"]["Client"]["Owner_Siemens_GID"]|default("-") }}
+- **Last Logon User**: {{ data["UCMS"]["LastLogonUser"]|default("-") }}
+- **Last Logon Date**: {{ data["UCMS"]["LastLogonDate"]|default("-") }}
+{%- endif %}
+
+
+# Company &amp; Domain
+{%- if "UCMS" in data %}
+- **Domain**:  {{ data["UCMS"]["Client"]["OsDomain"]|default("-") }}
+- **Domain Role**: {{ roles[data["UCMS"]["Client"]["OsDomainRole"]]|default("-") }}
+- **Workgroup**: {{ data["UCMS"]["Client"]["OsWorkgroup"]|default("-") }}
+{%- endif %}
+- **Registered Owner**: {{ data["OS"]["Owner"]|default("-") }}
+- **Registered Organization**: {{ data["OS"]["Organization"]|default("-") }}

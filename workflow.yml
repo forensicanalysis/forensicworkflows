@@ -1,0 +1,41 @@
+hotfixes:
+  type: plugin
+  command: hotfixes
+
+networking:
+  type: plugin
+  command: networking
+
+osinfos:
+  type: plugin
+  command: osinfos
+
+run_keys:
+  type: docker
+  image: "python:3"
+  command: "pip install jq && /script/run_keys"
+
+report:
+  type: plugin
+  command: report osinfo.tmpl.j2
+
+csv:
+  type: plugin
+  command: csvjob
+
+jq:
+  type: dockerfile
+  dockerfile: jq
+  command: /script/run_keys
+
+services:
+  type: plugin
+  command: services
+
+shimcache:
+  type: plugin
+  command: shimcache
+
+software:
+  type: plugin
+  command: software
