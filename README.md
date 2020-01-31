@@ -20,7 +20,7 @@ The command line tool requires a workflow yml file which is executed on an
 arbitrary number of forensicstores, e.g.:
 
 ```
-forensicworkflows --workflow workflow.yml store/example1.forensicstore
+forensicworkflows --workflow workflow.yml test/example1.forensicstore
 ```
 ## Workflow format
 The workflow.yml file contains a list of tasks like the following:

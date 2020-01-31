@@ -44,7 +44,7 @@ jobs:
         env:
           CI: "true"
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        run: bash <(curl -s https://codecov.io/bash)
+        run: bash <(curl -s https://codecov.io/bash) -f coverage.txt
         if: matrix.os == 'windows-latest'
         shell: bash
 
