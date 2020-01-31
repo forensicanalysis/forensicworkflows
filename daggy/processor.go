@@ -57,12 +57,13 @@ type Workflow struct {
 
 // A Job is a single element in a workflow.yml file.
 type Job struct {
-	Type       string   `yaml:"type"`
-	Requires   []string `yaml:"requires"`
-	Script     string   `yaml:"script"`     // bash
-	Image      string   `yaml:"image"`      // docker
-	Dockerfile string   `yaml:"dockerfile"` // dockerfile
-	Command    string   `yaml:"command"`    // shared
+	Type       string                 `yaml:"type"`
+	Requires   []string               `yaml:"requires"`
+	Script     string                 `yaml:"script"`     // bash
+	Image      string                 `yaml:"image"`      // docker
+	Dockerfile string                 `yaml:"dockerfile"` // dockerfile
+	Command    string                 `yaml:"command"`    // shared
+	With       map[string]interface{} `yaml:"with"`
 }
 
 func (workflow *Workflow) Run(workingDir, pluginDir string, options map[string]string) error {
@@ -88,19 +89,19 @@ func (workflow *Workflow) runJob(jobName string) (err error) {
 	defer log.Println("End", jobName)
 	switch job.Type {
 	case "bash":
-		return workflow.bash(job.Command)
+		return workflow.bash(job.Command, job.With)
 	case "docker":
-		return workflow.docker(job.Image, job.Command, true)
+		return workflow.docker(job.Image, job.Command, true, job.With)
 	case "dockerfile":
-		return workflow.dockerfile(job.Dockerfile, job.Command)
+		return workflow.dockerfile(job.Dockerfile, job.Command, job.With)
 	case "plugin":
-		return workflow.plugin(job.Command)
+		return workflow.plugin(job.Command, job.With)
 	default:
 		return errors.New("unknown type")
 	}
 }
 
-func (workflow *Workflow) bash(command string) (err error) {
+func (workflow *Workflow) bash(command string, args map[string]interface{}) (err error) {
 	command = filepath.ToSlash(command)
 
 	var stdout, stderr bytes.Buffer
@@ -127,7 +128,7 @@ func (workflow *Workflow) bash(command string) (err error) {
 	return err
 }
 
-func (workflow *Workflow) docker(image, command string, pull bool) error {
+func (workflow *Workflow) docker(image, command string, pull bool, args map[string]interface{}) error {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
@@ -156,7 +157,10 @@ func (workflow *Workflow) docker(image, command string, pull bool) error {
 		if err != nil {
 			return err
 		}
-		io.Copy(os.Stderr, reader)
+		_, err = io.Copy(os.Stderr, reader)
+		if err != nil {
+			return err
+		}
 	}
 
 	if workflow.workingDir[1] == ':' {
@@ -205,7 +209,7 @@ func (workflow *Workflow) docker(image, command string, pull bool) error {
 	return err
 }
 
-func (workflow *Workflow) dockerfile(file, command string) error {
+func (workflow *Workflow) dockerfile(file, command string, args map[string]interface{}) error {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
@@ -218,6 +222,9 @@ func (workflow *Workflow) dockerfile(file, command string) error {
 
 	fmt.Println(filepath.Join(workflow.pluginDir, file))
 	infos, err := ioutil.ReadDir(filepath.Join(workflow.pluginDir, file))
+	if err != nil {
+		return err
+	}
 
 	for _, info := range infos {
 		fmt.Println(info.Name())
@@ -265,10 +272,10 @@ func (workflow *Workflow) dockerfile(file, command string) error {
 		log.Fatal(err, "unable to read image build response")
 	}
 
-	return workflow.docker("plugin", command, false) // TODO: rename tag
+	return workflow.docker("plugin", command, false, args) // TODO: rename tag
 }
 
-func (workflow *Workflow) plugin(command string) error {
+func (workflow *Workflow) plugin(command string, args map[string]interface{}) error {
 	// try plugins
 	if plugin, ok := plugins.Plugins[command]; ok {
 		return plugin.Run(workflow.workingDir, plugins.Data{})
@@ -292,7 +299,7 @@ func (workflow *Workflow) plugin(command string) error {
 		return fmt.Errorf("script `%s` is directory", cmdPath)
 	}
 
-	return workflow.bash(cmdPath + " " + strings.Join(parts[1:], " "))
+	return workflow.bash(cmdPath + " " + strings.Join(parts[1:], " "), args)
 }
 
 func tarWrite(src string, dest string, tw *tar.Writer) error {

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # Copyright (c) 2019 Siemens AG
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -20,32 +20,24 @@
 #
 # Author(s): Jonas Plum
 
-import types
 
 import forensicstore
-from jq import jq
-
-QUERY = r'.key as $key | (.key / "\\")[1] as $sid | .values | values | .[] | '
-QUERY += r'{Command: .data, Name: .name, SID: $sid, Key: $key}'
 
 
-def transform(item, args):
-    if isinstance(item, types.GeneratorType):
-        item = list(item)
-    try:
-        results = jq(QUERY).transform(item, multiple_output=True)
-        for result in results:
-            if result:
-                result["type"] = "runkeys"
+def transform(items):
+    results = []
+    for item in items:
+        if "values" in item:
+            for value in item["values"]:
+                results.append({
+                    "Key": item["key"],
+                    "Command": value["data"],
+                    "Name": value["name"],
+                    "SID": item["key"].split("\\")[1],
+                    "type": "runkey",
+                })
 
-        return [result for result in results if result]
-    except Exception as error:
-        return [{
-            "type": "runkeys",
-            "item": item,
-            "args": args,
-            "errors": [str(error)]
-        }]
+    return results
 
 
 def main():
@@ -74,11 +66,10 @@ def main():
         {'key': hkusw + r"Wow6432Node\Microsoft\Windows\CurrentVersion\RunOnce\Setup"},
         {'key': hkusw + r"Wow6432Node\Microsoft\Windows\CurrentVersion\RunOnceEx"}
     ]
-    items = list(store.select("windows-registry-key", conditions))
-    for item in items:
-        results = transform(item, {})
-        for result in results:
-            store.insert(result)
+    items = store.select("windows-registry-key", conditions)
+    results = transform(items)
+    for result in results:
+        store.insert(result)
     store.close()
 
 

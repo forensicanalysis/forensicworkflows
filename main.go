@@ -91,13 +91,17 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path"
 	"path/filepath"
 
 	"github.com/forensicanalysis/forensicworkflows/assets"
 	"github.com/forensicanalysis/forensicworkflows/daggy"
 )
 
-//go:generate resources -declare -var=FS -package assets -output assets/assets.go script/* script/templates/*
+//go:generate go get github.com/cugu/go-resources/cmd/resources
+//go:generate mkdir -p assets
+//go:generate resources -declare -var=FS -package assets -output assets/assets.go plugins/* plugins/templates/*
+//go:generate pip install -r requirements.txt
 
 func main() {
 	var processCommand = &cobra.Command{
@@ -142,7 +146,7 @@ Those tasks can be defined to be run on the system itself or in a containerized 
 			}
 
 			// run workflow
-			err = workflow.Run(storePath, "/plugins", map[string]string{
+			err = workflow.Run(storePath, path.Join(tempDir, "plugins"), map[string]string{
 				"docker-user":     cmd.PersistentFlags().Lookup("docker-user").Value.String(),
 				"docker-password": cmd.PersistentFlags().Lookup("docker-password").Value.String(),
 				"docker-server":   cmd.PersistentFlags().Lookup("docker-server").Value.String(),
@@ -172,7 +176,7 @@ func unpack() (tempDir string, err error) {
 		if err := os.MkdirAll(filepath.Join(tempDir, filepath.Dir(path)), 0700); err != nil {
 			return tempDir, err
 		}
-		if err := ioutil.WriteFile(filepath.Join(tempDir, path), content, 0644); err != nil {
+		if err := ioutil.WriteFile(filepath.Join(tempDir, path), content, 0755); err != nil {
 			return tempDir, err
 		}
 		log.Printf("Unpacking %s", path)

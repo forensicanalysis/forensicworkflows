@@ -38,7 +38,7 @@ func setup() (storeDir, pluginDir string, err error) {
 	if err != nil {
 		return "", "", err
 	}
-	storeDir = filepath.Join(tempDir, "store")
+	storeDir = filepath.Join(tempDir, "test")
 	err = os.MkdirAll(storeDir, 0755)
 	if err != nil {
 		return "", "", err
@@ -50,13 +50,24 @@ func setup() (storeDir, pluginDir string, err error) {
 		return "", "", err
 	}
 
-	err = copy.Copy(filepath.Join("..", "store"), storeDir)
+	err = copy.Copy(filepath.Join("..", "test"), storeDir)
 	if err != nil {
 		return "", "", err
 	}
 	err = copy.Copy(filepath.Join("..", "plugins"), pluginDir)
 	if err != nil {
 		return "", "", err
+	}
+
+	infos, err := ioutil.ReadDir(pluginDir)
+	if err != nil {
+		return "", "", err
+	}
+	for _, info := range infos {
+		err := os.Chmod(filepath.Join(pluginDir, info.Name()), 0755)
+		if err != nil {
+			return "", "", err
+		}
 	}
 
 	return storeDir, pluginDir, nil
@@ -93,17 +104,18 @@ func Test_processJob(t *testing.T) {
 		wantCount int
 		wantErr   bool
 	}{
-		{"test plugin", "md1rejuc_2019-11-27T10-36-16.forensicstore", args{"testjob", Job{Type: "plugin", Command: "example"}}, "example", 0, false},
-		{"test script not existing", "md1rejuc_2019-11-27T10-36-16.forensicstore", args{"testjob", Job{Type: "plugin", Command: "foo"}}, "", 0, true},
-		// {"test docker", "md1rejuc_2019-11-27T10-36-16.forensicstore", args{"testjob", Job{Type: "docker", Image: "alpine", Command: "true"}}, "", 0, false},
+		{"test plugin", "example1.forensicstore", args{"testjob", Job{Type: "plugin", Command: "example"}}, "example", 0, false},
+		{"test script not existing", "example1.forensicstore", args{"testjob", Job{Type: "plugin", Command: "foo"}}, "", 0, true},
+		// {"test docker", "example1.forensicstore", args{"testjob", Job{Type: "docker", Image: "alpine", Command: "true"}}, "", 0, false},
 
-		{"test hotfixes", "md1rejuc_2019-11-27T10-36-16.forensicstore", args{"testjob", Job{Type: "plugin", Command: "hotfixes"}}, "hotfix", 14, false},
-		{"test networking", "md1rejuc_2019-11-27T10-36-16.forensicstore", args{"testjob", Job{Type: "plugin", Command: "networking"}}, "known_network", 15, false},
-		// {"test run-keys", "md1rejuc_2019-11-27T10-36-16.forensicstore", args{"testjob", Job{Type: "plugin", Command: "run-keys"}}, "runkeys", 1, false}, TODO fix jq
-		// {"test services", "md1rejuc_2019-11-27T10-36-16.forensicstore", args{"testjob", Job{Type: "plugin", Command: "services"}}, "services", 1, false}, TODO fix services artifact
-		{"test shimcache", "md1rejuc_2019-11-27T10-36-16.forensicstore", args{"testjob", Job{Type: "plugin", Command: "shimcache"}}, "shimcache", 1024, false},
-		{"test software", "md1rejuc_2019-11-27T10-36-16.forensicstore", args{"testjob", Job{Type: "plugin", Command: "software"}}, "uninstall_entry", 133, false},
-		// {"test plaso", "md1rejuc_2019-11-27T10-36-16.forensicstore", args{"testjob", Job{Type: "dockerfile", Dockerfile: "plaso"}}, "event", 123, false},
+		{"test hotfixes", "example1.forensicstore", args{"testjob", Job{Type: "plugin", Command: "hotfixes"}}, "hotfix", 14, false},
+		{"test networking", "example1.forensicstore", args{"testjob", Job{Type: "plugin", Command: "networking"}}, "known_network", 9, false},
+		{"test run-keys", "example1.forensicstore", args{"testjob", Job{Type: "plugin", Command: "run-keys"}}, "runkey", 10, false},
+		{"test services", "example1.forensicstore", args{"testjob", Job{Type: "plugin", Command: "services"}}, "service", 624, false},
+		{"test shimcache", "example1.forensicstore", args{"testjob", Job{Type: "plugin", Command: "shimcache"}}, "shimcache", 391, false},
+		{"test software", "example1.forensicstore", args{"testjob", Job{Type: "plugin", Command: "software"}}, "uninstall_entry", 6, false},
+		{"test prefetch", "example1.forensicstore", args{"testjob", Job{Type: "plugin", Command: "prefetch"}}, "prefetch", 261, false},
+		// {"test plaso", "example1.forensicstore", args{"testjob", Job{Type: "dockerfile", Dockerfile: "plaso"}}, "event", 123, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -122,18 +134,6 @@ func Test_processJob(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-
-				// validate store
-				/*
-					log.Println("Start validation")
-					flaws, err := store.Validate()
-					if err != nil {
-						t.Fatal(err)
-					}
-					if len(flaws) > 0 {
-						t.Errorf("runJob() error, validation of the forensicstore failed: %v", flaws)
-					}
-				*/
 
 				log.Println("Start select")
 				if tt.wantCount > 0 {

@@ -22,9 +22,6 @@
 package daggy
 
 import (
-	"bytes"
-	"encoding/base64"
-	"fmt"
 	"io/ioutil"
 	"log"
 
@@ -45,12 +42,6 @@ func Parse(workflowFile string) (*Workflow, error) {
 		return nil, err
 	}
 
-	// setup graph print
-	graphLink := &bytes.Buffer{}
-	graphLink.WriteString("View graph: https://mermaidjs.github.io/mermaid-live-editor/#/edit/")
-	encoder := base64.NewEncoder(base64.StdEncoding, graphLink)
-	encoder.Write([]byte("graph TD\n"))
-
 	// Create the dag
 	setupLogging()
 	graph := dag.AcyclicGraph{}
@@ -58,20 +49,14 @@ func Parse(workflowFile string) (*Workflow, error) {
 	for name, job := range workflow.Jobs {
 		graph.Add(name)
 		jobs[name] = job
-		encoder.Write([]byte("    " + name + "\n"))
 	}
 
 	// add edges / requirements
 	for name, job := range workflow.Jobs {
 		for _, requirement := range job.Requires {
 			graph.Connect(dag.BasicEdge(requirement, name))
-			fmt.Fprintf(encoder, "    %s-->%s\n", requirement, name)
 		}
 	}
-
-	// print graph link
-	encoder.Close()
-	log.Println(graphLink.String())
 
 	workflow.graph = &graph
 

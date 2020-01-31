@@ -6,27 +6,14 @@ networking:
   type: plugin
   command: networking
 
-osinfos:
-  type: plugin
-  command: osinfos
-
 run_keys:
-  type: docker
-  image: "python:3"
-  command: "pip install jq && /script/run_keys"
-
-report:
   type: plugin
-  command: report osinfo.tmpl.j2
+  command: "run-keys"
 
-csv:
+autoruns_csv:
   type: plugin
-  command: csvjob
-
-jq:
-  type: dockerfile
-  dockerfile: jq
-  command: /script/run_keys
+  command: create-csv runkey Name Command SID
+  requires: [run_keys]
 
 services:
   type: plugin
@@ -39,3 +26,12 @@ shimcache:
 software:
   type: plugin
   command: software
+
+prefetch:
+  type: plugin
+  command: prefetch
+
+prefetch_report:
+  type: plugin
+  command: report prefetch prefetch.tmpl.j2
+  requires: [prefetch]

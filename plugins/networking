@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # Copyright (c) 2019 Siemens AG
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -22,8 +22,8 @@
 
 import forensicstore
 
-NAMES_KEY = r"hkey_local_machine\system\controlset001\control\network\{4d36e972-e325-11ce-bfc1-08002be10318}"
-INTERFACE_KEY = r'hkey_local_machine\system\controlset001\services\tcpip\parameters\interfaces'
+NAMES_KEY = r"\control\network\{4d36e972-e325-11ce-bfc1-08002be10318}"
+INTERFACE_KEY = r'\services\tcpip\parameters\interfaces'
 
 
 def transform(objs):
@@ -31,16 +31,16 @@ def transform(objs):
     This plugin parses network configuration from the SYSTEM hive and correlates it with other keys to
     get the network interface name and the last configuration
     """
-    results = []
     names_keys = []
     interface_keys = []
     for obj in objs:
         key = obj["key"].lower()
-        if key.startswith(NAMES_KEY):
+        if NAMES_KEY in key:
             names_keys.append(obj)
-        elif key.startswith(INTERFACE_KEY):
+        elif INTERFACE_KEY in key:
             interface_keys.append(obj)
 
+    results = []
     for interface_key in interface_keys:
         result = {}
 

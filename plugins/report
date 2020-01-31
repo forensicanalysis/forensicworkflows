@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # Copyright (c) 2019 Siemens AG
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -20,47 +20,32 @@
 #
 # Author(s): Jonas Plum
 
+import forensicstore
+import jinja2
 import os
 import sys
-import types
-
-import jinja2
-
-import forensicstore
 
 
-class Report:
+def transform(store, items, template_name):
+    dir_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "templates")
+    template_loader = jinja2.FileSystemLoader(searchpath=dir_path)
+    template_env = jinja2.Environment(loader=template_loader, autoescape=True)
 
-    def __init__(self):
-        super().__init__()
-        self.scatter = False
-        dir_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "templates")
-        self.template_loader = jinja2.FileSystemLoader(searchpath=dir_path)
+    template = template_env.get_template(template_name)
+    output = template.render(data=list(items))
 
-    def transform(self, store, item, args, context):
-        if isinstance(item, types.GeneratorType):
-            item = list(item)
-        template_env = jinja2.Environment(loader=self.template_loader, autoescape=args.get("escape", True))
-
-        template = template_env.get_template(args["template"])
-        output = template.render(data=item, args=args)
-
-        report_name = context.get('information_name', 'report') + ".md"
-        try:
-            with store.store_file(os.path.join("Reports", report_name)) as (report_path, file_io):
-                file_io.write(output.encode("UTF-8"))
-                return [{"type": "report", "report_path": report_path, "format": "markdown"}]
-        except Exception as error:
-            return [{"type": "report", "errors": [str(error)]}]
+    report_name = template_name.split(".")[0] + ".md"
+    with store.store_file("Reports/" + report_name) as (report_path, file_io):
+        file_io.write(output.encode('utf-8'))
+        return {"type": "report", "report_path": report_path, "format": "markdown"}
 
 
 def main():
     store = forensicstore.connect(".")
-    transformer = Report()
-    items = list(store.select("windows-registry-key"))  # TODO: add arguments
-    print(items)
-    results = transformer.transform(store, items, {"template": sys.argv[1]}, {})
-    print(results)
+    items = store.select(sys.argv[1])
+    result = transform(store, items, sys.argv[2])
+    if result:
+        store.insert(result)
     store.close()
 
 

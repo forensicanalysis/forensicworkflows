@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # Copyright (c) 2019 Siemens AG
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -32,7 +32,6 @@ def transform(objs):
     """
     # pylint: disable=too-many-locals
 
-    parse_result = []
     params_for_services = {}
     services = []
     for obj in objs:
@@ -45,10 +44,11 @@ def transform(objs):
         else:
             services.append(obj)
 
+    parse_result = []
     for obj in services:
         parameters_key = params_for_services.get(obj["key"].lower(), None)
         if parameters_key and "values" in parameters_key:
-            parameters = {v["name"].lower(): v["data"] for v in parameters_key["values"]}
+            parameters = {v["name"].lower(): v["data"] for v in parameters_key["values"] if "data" in v and "name" in v}
             parameters_last_written = parameters_key["modified"]
         else:
             parameters = {}
@@ -57,7 +57,7 @@ def transform(objs):
         if "values" not in obj:
             continue
 
-        service_values = {v["name"].lower(): v["data"] for v in obj["values"]}
+        service_values = {v["name"].lower(): v["data"] for v in obj["values"] if "data" in v and "name" in v}
         start_mode = int(service_values.get('start', 0x4))
         service_type = service_values.get('type', None)
 
@@ -75,6 +75,7 @@ def transform(objs):
             'Parameters Key Changed': parameters_last_written,
             'Source Key': obj["key"]
         }
+
         parse_result.append(service)
 
     return parse_result

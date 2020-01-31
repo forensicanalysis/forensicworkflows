@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # Copyright (c) 2019 Siemens AG
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -21,40 +21,36 @@
 # Author(s): Demian Kellermann
 """ Output table-like data to CSV files, quoting is enabled for every non-numeric field for easier parsing """
 import csv
+import forensicstore
+import sys
 from io import StringIO
 
-import forensicstore
 
-
-def transform(store, objs, args, context):
-    report_name = context.get('information_name', 'report') + ".csv"
-    headers = args.get('headers', list(objs[0].keys()))
-    try:
-        with store.store_file("/".join(["Reports", report_name
-                                        ])) as (report_path, file_io):
-            string_io = StringIO()
-            csv_out = csv.DictWriter(string_io,
-                                     fieldnames=headers,
-                                     delimiter=';',
-                                     extrasaction='ignore',
-                                     quoting=csv.QUOTE_NONNUMERIC)
-            csv_out.writeheader()
-            csv_out.writerows(objs)
-            string_io.seek(0)
-            file_io.write(string_io.read().encode('utf-8'))
-            return [{
-                "type": "report",
-                "report_path": report_path,
-                "format": "csv"
-            }]
-    except Exception as error:
-        return [{"type": "report", "errors": [str(error)]}]
+def transform(store, items, name, header):
+    report_name = name + ".csv"
+    with store.store_file("/".join(["Reports", report_name
+                                    ])) as (report_path, file_io):
+        string_io = StringIO()
+        csv_out = csv.DictWriter(string_io,
+                                 fieldnames=header,
+                                 delimiter=';',
+                                 extrasaction='ignore',
+                                 quoting=csv.QUOTE_NONNUMERIC)
+        csv_out.writeheader()
+        csv_out.writerows(items)
+        string_io.seek(0)
+        file_io.write(string_io.read().encode('utf-8'))
+        return [{
+            "type": "report",
+            "report_path": report_path,
+            "format": "csv"
+        }]
 
 
 def main():
     store = forensicstore.connect(".")
-    items = list(store.select("file"))  # TODO: add arguments
-    results = transform(store, items, {}, {})
+    items = store.select(sys.argv[1])
+    results = transform(store, items, sys.argv[1], sys.argv[2:])
     for result in results:
         store.insert(result)
     store.close()

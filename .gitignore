@@ -1,2 +1,4 @@
-store
+test
+!test/example1.forensicstore
+!test/.golangci.yml
 assets
