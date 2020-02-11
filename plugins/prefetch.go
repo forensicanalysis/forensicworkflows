@@ -34,10 +34,8 @@ func init() {
 	Plugins["prefetch"] = &PrefetchPlugin{}
 }
 
-// ExamplePlugin represents a plugin for forensicstore processing.
 type PrefetchPlugin struct{}
 
-// Run does nothing for the example plugin.
 func (*PrefetchPlugin) Run(url string, data Data) error {
 	store, err := goforensicstore.NewJSONLite(url)
 	if err != nil {

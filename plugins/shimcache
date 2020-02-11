@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# This file contains two code parts licened under different licensed.
+# This file contains two code parts licensed under different licenses.
 #
 # Copyright (c) 2019 Siemens AG
 #
@@ -23,6 +23,7 @@
 # Author(s): Demian Kellermann
 """ Shimcache analyser module based on Mandiant's open source shimcache parser """
 # pylint: skip-file
+from base64 import b64decode
 import datetime
 import io as sio
 import logging
@@ -44,7 +45,16 @@ def transform(obj):
     cache_bin = shimcache_infos.get('appcompatcache', None)
     if cache_bin:
 
-        parsed_cache = read_cache(bytearray.fromhex(cache_bin))
+        try:
+            cache_bin_bytes = read_cache(bytearray.fromhex(cache_bin))
+        except ValueError as original_error:
+            try:
+                cache_bin_bytes = b64decode(cache_bin)
+                LOGGER.info("Base64 encoded registry value is deprecated!")
+            except ValueError:
+                LOGGER.error("Could not parse shimcache: %s", original_error)
+                return
+        parsed_cache = read_cache(cache_bin_bytes)
         if not parsed_cache:
             return
         for entry in parsed_cache:
