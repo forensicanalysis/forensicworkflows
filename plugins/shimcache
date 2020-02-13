@@ -46,7 +46,7 @@ def transform(obj):
     if cache_bin:
 
         try:
-            cache_bin_bytes = read_cache(bytearray.fromhex(cache_bin))
+            cache_bin_bytes = bytearray.fromhex(cache_bin)
         except ValueError as original_error:
             try:
                 cache_bin_bytes = b64decode(cache_bin)
