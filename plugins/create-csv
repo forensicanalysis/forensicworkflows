@@ -27,6 +27,8 @@ from io import StringIO
 
 
 def transform(store, items, name, header):
+    if not items:
+        return []
     report_name = name + ".csv"
     with store.store_file("/".join(["Reports", report_name
                                     ])) as (report_path, file_io):
@@ -49,7 +51,7 @@ def transform(store, items, name, header):
 
 def main():
     store = forensicstore.connect(".")
-    items = store.select(sys.argv[1])
+    items = list(store.select(sys.argv[1]))
     results = transform(store, items, sys.argv[1], sys.argv[2:])
     for result in results:
         store.insert(result)

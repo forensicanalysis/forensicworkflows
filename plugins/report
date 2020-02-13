@@ -27,6 +27,8 @@ import sys
 
 
 def transform(store, items, template_name):
+    if not items:
+        return None
     dir_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "templates")
     template_loader = jinja2.FileSystemLoader(searchpath=dir_path)
     template_env = jinja2.Environment(loader=template_loader, autoescape=True)
@@ -42,7 +44,7 @@ def transform(store, items, template_name):
 
 def main():
     store = forensicstore.connect(".")
-    items = store.select(sys.argv[1])
+    items = list(store.select(sys.argv[1]))
     result = transform(store, items, sys.argv[2])
     if result:
         store.insert(result)
