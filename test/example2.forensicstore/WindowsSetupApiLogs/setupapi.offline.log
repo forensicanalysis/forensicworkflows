@@ -1,0 +1,904 @@
+[Device Install Log]
+     OS Version = 10.0.17763
+     Service Pack = 0.0
+     Suite = 0x0190
+     ProductType = 3
+     Architecture = amd64
+
+[BeginLog]
+
+[Boot Session: 2020/02/07 01:30:51.553]
+
+>>>  [Load Offline Registry Hive - SYSTEM]
+>>>  Section start 2020/02/09 20:29:38.159
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\3D91A307-EC74-4596-9A57-D959BC13A8BC\dismhost.exe {B21E7DA7-7AB9-4F79-AC07-40828C315AC1}
+     sto: Opened existing hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SYSTEM'.
+<<<  Section end 2020/02/09 20:29:38.159
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Load Offline Registry Hive - DRIVERS]
+>>>  Section start 2020/02/09 20:29:38.159
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\3D91A307-EC74-4596-9A57-D959BC13A8BC\dismhost.exe {B21E7DA7-7AB9-4F79-AC07-40828C315AC1}
+     sto: Opened existing hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/DRIVERS'.
+<<<  Section end 2020/02/09 20:29:38.159
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Load Offline Registry Hive - SYSTEM]
+>>>  Section start 2020/02/09 20:29:38.190
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\3D91A307-EC74-4596-9A57-D959BC13A8BC\dismhost.exe {B21E7DA7-7AB9-4F79-AC07-40828C315AC1}
+     sto: Opened existing hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SYSTEM'.
+<<<  Section end 2020/02/09 20:29:38.190
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Unload Offline Registry Hive - SYSTEM]
+>>>  Section start 2020/02/09 20:29:38.190
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\3D91A307-EC74-4596-9A57-D959BC13A8BC\dismhost.exe {B21E7DA7-7AB9-4F79-AC07-40828C315AC1}
+     sto: Closed hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SYSTEM'.
+     sto: Unable to unload hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SYSTEM' loaded by another process. Error = 0x00000005, Time = 0 ms
+<<<  Section end 2020/02/09 20:29:38.190
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Unload Offline Registry Hive - DRIVERS]
+>>>  Section start 2020/02/09 20:29:38.190
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\3D91A307-EC74-4596-9A57-D959BC13A8BC\dismhost.exe {B21E7DA7-7AB9-4F79-AC07-40828C315AC1}
+     sto: Closed hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/DRIVERS'.
+     sto: Unable to unload hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/DRIVERS' loaded by another process. Error = 0x00000005, Time = 0 ms
+<<<  Section end 2020/02/09 20:29:38.190
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Stage Driver Updates]
+>>>  Section start 2020/02/09 20:29:38.206
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\3D91A307-EC74-4596-9A57-D959BC13A8BC\dismhost.exe {B21E7DA7-7AB9-4F79-AC07-40828C315AC1}
+     sto: Image State        = Generalized
+     sto: Image Architecture = amd64
+     sto: Image OS Version   = 10.0.17763
+     sto: Image Product Type = 3
+     sto: Driver Updates     = 3
+     sto: {Load Offline Registry Hive: SYSTEM} 20:29:38.206
+     sto:      Opened existing hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SYSTEM'.
+     sto: {Load Offline Registry Hive: exit(0x00000000)} 20:29:38.206
+     sto: {Load Offline Registry Hive: DRIVERS} 20:29:38.206
+     sto:      Opened existing hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/DRIVERS'.
+     sto: {Load Offline Registry Hive: exit(0x00000000)} 20:29:38.206
+     sto: {Import Driver Package: F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\WinSxS\amd64_dual_rawsilo.inf_31bf3856ad364e35_10.0.17763.1_none_86159a46e8654f63\rawsilo.inf} 20:29:38.237
+     sto:      Driver Store   = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore (10.0.17763)
+     sto:      Driver Package = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\WinSxS\amd64_dual_rawsilo.inf_31bf3856ad364e35_10.0.17763.1_none_86159a46e8654f63\rawsilo.inf
+     sto:      Architecture   = amd64
+     sto:      Flags          = 0x00000245
+     inf:      Provider       = Microsoft
+     inf:      Class GUID     = {9da2b80f-f89f-4a49-a5c2-511b085b9e8a}
+     inf:      Driver Version = 06/21/2006,10.0.17763.1
+     inf:      Version Flags  = 0x00000011
+!    sto:      Driver package already imported as 'rawsilo.inf' (F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\rawsilo.inf_amd64_8bac05f6ce8c8163\rawsilo.inf).
+     sto:      Driver Store Filename = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\rawsilo.inf_amd64_8bac05f6ce8c8163\rawsilo.inf
+     sto: {Import Driver Package: exit(0x00000000)} 20:29:38.237
+     sto: {Import Driver Package: F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\WinSxS\amd64_dual_ehstorpwddrv.inf_31bf3856ad364e35_10.0.17763.1_none_be65520f351689a2\ehstorpwddrv.inf} 20:29:38.237
+     sto:      Driver Store   = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore (10.0.17763)
+     sto:      Driver Package = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\WinSxS\amd64_dual_ehstorpwddrv.inf_31bf3856ad364e35_10.0.17763.1_none_be65520f351689a2\ehstorpwddrv.inf
+     sto:      Architecture   = amd64
+     sto:      Flags          = 0x00000245
+     inf:      Provider       = Microsoft
+     inf:      Class GUID     = {9da2b80f-f89f-4a49-a5c2-511b085b9e8a}
+     inf:      Driver Version = 06/21/2006,10.0.17763.1
+     inf:      Version Flags  = 0x00000001
+!    sto:      Driver package already imported as 'ehstorpwddrv.inf' (F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\ehstorpwddrv.inf_amd64_d14b2d0cd98ecf84\ehstorpwddrv.inf).
+     sto:      Driver Store Filename = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\ehstorpwddrv.inf_amd64_d14b2d0cd98ecf84\ehstorpwddrv.inf
+     sto: {Import Driver Package: exit(0x00000000)} 20:29:38.237
+     sto: {Import Driver Package: F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\WinSxS\amd64_dual_ehstortcgdrv.inf_31bf3856ad364e35_10.0.17763.1_none_cc6f7be9385fd195\ehstortcgdrv.inf} 20:29:38.237
+     sto:      Driver Store   = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore (10.0.17763)
+     sto:      Driver Package = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\WinSxS\amd64_dual_ehstortcgdrv.inf_31bf3856ad364e35_10.0.17763.1_none_cc6f7be9385fd195\ehstortcgdrv.inf
+     sto:      Architecture   = amd64
+     sto:      Flags          = 0x00000245
+     inf:      Provider       = Microsoft
+     inf:      Class GUID     = {9da2b80f-f89f-4a49-a5c2-511b085b9e8a}
+     inf:      Driver Version = 06/21/2006,10.0.17763.1
+     inf:      Version Flags  = 0x00000003
+!    sto:      Driver package already imported as 'ehstortcgdrv.inf' (F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\ehstortcgdrv.inf_amd64_a8f895e0767a6d2a\ehstortcgdrv.inf).
+     sto:      Driver Store Filename = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\ehstortcgdrv.inf_amd64_a8f895e0767a6d2a\ehstortcgdrv.inf
+     sto: {Import Driver Package: exit(0x00000000)} 20:29:38.253
+     sto: {Unload Offline Registry Hive: SYSTEM} 20:29:38.253
+     sto:      Closed hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SYSTEM'.
+     sto:      Unable to unload hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SYSTEM' loaded by another process. Error = 0x00000005, Time = 0 ms
+     sto: {Unload Offline Registry Hive: exit(0x00000000)} 20:29:38.253
+     sto: {Unload Offline Registry Hive: DRIVERS} 20:29:38.253
+     sto:      Closed hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/DRIVERS'.
+     sto:      Unable to unload hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/DRIVERS' loaded by another process. Error = 0x00000005, Time = 0 ms
+     sto: {Unload Offline Registry Hive: exit(0x00000000)} 20:29:38.253
+<<<  Section end 2020/02/09 20:29:38.253
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Install Driver Updates]
+>>>  Section start 2020/02/09 20:29:38.253
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\3D91A307-EC74-4596-9A57-D959BC13A8BC\dismhost.exe {B21E7DA7-7AB9-4F79-AC07-40828C315AC1}
+     sto: Image State        = Generalized
+     sto: Image Architecture = amd64
+     sto: Driver Updates     = 3
+     sto: {Load Offline Registry Hive: SYSTEM} 20:29:38.253
+     sto:      Opened existing hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SYSTEM'.
+     sto: {Load Offline Registry Hive: exit(0x00000000)} 20:29:38.253
+     sto: {Load Offline Registry Hive: DRIVERS} 20:29:38.253
+     sto:      Opened existing hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/DRIVERS'.
+     sto: {Load Offline Registry Hive: exit(0x00000000)} 20:29:38.253
+     sto: {Publish Driver Package: F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\rawsilo.inf_amd64_8bac05f6ce8c8163\rawsilo.inf} 20:29:38.269
+     sto:      Driver Store   = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore (10.0.17763)
+     sto:      Driver Package = rawsilo.inf_amd64_8bac05f6ce8c8163
+     idb:      {Publish Driver Package: F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\rawsilo.inf_amd64_8bac05f6ce8c8163\rawsilo.inf} 20:29:38.269
+     idb:           Driver package 'rawsilo.inf_amd64_8bac05f6ce8c8163' is already active.
+     idb:      {Publish Driver Package: exit(0x00000000)} 20:29:38.269
+     sto: {Publish Driver Package: exit(0x00000000)} 20:29:38.269
+     sto: {Publish Driver Package: F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\ehstorpwddrv.inf_amd64_d14b2d0cd98ecf84\ehstorpwddrv.inf} 20:29:38.269
+     sto:      Driver Store   = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore (10.0.17763)
+     sto:      Driver Package = ehstorpwddrv.inf_amd64_d14b2d0cd98ecf84
+     idb:      {Publish Driver Package: F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\ehstorpwddrv.inf_amd64_d14b2d0cd98ecf84\ehstorpwddrv.inf} 20:29:38.269
+     idb:           Driver package 'ehstorpwddrv.inf_amd64_d14b2d0cd98ecf84' is already active.
+     idb:      {Publish Driver Package: exit(0x00000000)} 20:29:38.269
+     sto: {Publish Driver Package: exit(0x00000000)} 20:29:38.269
+     sto: {Publish Driver Package: F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\ehstortcgdrv.inf_amd64_a8f895e0767a6d2a\ehstortcgdrv.inf} 20:29:38.269
+     sto:      Driver Store   = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore (10.0.17763)
+     sto:      Driver Package = ehstortcgdrv.inf_amd64_a8f895e0767a6d2a
+     idb:      {Publish Driver Package: F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\ehstortcgdrv.inf_amd64_a8f895e0767a6d2a\ehstortcgdrv.inf} 20:29:38.269
+     idb:           Driver package 'ehstortcgdrv.inf_amd64_a8f895e0767a6d2a' is already active.
+     idb:      {Publish Driver Package: exit(0x00000000)} 20:29:38.269
+     sto: {Publish Driver Package: exit(0x00000000)} 20:29:38.269
+     sto: Driver update 'rawsilo.inf' is already reflected.
+     sto: Driver update 'ehstorpwddrv.inf' is already reflected.
+     sto: Driver update 'ehstortcgdrv.inf' is already reflected.
+     sto: {Unload Offline Registry Hive: SYSTEM} 20:29:38.269
+     sto:      Closed hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SYSTEM'.
+     sto:      Unable to unload hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SYSTEM' loaded by another process. Error = 0x00000005, Time = 0 ms
+     sto: {Unload Offline Registry Hive: exit(0x00000000)} 20:29:38.269
+     sto: {Unload Offline Registry Hive: DRIVERS} 20:29:38.269
+     sto:      Closed hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/DRIVERS'.
+     sto:      Unable to unload hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/DRIVERS' loaded by another process. Error = 0x00000005, Time = 0 ms
+     sto: {Unload Offline Registry Hive: exit(0x00000000)} 20:29:38.269
+<<<  Section end 2020/02/09 20:29:38.269
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Unload Offline Registry Hive - SYSTEM]
+>>>  Section start 2020/02/09 20:29:39.677
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\3D91A307-EC74-4596-9A57-D959BC13A8BC\dismhost.exe {B21E7DA7-7AB9-4F79-AC07-40828C315AC1}
+     sto: Closed hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SYSTEM'.
+     sto: Unable to unload hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SYSTEM' loaded by another process. Error = 0x00000005, Time = 0 ms
+<<<  Section end 2020/02/09 20:29:39.677
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Load Offline Registry Hive - SYSTEM]
+>>>  Section start 2020/02/09 20:30:02.727
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\A92DFE06-0E19-4E09-B42A-D132C866A837\dismhost.exe {850DD287-2AD0-4BD9-8B64-772B8B0647A6}
+     sto: Loaded hive 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\config\SYSTEM'. Time = 31 ms
+     sto: Opened hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SYSTEM'.
+     sto: Delay unloading hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SYSTEM'.
+<<<  Section end 2020/02/09 20:30:02.759
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Load Offline Registry Hive - DRIVERS]
+>>>  Section start 2020/02/09 20:30:02.759
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\A92DFE06-0E19-4E09-B42A-D132C866A837\dismhost.exe {850DD287-2AD0-4BD9-8B64-772B8B0647A6}
+     sto: Loaded hive 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\config\DRIVERS'. Time = 47 ms
+     sto: Opened hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/DRIVERS'.
+     sto: Delay unloading hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/DRIVERS'.
+<<<  Section end 2020/02/09 20:30:02.821
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Import Driver Package - \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\ipoib6x.inf]
+>>>  Section start 2020/02/09 20:30:08.087
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\A92DFE06-0E19-4E09-B42A-D132C866A837\dismhost.exe {850DD287-2AD0-4BD9-8B64-772B8B0647A6}
+     sto: Driver Store   = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore (10.0.17763)
+     sto: Driver Package = \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\ipoib6x.inf
+     sto: Architecture   = amd64
+     sto: Flags          = 0x00000000
+     inf: Provider       = Mellanox Technologies Ltd.
+     inf: Class GUID     = {4d36e972-e325-11ce-bfc1-08002be10318}
+     inf: Driver Version = 03/08/2017,5.35.12978.0
+     inf: Catalog File   = ipoib6x.cat
+     inf: Version Flags  = 0x00000001
+     inf: {Query Configurability: \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\ipoib6x.inf} 20:30:08.446
+     inf:      Driver package 'ipoib6x.inf' is configurable.
+     inf: {Query Configurability: exit(0x00000000)} 20:30:08.509
+     sig: {Verify Driver Package: \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\ipoib6x.inf} 20:30:08.727
+     sig:      Catalog File: \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\ipoib6x.cat
+     sig: {Verify Driver Package: exit(0x00000000)} 20:30:10.368
+     sig: Signer Score  = 0x0D000005 (WHQL)
+     sig: Signer Name   = Microsoft Windows Hardware Compatibility Publisher
+     sig: Submission ID = 30043180_13619904960683625_1152921504626418158
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\ipoib6x.cat' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\ipoib6x.inf_amd64_ada385517fbb9486\ipoib6x.cat'.
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\ipoib6x.inf' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\ipoib6x.inf_amd64_ada385517fbb9486\ipoib6x.inf'.
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\winctxtune_ipoib.dll' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\ipoib6x.inf_amd64_ada385517fbb9486\winctxtune_ipoib.dll'.
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\ipoib6x.sys' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\ipoib6x.inf_amd64_ada385517fbb9486\ipoib6x.sys'.
+     idb: {Register Driver Package: F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\ipoib6x.inf_amd64_ada385517fbb9486\ipoib6x.inf} 20:30:15.853
+     idb:      Created driver package object 'ipoib6x.inf_amd64_ada385517fbb9486' in DRIVERS database node.
+     idb:      Created driver INF file object 'oem0.inf' in DRIVERS database node.
+     idb:      Registered driver package 'ipoib6x.inf_amd64_ada385517fbb9486' with 'oem0.inf'.
+     idb: {Register Driver Package: exit(0x00000000)} 20:30:15.868
+     idb: {Publish Driver Package: F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\ipoib6x.inf_amd64_ada385517fbb9486\ipoib6x.inf} 20:30:15.868
+     idb:      Activating driver package 'ipoib6x.inf_amd64_ada385517fbb9486'.
+     cpy:      Published 'ipoib6x.inf_amd64_ada385517fbb9486\ipoib6x.inf' to 'oem0.inf'.
+     idb:      Indexed 31 device IDs for 'ipoib6x.inf_amd64_ada385517fbb9486'.
+     idb: {Publish Driver Package: exit(0x00000000)} 20:30:15.884
+     sig: Published catalog 'ipoib6x.cat' as 'oem0.cat'.
+     sto: Driver Store Filename = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\ipoib6x.inf_amd64_ada385517fbb9486\ipoib6x.inf
+<<<  Section end 2020/02/09 20:30:15.900
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Reflect Critical Driver Package - F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\ipoib6x.inf_amd64_ada385517fbb9486\ipoib6x.inf]
+>>>  Section start 2020/02/09 20:30:15.900
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\A92DFE06-0E19-4E09-B42A-D132C866A837\dismhost.exe {850DD287-2AD0-4BD9-8B64-772B8B0647A6}
+     sto: Driver Store   = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore (10.0.17763)
+     sto: Flags          = 0x00040F3F
+     inf: Class GUID     = {4d36e972-e325-11ce-bfc1-08002be10318}
+     inf: Class Options  = Configurable
+     inf: No critical drivers to configure.
+     sto: {Load Offline Registry Hive: SOFTWARE} 20:30:15.900
+     sto:      Loaded hive 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\config\SOFTWARE'. Time = 328 ms
+     sto:      Opened hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SOFTWARE'.
+     sto:      Delay unloading hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SOFTWARE'.
+     sto: {Load Offline Registry Hive: exit(0x00000000)} 20:30:16.228
+<<<  Section end 2020/02/09 20:30:16.228
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Import Driver Package - \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mlx4_bus.inf]
+>>>  Section start 2020/02/09 20:30:16.431
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\A92DFE06-0E19-4E09-B42A-D132C866A837\dismhost.exe {850DD287-2AD0-4BD9-8B64-772B8B0647A6}
+     sto: Driver Store   = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore (10.0.17763)
+     sto: Driver Package = \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mlx4_bus.inf
+     sto: Architecture   = amd64
+     sto: Flags          = 0x00000000
+     inf: Provider       = Mellanox Technologies Ltd.
+     inf: Class GUID     = {4d36e97d-e325-11ce-bfc1-08002be10318}
+     inf: Driver Version = 03/08/2017,5.35.12978.0
+     inf: Catalog File   = mlx4_bus.cat
+     inf: Version Flags  = 0x00000001
+!    inf: Needed section [PciSriovSupported] found in included INF "pci.inf", not referenced from [MLX4BUS_VF.DDInstall.NTamd64.Hw]. Code = 1313, Line = 133
+!    inf: Needed section [PciSriovSupported] found in included INF "pci.inf", not referenced from [MLX4BUS_ExtendedHWID_VF.DDInstall.NTamd64.Hw]. Code = 1313, Line = 144
+!    inf: Needed section [PciSriovSupported] found in included INF "pci.inf", not referenced from [MLX4BUS_ExtendedHWID.DDInstall.NTamd64.Hw]. Code = 1313, Line = 139
+!    inf: Section [bootflags.paramsreg] is defined multiple times. Code = 1209, Line = 279
+     inf: {Query Configurability: \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mlx4_bus.inf} 20:30:16.837
+!    inf:      Section [bootflags.paramsreg] is defined multiple times. Code = 1209, Line = 279
+!    inf:      Needed section [PciSriovSupported] found in included INF "pci.inf", not referenced from [MLX4BUS_VF.DDInstall.NTamd64.Hw]. Code = 1313, Line = 133
+!    inf:      Needed section [PciSriovSupported] found in included INF "pci.inf", not referenced from [MLX4BUS_ExtendedHWID_VF.DDInstall.NTamd64.Hw]. Code = 1313, Line = 144
+!    inf:      Needed section [PciSriovSupported] found in included INF "pci.inf", not referenced from [MLX4BUS_ExtendedHWID.DDInstall.NTamd64.Hw]. Code = 1313, Line = 139
+     inf:      Driver package 'mlx4_bus.inf' is configurable.
+     inf: {Query Configurability: exit(0x00000000)} 20:30:16.931
+     sig: {Verify Driver Package: \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mlx4_bus.inf} 20:30:17.384
+     sig:      Catalog File: \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mlx4_bus.cat
+     sig: {Verify Driver Package: exit(0x00000000)} 20:30:20.312
+     sig: Signer Score  = 0x0D000005 (WHQL)
+     sig: Signer Name   = Microsoft Windows Hardware Compatibility Publisher
+     sig: Submission ID = 30043180_13619904960683625_1152921504626418158
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\winmad.sys' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx4_bus.inf_amd64_6c695d1e72b60f9b\winmad.sys'.
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\ndfltr.sys' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx4_bus.inf_amd64_6c695d1e72b60f9b\ndfltr.sys'.
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mlx4_bus.cat' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx4_bus.inf_amd64_6c695d1e72b60f9b\mlx4_bus.cat'.
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mlx4_bus.inf' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx4_bus.inf_amd64_6c695d1e72b60f9b\mlx4_bus.inf'.
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mlx4_bus.sys' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx4_bus.inf_amd64_6c695d1e72b60f9b\mlx4_bus.sys'.
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\winverbs.sys' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx4_bus.inf_amd64_6c695d1e72b60f9b\winverbs.sys'.
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\winctxtune_bus.dll' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx4_bus.inf_amd64_6c695d1e72b60f9b\winctxtune_bus.dll'.
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\ibbus.sys' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx4_bus.inf_amd64_6c695d1e72b60f9b\ibbus.sys'.
+     idb: {Register Driver Package: F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx4_bus.inf_amd64_6c695d1e72b60f9b\mlx4_bus.inf} 20:30:27.577
+     idb:      Created driver package object 'mlx4_bus.inf_amd64_6c695d1e72b60f9b' in SYSTEM database node.
+     idb:      Created driver INF file object 'oem1.inf' in SYSTEM database node.
+     idb:      Registered driver package 'mlx4_bus.inf_amd64_6c695d1e72b60f9b' with 'oem1.inf'.
+     idb: {Register Driver Package: exit(0x00000000)} 20:30:27.593
+     idb: {Publish Driver Package: F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx4_bus.inf_amd64_6c695d1e72b60f9b\mlx4_bus.inf} 20:30:27.593
+     idb:      Activating driver package 'mlx4_bus.inf_amd64_6c695d1e72b60f9b'.
+     cpy:      Published 'mlx4_bus.inf_amd64_6c695d1e72b60f9b\mlx4_bus.inf' to 'oem1.inf'.
+     idb:      Indexed 65 device IDs for 'mlx4_bus.inf_amd64_6c695d1e72b60f9b'.
+     idb: {Publish Driver Package: exit(0x00000000)} 20:30:27.624
+     sig: Published catalog 'mlx4_bus.cat' as 'oem1.cat'.
+     sto: Driver Store Filename = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx4_bus.inf_amd64_6c695d1e72b60f9b\mlx4_bus.inf
+<<<  Section end 2020/02/09 20:30:27.640
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Reflect Critical Driver Package - F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx4_bus.inf_amd64_6c695d1e72b60f9b\mlx4_bus.inf]
+>>>  Section start 2020/02/09 20:30:27.640
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\A92DFE06-0E19-4E09-B42A-D132C866A837\dismhost.exe {850DD287-2AD0-4BD9-8B64-772B8B0647A6}
+     sto: Driver Store   = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore (10.0.17763)
+     sto: Flags          = 0x00040F3F
+!    inf: Section [bootflags.paramsreg] is defined multiple times. Code = 1209, Line = 279
+     inf: Class GUID     = {4d36e97d-e325-11ce-bfc1-08002be10318}
+     inf: Class Options  = Configurable BootCritical
+!    inf: Section [bootflags.paramsreg] is defined multiple times. Code = 1209, Line = 279
+     inf: {Configure Driver: Mellanox ConnectX VPI (MT25408) - PCIe 2.0 IB SDR / 10GigE Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    cpy:      Driver file 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\drivers\mlx4_bus.sys' belongs to newer driver package 'mlx4_bus.inf'.
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX VPI (MT25418) - PCIe 2.0 2.5GT/s, IB DDR / 10GigE Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX VPI (MT25428) - PCIe 2.0 2.5GT/s, IB QDR / 10GigE Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX EN (MT25448) - PCIe 2.0 2.5GT/s, 10GigE Ethernet Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX EN (MT25458) - PCIe 2.0 2.5GT/s, 10GigE 10GBaseT Ethernet Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX VPI (MT26418) - PCIe 2.0 5GT/s, IB DDR / 10GigE Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX VPI (MT26488) - PCIe 2.0 5GT/s, IB DDR / 10GigE Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX VPI (MT26428) - PCIe 2.0 5GT/s, IB QDR / 10GigE Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX VPI (MT26438) - PCIe 2.0 5GT/s, IB QDR / 10GigE Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX EN (MT26448) - PCIe 2.0 5GT/s, 10GigE Ethernet Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX EN (MT26458) - PCIe 2.0 5GT/s, 10GigE 10GBaseT Ethernet Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX EN (MT26468) - PCIe 2.0 5GT/s, 10GigE Ethernet Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX EN (MT26478) - PCIe 2.0 5GT/s, 40GigE Ethernet Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX VPI (MT25409) - IB SDR / 10GigE Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX VPI (MT25419) - PCIe 2.0 2.5GT/s, IB DDR / 10GigE Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX VPI (MT26419) - PCIe 2.0 5GT/s, IB DDR / 10GigE Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX VPI (MT26429) - PCIe 2.0 5GT/s, IB QDR / 10GigE Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX EN (MT25449) - PCIe 2.0 2.5GT/s, 10GigE Ethernet Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX EN (MT26449) - PCIe 2.0 5GT/s, 10GigE Ethernet Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX EN (MT26469) - PCIe 2.0 5GT/s, 10GigE Ethernet Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX VPI (MT04096) - PCIe 2.0 5GT/s, IB QDR / 10GigE Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX VPI (MT04097) - PCIe 2.0 5GT/s, IB QDR / 10GigE Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX VPI (MT04098) - PCIe 2.0 5GT/s, IB QDR / 10GigE Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX-3 VPI (MT04099) Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+!    inf: Needed section [PciSriovSupported] found in included INF "pci.inf", not referenced from [MLX4BUS_VF.DDInstall.NTamd64.Hw]. Code = 1313, Line = 133
+     inf: {Configure Driver: Mellanox ConnectX-3 VPI (MT04100) Virtual Network Adapter}
+     inf:      Section Name = MLX4BUS_VF.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX (MT04101) Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX (MT04102) Virtual Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX-3 PRO VPI (MT04103) Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX-3 PRO VPI (MT04104) Virtual Network Adapter}
+     inf:      Section Name = MLX4BUS_VF.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX (MT04105) Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX (MT04106) Virtual Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX (MT04107) Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX (MT04108) Virtual Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX (MT04109) Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX (MT04110) Virtual Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX (MT04111) Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: Mellanox ConnectX (MT04112) Virtual Network Adapter}
+     inf:      Section Name = MLX4BUS.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+!    inf: Needed section [PciSriovSupported] found in included INF "pci.inf", not referenced from [MLX4BUS_ExtendedHWID_VF.DDInstall.NTamd64.Hw]. Code = 1313, Line = 144
+     inf: {Configure Driver: HP Ethernet 10G 2-port 546SFP+ Virtual Network Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID_VF.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: HP Ethernet 10G 2-port 546FLR-SFP+ Virtual Network Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID_VF.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+!    inf: Needed section [PciSriovSupported] found in included INF "pci.inf", not referenced from [MLX4BUS_ExtendedHWID.DDInstall.NTamd64.Hw]. Code = 1313, Line = 139
+     inf: {Configure Driver: HP Ethernet 10G 2-port 546SFP+ Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: HP Ethernet 10G 2-port 546FLR-SFP+ Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: HP Ethernet 10G 2-port 546SFP+ Virtual Network Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID_VF.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: HP Ethernet 10G 2-port 546FLR-SFP+ Virtual Network Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID_VF.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: HP Infiniband QDR/Ethernet 10Gb 2-port 544FLR-QSFP Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: HP Infiniband QDR/Ethernet 10Gb 2-port 544FLR-QSFP Virtual Network Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID_VF.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: HP InfiniBand QDR/Ethernet 10Gb 2-port 544+M Virtual Network Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID_VF.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: HP InfiniBand QDR/Ethernet 10Gb 2-port 544+M Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: HP InfiniBand QDR/Ethernet 10Gb 2-port 544+M Virtual Network Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID_VF.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: HP InfiniBand FDR/Ethernet 10Gb/40Gb 2-port 544+M Virtual Network Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID_VF.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: HP InfiniBand FDR/Ethernet 10Gb/40Gb 2-port 544+M Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: HP InfiniBand FDR/Ethernet 10Gb/40Gb 2-port 544+M Virtual Network Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID_VF.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: HP InfiniBand FDR/Ethernet 10Gb/40Gb 2-port 544+QSFP Virtual Network Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID_VF.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: HP InfiniBand FDR/Ethernet 10Gb/40Gb 2-port 544+QSFP Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: HP InfiniBand FDR/Ethernet 10Gb/40Gb 2-port 544+QSFP Virtual Network Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID_VF.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: HP InfiniBand FDR/Ethernet 10Gb/40Gb 2-port 544+FLR-QSFP Virtual Network Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID_VF.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: HP InfiniBand FDR/Ethernet 10Gb/40Gb 2-port 544+FLR-QSFP Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: HP InfiniBand FDR/Ethernet 10Gb 2-port 544+FLR-QSFP Virtual Network Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID_VF.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: HP InfiniBand FDR/Ethernet 10Gb 2-port 544+FLR-QSFP Virtual Network Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID_VF.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: HP InfiniBand FDR/Ethernet 10Gb 2-port 544+FLR-QSFP Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: HP InfiniBand FDR/Ethernet 10Gb/40Gb 2-port 544+FLR-QSFP Virtual Network Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID_VF.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: ATTO FastFrame NQ41 Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: ATTO FastFrame NQ42 Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: ATTO FastFrame NQ11 Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+     inf: {Configure Driver: ATTO FastFrame NQ12 Adapter}
+     inf:      Section Name = MLX4BUS_ExtendedHWID.DDInstall.NTamd64
+!    sto:      Skipping driver configuration to preserve existing driver files.
+     inf: {Configure Driver: exit(0x00000000)}
+<<<  Section end 2020/02/09 20:30:27.780
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Import Driver Package - \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mlx4eth63.inf]
+>>>  Section start 2020/02/09 20:30:28.046
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\A92DFE06-0E19-4E09-B42A-D132C866A837\dismhost.exe {850DD287-2AD0-4BD9-8B64-772B8B0647A6}
+     sto: Driver Store   = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore (10.0.17763)
+     sto: Driver Package = \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mlx4eth63.inf
+     sto: Architecture   = amd64
+     sto: Flags          = 0x00000000
+     inf: Provider       = Mellanox Technologies Ltd.
+     inf: Class GUID     = {4d36e972-e325-11ce-bfc1-08002be10318}
+     inf: Driver Version = 03/08/2017,5.35.12978.0
+     inf: Catalog File   = mlx4eth63.cat
+     inf: Version Flags  = 0x00000001
+     inf: {Query Configurability: \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mlx4eth63.inf} 20:30:28.405
+     inf:      Driver package 'mlx4eth63.inf' is configurable.
+     inf: {Query Configurability: exit(0x00000000)} 20:30:28.484
+     sig: {Verify Driver Package: \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mlx4eth63.inf} 20:30:28.702
+     sig:      Catalog File: \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mlx4eth63.cat
+     sig: {Verify Driver Package: exit(0x00000000)} 20:30:30.406
+     sig: Signer Score  = 0x0D000005 (WHQL)
+     sig: Signer Name   = Microsoft Windows Hardware Compatibility Publisher
+     sig: Submission ID = 30043180_13619904960683625_1152921504626418158
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mlx4eth63.cat' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx4eth63.inf_amd64_df3a92c392670cdf\mlx4eth63.cat'.
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mlx4eth63.inf' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx4eth63.inf_amd64_df3a92c392670cdf\mlx4eth63.inf'.
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mlx4eth63.sys' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx4eth63.inf_amd64_df3a92c392670cdf\mlx4eth63.sys'.
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\winctxtune_eth.dll' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx4eth63.inf_amd64_df3a92c392670cdf\winctxtune_eth.dll'.
+     idb: {Register Driver Package: F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx4eth63.inf_amd64_df3a92c392670cdf\mlx4eth63.inf} 20:30:34.067
+     idb:      Created driver package object 'mlx4eth63.inf_amd64_df3a92c392670cdf' in DRIVERS database node.
+     idb:      Created driver INF file object 'oem2.inf' in DRIVERS database node.
+     idb:      Registered driver package 'mlx4eth63.inf_amd64_df3a92c392670cdf' with 'oem2.inf'.
+     idb: {Register Driver Package: exit(0x00000000)} 20:30:34.083
+     idb: {Publish Driver Package: F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx4eth63.inf_amd64_df3a92c392670cdf\mlx4eth63.inf} 20:30:34.083
+     idb:      Activating driver package 'mlx4eth63.inf_amd64_df3a92c392670cdf'.
+     cpy:      Published 'mlx4eth63.inf_amd64_df3a92c392670cdf\mlx4eth63.inf' to 'oem2.inf'.
+     idb:      Indexed 63 device IDs for 'mlx4eth63.inf_amd64_df3a92c392670cdf'.
+     idb: {Publish Driver Package: exit(0x00000000)} 20:30:34.099
+     sig: Published catalog 'mlx4eth63.cat' as 'oem2.cat'.
+     sto: Driver Store Filename = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx4eth63.inf_amd64_df3a92c392670cdf\mlx4eth63.inf
+<<<  Section end 2020/02/09 20:30:34.114
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Reflect Critical Driver Package - F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx4eth63.inf_amd64_df3a92c392670cdf\mlx4eth63.inf]
+>>>  Section start 2020/02/09 20:30:34.114
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\A92DFE06-0E19-4E09-B42A-D132C866A837\dismhost.exe {850DD287-2AD0-4BD9-8B64-772B8B0647A6}
+     sto: Driver Store   = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore (10.0.17763)
+     sto: Flags          = 0x00040F3F
+     inf: Class GUID     = {4d36e972-e325-11ce-bfc1-08002be10318}
+     inf: Class Options  = Configurable
+     inf: No critical drivers to configure.
+<<<  Section end 2020/02/09 20:30:34.130
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Import Driver Package - \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mux_mp.inf]
+>>>  Section start 2020/02/09 20:30:34.333
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\A92DFE06-0E19-4E09-B42A-D132C866A837\dismhost.exe {850DD287-2AD0-4BD9-8B64-772B8B0647A6}
+     sto: Driver Store   = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore (10.0.17763)
+     sto: Driver Package = \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mux_mp.inf
+     sto: Architecture   = amd64
+     sto: Flags          = 0x00000000
+     inf: Provider       = Mellanox
+     inf: Class GUID     = {4d36e972-e325-11ce-bfc1-08002be10318}
+     inf: Driver Version = 03/08/2017,5.35.12978.0
+     inf: Catalog File   = mux_mp.cat
+     inf: Version Flags  = 0x00000001
+     inf: {Query Configurability: \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mux_mp.inf} 20:30:34.692
+     inf:      Driver package 'mux_mp.inf' is configurable.
+     inf: {Query Configurability: exit(0x00000000)} 20:30:34.739
+     sig: {Verify Driver Package: \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mux_mp.inf} 20:30:35.036
+     sig:      Catalog File: \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mux_mp.cat
+     sig: {Verify Driver Package: exit(0x00000000)} 20:30:36.974
+     sig: Signer Score  = 0x0D000005 (WHQL)
+     sig: Signer Name   = Microsoft Windows Hardware Compatibility Publisher
+     sig: Submission ID = 30043180_13619904960683625_1152921504626418158
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mux_mp.cat' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mux_mp.inf_amd64_62d2503e24f27102\mux_mp.cat'.
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mux_mp.inf' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mux_mp.inf_amd64_62d2503e24f27102\mux_mp.inf'.
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mux.dll' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mux_mp.inf_amd64_62d2503e24f27102\mux.dll'.
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mlxmux6x.sys' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mux_mp.inf_amd64_62d2503e24f27102\mlxmux6x.sys'.
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\winctxtune_mux.dll' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mux_mp.inf_amd64_62d2503e24f27102\winctxtune_mux.dll'.
+     idb: {Register Driver Package: F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mux_mp.inf_amd64_62d2503e24f27102\mux_mp.inf} 20:30:41.396
+     idb:      Created driver package object 'mux_mp.inf_amd64_62d2503e24f27102' in DRIVERS database node.
+     idb:      Created driver INF file object 'oem3.inf' in DRIVERS database node.
+     idb:      Registered driver package 'mux_mp.inf_amd64_62d2503e24f27102' with 'oem3.inf'.
+     idb: {Register Driver Package: exit(0x00000000)} 20:30:41.396
+     idb: {Publish Driver Package: F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mux_mp.inf_amd64_62d2503e24f27102\mux_mp.inf} 20:30:41.396
+     idb:      Activating driver package 'mux_mp.inf_amd64_62d2503e24f27102'.
+     cpy:      Published 'mux_mp.inf_amd64_62d2503e24f27102\mux_mp.inf' to 'oem3.inf'.
+     idb:      Indexed 2 device IDs for 'mux_mp.inf_amd64_62d2503e24f27102'.
+     idb: {Publish Driver Package: exit(0x00000000)} 20:30:41.411
+     sig: Published catalog 'mux_mp.cat' as 'oem3.cat'.
+     sto: Driver Store Filename = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mux_mp.inf_amd64_62d2503e24f27102\mux_mp.inf
+<<<  Section end 2020/02/09 20:30:41.411
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Reflect Critical Driver Package - F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mux_mp.inf_amd64_62d2503e24f27102\mux_mp.inf]
+>>>  Section start 2020/02/09 20:30:41.411
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\A92DFE06-0E19-4E09-B42A-D132C866A837\dismhost.exe {850DD287-2AD0-4BD9-8B64-772B8B0647A6}
+     sto: Driver Store   = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore (10.0.17763)
+     sto: Flags          = 0x00040F3F
+     inf: Class GUID     = {4d36e972-e325-11ce-bfc1-08002be10318}
+     inf: Class Options  = Configurable
+     inf: No critical drivers to configure.
+<<<  Section end 2020/02/09 20:30:41.427
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Import Driver Package - \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\muxp.inf]
+>>>  Section start 2020/02/09 20:30:41.630
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\A92DFE06-0E19-4E09-B42A-D132C866A837\dismhost.exe {850DD287-2AD0-4BD9-8B64-772B8B0647A6}
+     sto: Driver Store   = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore (10.0.17763)
+     sto: Driver Package = \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\muxp.inf
+     sto: Architecture   = amd64
+     sto: Flags          = 0x00000000
+     inf: Provider       = Mellanox
+     inf: Class GUID     = {4d36e975-e325-11ce-bfc1-08002be10318}
+     inf: Driver Version = 03/08/2017,5.35.12978.0
+     inf: Catalog File   = muxp.cat
+     inf: Version Flags  = 0x00000001
+     inf: {Query Configurability: \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\muxp.inf} 20:30:42.239
+     inf:      Driver package 'muxp.inf' is configurable.
+     inf: {Query Configurability: exit(0x00000000)} 20:30:42.302
+     sig: {Verify Driver Package: \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\muxp.inf} 20:30:42.536
+     sig:      Catalog File: \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\muxp.cat
+     sig: {Verify Driver Package: exit(0x00000000)} 20:30:43.567
+     sig: Signer Score  = 0x0D000005 (WHQL)
+     sig: Signer Name   = Microsoft Windows Hardware Compatibility Publisher
+     sig: Submission ID = 30043180_13619904960683625_1152921504626418158
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mux.dll' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\muxp.inf_amd64_d4520f4b0dc1d2ef\mux.dll'.
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\mlxmux6x.sys' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\muxp.inf_amd64_d4520f4b0dc1d2ef\mlxmux6x.sys'.
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\muxp.cat' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\muxp.inf_amd64_d4520f4b0dc1d2ef\muxp.cat'.
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX3Pro\VFDrivers\53512978_All_2016\muxp.inf' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\muxp.inf_amd64_d4520f4b0dc1d2ef\muxp.inf'.
+     idb: {Register Driver Package: F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\muxp.inf_amd64_d4520f4b0dc1d2ef\muxp.inf} 20:30:47.152
+     idb:      Created driver package object 'muxp.inf_amd64_d4520f4b0dc1d2ef' in DRIVERS database node.
+     idb:      Created driver INF file object 'oem4.inf' in DRIVERS database node.
+     idb:      Registered driver package 'muxp.inf_amd64_d4520f4b0dc1d2ef' with 'oem4.inf'.
+     idb: {Register Driver Package: exit(0x00000000)} 20:30:47.152
+     idb: {Publish Driver Package: F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\muxp.inf_amd64_d4520f4b0dc1d2ef\muxp.inf} 20:30:47.152
+     idb:      Activating driver package 'muxp.inf_amd64_d4520f4b0dc1d2ef'.
+     cpy:      Published 'muxp.inf_amd64_d4520f4b0dc1d2ef\muxp.inf' to 'oem4.inf'.
+     idb:      Indexed 2 device IDs for 'muxp.inf_amd64_d4520f4b0dc1d2ef'.
+     idb: {Publish Driver Package: exit(0x00000000)} 20:30:47.167
+     sig: Published catalog 'muxp.cat' as 'oem4.cat'.
+     sto: CopyINF driver package 'mux_mp.inf' is already imported as 'oem3.inf' (F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mux_mp.inf_amd64_62d2503e24f27102\mux_mp.inf)
+     sto: Driver Store Filename = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\muxp.inf_amd64_d4520f4b0dc1d2ef\muxp.inf
+<<<  Section end 2020/02/09 20:30:47.620
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Reflect Critical Driver Package - F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\muxp.inf_amd64_d4520f4b0dc1d2ef\muxp.inf]
+>>>  Section start 2020/02/09 20:30:47.620
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\A92DFE06-0E19-4E09-B42A-D132C866A837\dismhost.exe {850DD287-2AD0-4BD9-8B64-772B8B0647A6}
+     sto: Driver Store   = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore (10.0.17763)
+     sto: Flags          = 0x00040F3F
+     inf: Class GUID     = {4d36e975-e325-11ce-bfc1-08002be10318}
+     inf: No critical drivers to configure.
+<<<  Section end 2020/02/09 20:30:47.620
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Unload Offline Registry Hive - SYSTEM]
+>>>  Section start 2020/02/09 20:30:47.620
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\A92DFE06-0E19-4E09-B42A-D132C866A837\dismhost.exe {850DD287-2AD0-4BD9-8B64-772B8B0647A6}
+     sto: Closed hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SYSTEM'.
+     sto: Unloaded hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SYSTEM'. Time = 234 ms
+<<<  Section end 2020/02/09 20:30:47.855
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Unload Offline Registry Hive - SOFTWARE]
+>>>  Section start 2020/02/09 20:30:47.855
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\A92DFE06-0E19-4E09-B42A-D132C866A837\dismhost.exe {850DD287-2AD0-4BD9-8B64-772B8B0647A6}
+     sto: Closed hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SOFTWARE'.
+     sto: Unloaded hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SOFTWARE'. Time = 0 ms
+<<<  Section end 2020/02/09 20:30:48.046
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Unload Offline Registry Hive - DRIVERS]
+>>>  Section start 2020/02/09 20:30:48.046
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\A92DFE06-0E19-4E09-B42A-D132C866A837\dismhost.exe {850DD287-2AD0-4BD9-8B64-772B8B0647A6}
+     sto: Closed hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/DRIVERS'.
+     sto: Unloaded hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/DRIVERS'. Time = 0 ms
+<<<  Section end 2020/02/09 20:30:48.140
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Load Offline Registry Hive - SYSTEM]
+>>>  Section start 2020/02/09 20:30:52.071
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\08DFD170-5D72-45E0-9AD6-0377F7B96C17\dismhost.exe {B3E4EB96-42A4-43A8-A7C8-392CFC55ABDE}
+     sto: Loaded hive 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\config\SYSTEM'. Time = 31 ms
+     sto: Opened hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SYSTEM'.
+     sto: Delay unloading hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SYSTEM'.
+<<<  Section end 2020/02/09 20:30:52.102
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Load Offline Registry Hive - DRIVERS]
+>>>  Section start 2020/02/09 20:30:52.102
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\08DFD170-5D72-45E0-9AD6-0377F7B96C17\dismhost.exe {B3E4EB96-42A4-43A8-A7C8-392CFC55ABDE}
+     sto: Loaded hive 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\config\DRIVERS'. Time = 31 ms
+     sto: Opened hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/DRIVERS'.
+     sto: Delay unloading hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/DRIVERS'.
+<<<  Section end 2020/02/09 20:30:52.149
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Import Driver Package - \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX4Lx\VFDrivers\mlx5.inf]
+>>>  Section start 2020/02/09 20:30:53.353
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\08DFD170-5D72-45E0-9AD6-0377F7B96C17\dismhost.exe {B3E4EB96-42A4-43A8-A7C8-392CFC55ABDE}
+     sto: Driver Store   = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore (10.0.17763)
+     sto: Driver Package = \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX4Lx\VFDrivers\mlx5.inf
+     sto: Architecture   = amd64
+     sto: Flags          = 0x00000000
+     inf: Provider       = Mellanox Technologies Ltd.
+     inf: Class GUID     = {4d36e972-e325-11ce-bfc1-08002be10318}
+     inf: Driver Version = 07/02/2018,2.0.19824.0
+     inf: Catalog File   = mlx5.cat
+     inf: Version Flags  = 0x00000001
+!    inf: Needed section [PciSriovSupported] found in included INF "pci.inf", not referenced from [mlx5.vMlx5install.6.2.Hw]. Code = 1313, Line = 712
+!    inf: Needed section [PciSriovSupported] found in included INF "pci.inf", not referenced from [mlx5.hvMlx5install.6.2.Hw]. Code = 1313, Line = 735
+!    inf: Needed section [PciSriovSupported] found in included INF "pci.inf", not referenced from [mlx5.Mlx5install.10.0.Hw]. Code = 1313, Line = 757
+!    inf: Needed section [PciSriovSupported] found in included INF "pci.inf", not referenced from [mlx5.vMlx5install.10.0.Hw]. Code = 1313, Line = 780
+!    inf: Needed section [PciSriovSupported] found in included INF "pci.inf", not referenced from [mlx5.hvMlx5install.10.0.Hw]. Code = 1313, Line = 803
+     inf: {Query Configurability: \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX4Lx\VFDrivers\mlx5.inf} 20:30:53.744
+!    inf:      Needed section [PciSriovSupported] found in included INF "pci.inf", not referenced from [mlx5.vMlx5install.10.0.Hw]. Code = 1313, Line = 780
+!    inf:      Needed section [PciSriovSupported] found in included INF "pci.inf", not referenced from [mlx5.hvMlx5install.10.0.Hw]. Code = 1313, Line = 803
+     inf:      Driver package 'mlx5.inf' is configurable.
+     inf: {Query Configurability: exit(0x00000000)} 20:30:53.822
+     sig: {Verify Driver Package: \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX4Lx\VFDrivers\mlx5.inf} 20:30:54.056
+     sig:      Catalog File: \\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX4Lx\VFDrivers\mlx5.cat
+     sig: {Verify Driver Package: exit(0x00000000)} 20:30:55.462
+     sig: Signer Score  = 0x0D000005 (WHQL)
+     sig: Signer Name   = Microsoft Windows Hardware Compatibility Publisher
+     sig: Submission ID = 30043180_14134382729830039_1152921504627725194
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX4Lx\VFDrivers\mlx5.cat' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx5.inf_amd64_4190427cbbca4e94\mlx5.cat'.
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX4Lx\VFDrivers\mlx5.inf' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx5.inf_amd64_4190427cbbca4e94\mlx5.inf'.
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX4Lx\VFDrivers\mlx5.sys' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx5.inf_amd64_4190427cbbca4e94\mlx5.sys'.
+     flq: Copying '\\reddog\builds\branches\git_networking_datapath_mellanox_release_2_0\2.0.0.43\retail-amd64\Mellanox\CX4Lx\VFDrivers\mlx5ui.dll' to 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx5.inf_amd64_4190427cbbca4e94\mlx5ui.dll'.
+     idb: {Register Driver Package: F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx5.inf_amd64_4190427cbbca4e94\mlx5.inf} 20:31:00.105
+     idb:      Created driver package object 'mlx5.inf_amd64_4190427cbbca4e94' in DRIVERS database node.
+     idb:      Created driver INF file object 'oem5.inf' in DRIVERS database node.
+     idb:      Registered driver package 'mlx5.inf_amd64_4190427cbbca4e94' with 'oem5.inf'.
+     idb: {Register Driver Package: exit(0x00000000)} 20:31:00.121
+     idb: {Publish Driver Package: F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx5.inf_amd64_4190427cbbca4e94\mlx5.inf} 20:31:00.136
+     idb:      Activating driver package 'mlx5.inf_amd64_4190427cbbca4e94'.
+     cpy:      Published 'mlx5.inf_amd64_4190427cbbca4e94\mlx5.inf' to 'oem5.inf'.
+     idb:      Indexed 319 device IDs for 'mlx5.inf_amd64_4190427cbbca4e94'.
+     idb: {Publish Driver Package: exit(0x00000000)} 20:31:00.214
+     sig: Published catalog 'mlx5.cat' as 'oem5.cat'.
+     sto: Driver Store Filename = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx5.inf_amd64_4190427cbbca4e94\mlx5.inf
+<<<  Section end 2020/02/09 20:31:00.246
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Reflect Critical Driver Package - F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore\FileRepository\mlx5.inf_amd64_4190427cbbca4e94\mlx5.inf]
+>>>  Section start 2020/02/09 20:31:00.246
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\08DFD170-5D72-45E0-9AD6-0377F7B96C17\dismhost.exe {B3E4EB96-42A4-43A8-A7C8-392CFC55ABDE}
+     sto: Driver Store   = F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\DriverStore (10.0.17763)
+     sto: Flags          = 0x00040F3F
+     inf: Class GUID     = {4d36e972-e325-11ce-bfc1-08002be10318}
+     inf: Class Options  = Configurable
+     inf: No critical drivers to configure.
+     sto: {Load Offline Registry Hive: SOFTWARE} 20:31:00.261
+     sto:      Loaded hive 'F:\TEMP\CustomizationServiceMedia\4195fd23-9264-4e50-9020-77e98b5c6113\27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77\2\Windows\System32\config\SOFTWARE'. Time = 344 ms
+     sto:      Opened hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SOFTWARE'.
+     sto:      Delay unloading hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SOFTWARE'.
+     sto: {Load Offline Registry Hive: exit(0x00000000)} 20:31:00.605
+<<<  Section end 2020/02/09 20:31:00.605
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Unload Offline Registry Hive - SYSTEM]
+>>>  Section start 2020/02/09 20:31:00.605
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\08DFD170-5D72-45E0-9AD6-0377F7B96C17\dismhost.exe {B3E4EB96-42A4-43A8-A7C8-392CFC55ABDE}
+     sto: Closed hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SYSTEM'.
+     sto: Unloaded hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SYSTEM'. Time = 781 ms
+<<<  Section end 2020/02/09 20:31:01.386
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Unload Offline Registry Hive - SOFTWARE]
+>>>  Section start 2020/02/09 20:31:01.386
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\08DFD170-5D72-45E0-9AD6-0377F7B96C17\dismhost.exe {B3E4EB96-42A4-43A8-A7C8-392CFC55ABDE}
+     sto: Closed hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SOFTWARE'.
+     sto: Unloaded hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/SOFTWARE'. Time = 0 ms
+<<<  Section end 2020/02/09 20:31:01.464
+<<<  [Exit status: SUCCESS]
+
+
+>>>  [Unload Offline Registry Hive - DRIVERS]
+>>>  Section start 2020/02/09 20:31:01.464
+       os: Version = 10.0.17763, Service Pack = 0.0, Suite = 0x0190, ProductType = 3, Architecture = amd64
+      cmd: C:\Users\wsdmcs\AppData\Local\Temp\08DFD170-5D72-45E0-9AD6-0377F7B96C17\dismhost.exe {B3E4EB96-42A4-43A8-A7C8-392CFC55ABDE}
+     sto: Closed hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/DRIVERS'.
+     sto: Unloaded hive key '{bf1a281b-ad7b-4476-ac95-f47682990ce7}F:/TEMP/CustomizationServiceMedia/4195fd23-9264-4e50-9020-77e98b5c6113/27a4b8e4-1fc1-4d2e-802e-e11ef54d7a77/2/Windows/System32/config/DRIVERS'. Time = 0 ms
+<<<  Section end 2020/02/09 20:31:01.621
+<<<  [Exit status: SUCCESS]
+

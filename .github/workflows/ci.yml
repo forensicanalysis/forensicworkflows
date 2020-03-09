@@ -1,5 +1,8 @@
 name: CI
-on: [push]
+on:
+  push:
+    branches: [ master ]
+  pull_request:
 
 jobs:
 
@@ -8,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
+        os: [ubuntu-latest]
     steps:
       - name: Setup go 1.13
         uses: actions/setup-go@v1
@@ -45,7 +48,7 @@ jobs:
           CI: "true"
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: bash <(curl -s https://codecov.io/bash) -f coverage.txt
-        if: matrix.os == 'windows-latest'
+        # if: matrix.os == 'windows-latest'
         shell: bash
 
       # - name: Setup node

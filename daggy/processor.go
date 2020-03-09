@@ -171,11 +171,12 @@ func (workflow *Workflow) docker(image, command string, pull bool, args map[stri
 	}
 
 	cmd := strings.Split(command, " ")
+	fmt.Printf("workingDir: %s, pluginDir: %s, cmd: %s\n", workflow.workingDir, workflow.pluginDir, cmd)
 	resp, err := cli.ContainerCreate(
 		ctx,
-		&container.Config{Image: image, Cmd: cmd, Tty: true, WorkingDir: "/job"},
+		&container.Config{Image: image, Cmd: cmd, Tty: true, WorkingDir: "/store"},
 		&container.HostConfig{Mounts: []mount.Mount{
-			{Type: mount.TypeBind, Source: workflow.workingDir, Target: "/job"},
+			{Type: mount.TypeBind, Source: workflow.workingDir, Target: "/store"},
 			{Type: mount.TypeBind, Source: workflow.pluginDir, Target: "/plugins"},
 		}},
 		nil,
@@ -220,14 +221,13 @@ func (workflow *Workflow) dockerfile(file, command string, args map[string]inter
 	tw := tar.NewWriter(buf)
 	defer tw.Close()
 
-	fmt.Println(filepath.Join(workflow.pluginDir, file))
+	fmt.Println("dockerfile path", workflow.pluginDir, file)
 	infos, err := ioutil.ReadDir(filepath.Join(workflow.pluginDir, file))
 	if err != nil {
 		return err
 	}
 
 	for _, info := range infos {
-		fmt.Println(info.Name())
 		err = tarWrite(filepath.Join(workflow.pluginDir, file, info.Name()), info.Name(), tw)
 		if err != nil {
 			return err
@@ -258,7 +258,7 @@ func (workflow *Workflow) dockerfile(file, command string, args map[string]inter
 		PullParent:     true,
 		Dockerfile:     "Dockerfile",
 		Context:        dockerFileTarReader,
-		Tags:           []string{"plugin"}, // TODO: rename tag
+		Tags:           []string{"plugin" + file},
 		AuthConfigs:    authConfigs,
 	}
 	imageBuildResponse, err := cli.ImageBuild(ctx, dockerFileTarReader, opt)
@@ -272,7 +272,7 @@ func (workflow *Workflow) dockerfile(file, command string, args map[string]inter
 		log.Fatal(err, "unable to read image build response")
 	}
 
-	return workflow.docker("plugin", command, false, args) // TODO: rename tag
+	return workflow.docker("plugin"+file, command, false, args)
 }
 
 func (workflow *Workflow) plugin(command string, args map[string]interface{}) error {
@@ -299,7 +299,7 @@ func (workflow *Workflow) plugin(command string, args map[string]interface{}) er
 		return fmt.Errorf("script `%s` is directory", cmdPath)
 	}
 
-	return workflow.bash(cmdPath + " " + strings.Join(parts[1:], " "), args)
+	return workflow.bash(cmdPath+" "+strings.Join(parts[1:], " "), args)
 }
 
 func tarWrite(src string, dest string, tw *tar.Writer) error {

@@ -106,7 +106,8 @@ func Test_processJob(t *testing.T) {
 	}{
 		{"test plugin", "example1.forensicstore", args{"testjob", Job{Type: "plugin", Command: "example"}}, "example", 0, false},
 		{"test script not existing", "example1.forensicstore", args{"testjob", Job{Type: "plugin", Command: "foo"}}, "", 0, true},
-		// {"test docker", "example1.forensicstore", args{"testjob", Job{Type: "docker", Image: "alpine", Command: "true"}}, "", 0, false},
+		{"unknown type", "example1.forensicstore", args{"testjob", Job{Type: "foo", Command: "foo"}}, "", 0, true},
+		{"test docker", "example1.forensicstore", args{"testjob", Job{Type: "docker", Image: "alpine", Command: "true"}}, "", 0, false},
 
 		{"test hotfixes", "example1.forensicstore", args{"testjob", Job{Type: "plugin", Command: "hotfixes"}}, "hotfix", 14, false},
 		{"test networking", "example1.forensicstore", args{"testjob", Job{Type: "plugin", Command: "networking"}}, "known_network", 9, false},
@@ -115,7 +116,7 @@ func Test_processJob(t *testing.T) {
 		{"test shimcache", "example1.forensicstore", args{"testjob", Job{Type: "plugin", Command: "shimcache"}}, "shimcache", 391, false},
 		{"test software", "example1.forensicstore", args{"testjob", Job{Type: "plugin", Command: "software"}}, "uninstall_entry", 6, false},
 		{"test prefetch", "example1.forensicstore", args{"testjob", Job{Type: "plugin", Command: "prefetch"}}, "prefetch", 261, false},
-		// {"test plaso", "example1.forensicstore", args{"testjob", Job{Type: "dockerfile", Dockerfile: "plaso"}}, "event", 123, false},
+		{"test plaso", "example1.forensicstore", args{"testjob", Job{Type: "dockerfile", Dockerfile: "plaso"}}, "event", 72, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

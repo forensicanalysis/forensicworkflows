@@ -19,7 +19,10 @@
 #
 # Author(s): Jonas Plum
 
-FROM log2timeline/plaso
+FROM log2timeline/plaso:20200227
+
+RUN apt-get update && apt-get install -y python3-pip
+RUN pip3 install -v forensicstore
 
 RUN echo "from plaso.output import forensicstore" >> /usr/lib/python3/dist-packages/plaso/output/__init__.py
 RUN echo "from plaso.cli.helpers import forensicstore_output" >> /usr/lib/python3/dist-packages/plaso/cli/helpers/__init__.py
@@ -27,4 +30,4 @@ RUN echo "from plaso.cli.helpers import forensicstore_output" >> /usr/lib/python
 ADD forensicstore.py /usr/lib/python3/dist-packages/plaso/output/forensicstore.py
 ADD forensicstore_output.py /usr/lib/python3/dist-packages/plaso/cli/helpers/forensicstore_output.py
 
-CMD log2timeline events.plaso /store && psort --status_view none -o forensicstore -w /store events.plaso
+ENTRYPOINT ["/bin/sh", "-c", "mkdir -p Plaso && log2timeline.py --status_view none --logfile test.log Plaso/events.plaso /store/WindowsDeviceSetup && psort.py --status_view none -o forensicstore -w /store/ Plaso/events.plaso"]
