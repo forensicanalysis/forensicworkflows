@@ -8,7 +8,7 @@ import (
 
 func TestParse(t *testing.T) {
 	workflow := &Workflow{
-		Jobs: map[string]Job{
+		Tasks: map[string]Task{
 			"create":      {Type: "bash", Requires: []string{"rm", "cwd"}, Command: "echo \"test\" > foo"},
 			"cwd":         {Type: "bash", Requires: []string(nil), Command: "pwd"},
 			"docker":      {Type: "docker", Requires: []string(nil), Image: "alpine", Command: "echo forensicreports"},

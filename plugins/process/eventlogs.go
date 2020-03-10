@@ -1,11 +1,13 @@
-package plugins
+package process
 
 import (
 	"encoding/json"
-	"github.com/Velocidex/ordereddict"
-	"github.com/forensicanalysis/forensicstore/goforensicstore"
 	"path"
 	"strings"
+
+	"github.com/Velocidex/ordereddict"
+	"github.com/forensicanalysis/forensicstore/goforensicstore"
+	"github.com/forensicanalysis/forensicworkflows/daggy"
 	"www.velocidex.com/golang/evtx"
 )
 
@@ -15,7 +17,7 @@ func init() {
 
 type EventlogsPlugin struct{}
 
-func (*EventlogsPlugin) Run(url string, data Data) error {
+func (*EventlogsPlugin) Run(url string, data daggy.Data) error {
 	store, err := goforensicstore.NewJSONLite(url)
 	if err != nil {
 		return err

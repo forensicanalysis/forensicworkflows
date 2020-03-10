@@ -56,7 +56,7 @@
 //
 // Plugin
 //
-// Run either a builtin Go plugin or an executeable from the plugins folder. The
+// Run either a builtin Go plugin or an executeable from the process folder. The
 // working directory is the forensicstore. Example:
 //
 //     hotfixes:
@@ -66,7 +66,7 @@
 // Docker
 //
 // Run a docker container. The forensicstore is located at '/store' and the plugin
-// folder is located at '/plugins'. Example:
+// folder is located at '/process'. Example:
 //
 //     docker_task:
 //         type: docker
@@ -86,101 +86,22 @@ package main
 
 import (
 	"fmt"
-	"github.com/pkg/errors"
-	"github.com/spf13/cobra"
-	"io/ioutil"
-	"log"
 	"os"
-	"path"
-	"path/filepath"
 
-	"github.com/forensicanalysis/forensicworkflows/assets"
-	"github.com/forensicanalysis/forensicworkflows/daggy"
+	"github.com/forensicanalysis/forensicworkflows/cmd"
 )
 
 //go:generate go get github.com/cugu/go-resources/cmd/resources
 //go:generate mkdir -p assets
-//go:generate resources -declare -var=FS -package assets -output assets/assets.go plugins/* plugins/templates/*
+//go:generate resources -declare -var=FS -package assets -output assets/assets.go process/* process/templates/*
 //go:generate pip install -r requirements.txt
 
 func main() {
-	var processCommand = &cobra.Command{
-		Use:   "forensicworkflows",
-		Short: "Run a workflow on the forensicstore",
-		Long: `process can run parallel workflows locally. Those workflows are a directed acyclic graph of tasks. 
-Those tasks can be defined to be run on the system itself or in a containerized way.`,
-		Args: func(cmd *cobra.Command, args []string) error {
-			if len(args) < 1 {
-				return errors.New("requires at least one store")
-			}
-			for _, arg := range args {
-				if _, err := os.Stat(arg); os.IsNotExist(err) {
-					return errors.Wrap(os.ErrNotExist, arg)
-				}
-			}
-
-			return cmd.MarkFlagRequired("workflow")
-		},
-		Run: func(cmd *cobra.Command, args []string) {
-			// parse workflow yaml
-			workflowFile := cmd.PersistentFlags().Lookup("workflow").Value.String()
-			if _, err := os.Stat(workflowFile); os.IsNotExist(err) {
-				log.Fatal(errors.Wrap(os.ErrNotExist, workflowFile))
-			}
-			workflow, err := daggy.Parse(workflowFile)
-			if err != nil {
-				log.Fatal("parsing failed: ", err)
-			}
-
-			// unpack scripts
-			tempDir, err := unpack()
-			if err != nil {
-				log.Fatal("unpacking error: ", err)
-			}
-			defer os.RemoveAll(tempDir)
-
-			// get store path
-			storePath, err := filepath.Abs(args[0])
-			if err != nil {
-				log.Println("abs: ", err)
-			}
-
-			// run workflow
-			err = workflow.Run(storePath, path.Join(tempDir, "plugins"), map[string]string{
-				"docker-user":     cmd.PersistentFlags().Lookup("docker-user").Value.String(),
-				"docker-password": cmd.PersistentFlags().Lookup("docker-password").Value.String(),
-				"docker-server":   cmd.PersistentFlags().Lookup("docker-server").Value.String(),
-			})
-			if err != nil {
-				log.Println("processing errors: ", err)
-			}
-		},
-	}
-	processCommand.PersistentFlags().String("workflow", "", "workflow definition file")
-	processCommand.PersistentFlags().String("docker-user", "", "docker username")
-	processCommand.PersistentFlags().String("docker-password", "", "docker password")
-	processCommand.PersistentFlags().String("docker-server", "", "docker server")
-	if err := processCommand.Execute(); err != nil {
+	rootCmd := cmd.Process()
+	rootCmd.Use = "forensicworkflows"
+	// rootCmd.AddCommand(cmd.Import()) //, exportCommand())
+	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-}
-
-func unpack() (tempDir string, err error) {
-	tempDir, err = ioutil.TempDir("", "forensicreports")
-	if err != nil {
-		return tempDir, err
-	}
-
-	for path, content := range assets.FS.Files {
-		if err := os.MkdirAll(filepath.Join(tempDir, filepath.Dir(path)), 0700); err != nil {
-			return tempDir, err
-		}
-		if err := ioutil.WriteFile(filepath.Join(tempDir, path), content, 0755); err != nil {
-			return tempDir, err
-		}
-		log.Printf("Unpacking %s", path)
-	}
-
-	return tempDir, nil
 }

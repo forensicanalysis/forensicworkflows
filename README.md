@@ -49,7 +49,7 @@ list_dir:
     command: ls
 ```
 ## Plugin
-Run either a builtin Go plugin or an executeable from the plugins folder. The
+Run either a builtin Go plugin or an executeable from the process folder. The
 working directory is the forensicstore. Example:
 
 ```
@@ -59,7 +59,7 @@ hotfixes:
 ```
 ## Docker
 Run a docker container. The forensicstore is located at &#39;/store&#39; and the plugin
-folder is located at &#39;/plugins&#39;. Example:
+folder is located at &#39;/process&#39;. Example:
 
 ```
 docker_task:

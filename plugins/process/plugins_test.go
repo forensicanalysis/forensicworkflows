@@ -1,4 +1,4 @@
-package plugins
+package process
 
 import (
 	"io/ioutil"
@@ -19,7 +19,7 @@ func setup() (storeDir string, err error) {
 		return "", err
 	}
 
-	err = copy.Copy(filepath.Join("..", "test"), storeDir)
+	err = copy.Copy(filepath.Join("..", "..", "test"), storeDir)
 	if err != nil {
 		return "", err
 	}

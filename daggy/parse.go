@@ -41,26 +41,27 @@ func Parse(workflowFile string) (*Workflow, error) {
 	if err != nil {
 		return nil, err
 	}
+	return &workflow, nil
+}
 
+func (workflow *Workflow) SetupGraph() {
 	// Create the dag
 	setupLogging()
 	graph := dag.AcyclicGraph{}
-	jobs := map[string]Job{}
-	for name, job := range workflow.Jobs {
+	tasks := map[string]Task{}
+	for name, task := range workflow.Tasks {
 		graph.Add(name)
-		jobs[name] = job
+		tasks[name] = task
 	}
 
 	// add edges / requirements
-	for name, job := range workflow.Jobs {
-		for _, requirement := range job.Requires {
+	for name, task := range workflow.Tasks {
+		for _, requirement := range task.Requires {
 			graph.Connect(dag.BasicEdge(requirement, name))
 		}
 	}
 
 	workflow.graph = &graph
-
-	return &workflow, nil
 }
 
 func setupLogging() {

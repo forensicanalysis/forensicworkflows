@@ -19,15 +19,18 @@
 //
 // Author(s): Jonas Plum
 
-package plugins
+package process
 
-// Plugins is a map of all implemented plugins.
-var Plugins = map[string]Plugin{}
+import "github.com/forensicanalysis/forensicworkflows/daggy"
 
-// Data is the input into the plugins.
-type Data map[string]interface{}
+func init() {
+	Plugins["example"] = &ExamplePlugin{}
+}
 
-// Plugin is an interface that all plugins need to implement.
-type Plugin interface {
-	Run(store string, data Data) error
+// ExamplePlugin represents a plugin for forensicstore processing.
+type ExamplePlugin struct{}
+
+// Run does nothing for the example plugin.
+func (*ExamplePlugin) Run(string, daggy.Data) error {
+	return nil
 }

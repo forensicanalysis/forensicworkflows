@@ -12,9 +12,11 @@ require (
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
 	github.com/forensicanalysis/forensicstore v0.12.1
+	github.com/forensicanalysis/fslib v0.12.0
 	github.com/gorilla/mux v1.7.4 // indirect
 	github.com/hashicorp/logutils v1.0.0
 	github.com/hashicorp/terraform v0.12.17
+	github.com/imdario/mergo v0.3.7
 	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
 	github.com/opencontainers/image-spec v1.0.1 // indirect

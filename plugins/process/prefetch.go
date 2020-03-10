@@ -19,7 +19,7 @@
 //
 // Author(s): Jonas Plum
 
-package plugins
+package process
 
 import (
 	"path"
@@ -27,6 +27,7 @@ import (
 	"time"
 
 	"github.com/forensicanalysis/forensicstore/goforensicstore"
+	"github.com/forensicanalysis/forensicworkflows/daggy"
 	"www.velocidex.com/golang/go-prefetch"
 )
 
@@ -36,7 +37,7 @@ func init() {
 
 type PrefetchPlugin struct{}
 
-func (*PrefetchPlugin) Run(url string, data Data) error {
+func (*PrefetchPlugin) Run(url string, data daggy.Data) error {
 	store, err := goforensicstore.NewJSONLite(url)
 	if err != nil {
 		return err

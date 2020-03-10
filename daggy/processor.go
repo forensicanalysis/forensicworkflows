@@ -42,21 +42,20 @@ import (
 	"github.com/docker/docker/client"
 	"github.com/hashicorp/terraform/dag"
 	"github.com/hashicorp/terraform/tfdiags"
-
-	"github.com/forensicanalysis/forensicworkflows/plugins"
 )
 
 // Workflow can be used to parse workflow.yml files.
 type Workflow struct {
-	Jobs       map[string]Job `yaml:",inline"`
+	Tasks      map[string]Task `yaml:",inline"`
 	graph      *dag.AcyclicGraph
 	workingDir string
 	pluginDir  string
+	plugins    map[string]Plugin
 	options    map[string]string
 }
 
-// A Job is a single element in a workflow.yml file.
-type Job struct {
+// A Task is a single element in a workflow.yml file.
+type Task struct {
 	Type       string                 `yaml:"type"`
 	Requires   []string               `yaml:"requires"`
 	Script     string                 `yaml:"script"`     // bash
@@ -66,13 +65,14 @@ type Job struct {
 	With       map[string]interface{} `yaml:"with"`
 }
 
-func (workflow *Workflow) Run(workingDir, pluginDir string, options map[string]string) error {
+func (workflow *Workflow) Run(workingDir, pluginDir string, plugins map[string]Plugin, options map[string]string) error {
 	workflow.workingDir = workingDir
 	workflow.pluginDir = pluginDir
 	workflow.options = options
+	workflow.plugins = plugins
 
 	w := &dag.Walker{Callback: func(v dag.Vertex) tfdiags.Diagnostics {
-		err := workflow.runJob(v.(string))
+		err := workflow.runTask(v.(string))
 		if err != nil {
 			return tfdiags.Diagnostics{tfdiags.Sourceless(tfdiags.Error, fmt.Sprint(v.(string)), err.Error())}
 		}
@@ -82,20 +82,20 @@ func (workflow *Workflow) Run(workingDir, pluginDir string, options map[string]s
 	return w.Wait().Err()
 }
 
-func (workflow *Workflow) runJob(jobName string) (err error) {
-	job := workflow.Jobs[jobName]
+func (workflow *Workflow) runTask(taskName string) (err error) {
+	task := workflow.Tasks[taskName]
 
-	log.Println("Start", jobName)
-	defer log.Println("End", jobName)
-	switch job.Type {
+	log.Println("Start", taskName)
+	defer log.Println("End", taskName)
+	switch task.Type {
 	case "bash":
-		return workflow.bash(job.Command, job.With)
+		return workflow.bash(task.Command, task.With)
 	case "docker":
-		return workflow.docker(job.Image, job.Command, true, job.With)
+		return workflow.docker(task.Image, task.Command, true, task.With)
 	case "dockerfile":
-		return workflow.dockerfile(job.Dockerfile, job.Command, job.With)
+		return workflow.dockerfile(task.Dockerfile, task.Command, task.With)
 	case "plugin":
-		return workflow.plugin(job.Command, job.With)
+		return workflow.plugin(task.Command, workflow.plugins, task.With)
 	default:
 		return errors.New("unknown type")
 	}
@@ -275,10 +275,10 @@ func (workflow *Workflow) dockerfile(file, command string, args map[string]inter
 	return workflow.docker("plugin"+file, command, false, args)
 }
 
-func (workflow *Workflow) plugin(command string, args map[string]interface{}) error {
+func (workflow *Workflow) plugin(command string, goplugins map[string]Plugin, args map[string]interface{}) error {
 	// try plugins
-	if plugin, ok := plugins.Plugins[command]; ok {
-		return plugin.Run(workflow.workingDir, plugins.Data{})
+	if plugin, ok := goplugins[command]; ok {
+		return plugin.Run(workflow.workingDir, Data{})
 	}
 
 	// try script

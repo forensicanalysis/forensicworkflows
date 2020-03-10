@@ -19,16 +19,9 @@
 //
 // Author(s): Jonas Plum
 
-package plugins
+package process
 
-func init() {
-	Plugins["example"] = &ExamplePlugin{}
-}
+import "github.com/forensicanalysis/forensicworkflows/daggy"
 
-// ExamplePlugin represents a plugin for forensicstore processing.
-type ExamplePlugin struct{}
-
-// Run does nothing for the example plugin.
-func (*ExamplePlugin) Run(string, Data) error {
-	return nil
-}
+// Plugins is a map of all implemented plugins.
+var Plugins = map[string]daggy.Plugin{}
