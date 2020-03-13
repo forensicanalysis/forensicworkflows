@@ -1,7 +1,6 @@
 package process
 
 import (
-	"fmt"
 	"log"
 	"path/filepath"
 	"testing"
@@ -12,12 +11,12 @@ import (
 
 func TestEventlogsPlugin_Run(t *testing.T) {
 	log.Println("Start setup")
-	storeDir, err := setup()
+	storeDir, pluginDir, err := setup()
 	if err != nil {
 		t.Fatal(err)
 	}
 	log.Println("Setup done")
-	defer fmt.Println(storeDir)
+	defer cleanup(storeDir, pluginDir)
 
 	type args struct {
 		storeName string

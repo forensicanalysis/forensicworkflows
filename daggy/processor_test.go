@@ -19,11 +19,9 @@
 //
 // Author(s): Jonas Plum
 
-package daggy_test
+package daggy
 
 import (
-	"github.com/forensicanalysis/forensicworkflows/daggy"
-	"github.com/forensicanalysis/forensicworkflows/plugins/process"
 	"io/ioutil"
 	"log"
 	"os"
@@ -85,6 +83,14 @@ func cleanup(folders ...string) (err error) {
 	return nil
 }
 
+// ExamplePlugin represents a plugin for forensicstore processing.
+type ExamplePlugin struct{}
+
+// Run does nothing for the example plugin.
+func (*ExamplePlugin) Run(string, Data) error {
+	return nil
+}
+
 func Test_processJob(t *testing.T) {
 	log.Println("Start setup")
 	storeDir, pluginDir, err := setup()
@@ -96,7 +102,7 @@ func Test_processJob(t *testing.T) {
 
 	type args struct {
 		taskName string
-		task     daggy.Task
+		task     Task
 	}
 	tests := []struct {
 		name      string
@@ -106,25 +112,21 @@ func Test_processJob(t *testing.T) {
 		wantCount int
 		wantErr   bool
 	}{
-		{"test plugin", "example1.forensicstore", args{" testtask", daggy.Task{Type: "plugin", Command: "example"}}, "example", 0, false},
-		{"test script not existing", "example1.forensicstore", args{" testtask", daggy.Task{Type: "plugin", Command: "foo"}}, "", 0, true},
-		{"unknown type", "example1.forensicstore", args{" testtask", daggy.Task{Type: "foo", Command: "foo"}}, "", 0, true},
-		{"test docker", "example1.forensicstore", args{" testtask", daggy.Task{Type: "docker", Image: "alpine", Command: "true"}}, "", 0, false},
-
-		{"test hotfixes", "example1.forensicstore", args{" testtask", daggy.Task{Type: "plugin", Command: "hotfixes"}}, "hotfix", 14, false},
-		{"test networking", "example1.forensicstore", args{" testtask", daggy.Task{Type: "plugin", Command: "networking"}}, "known_network", 9, false},
-		{"test run-keys", "example1.forensicstore", args{" testtask", daggy.Task{Type: "plugin", Command: "run-keys"}}, "runkey", 10, false},
-		{"test services", "example1.forensicstore", args{" testtask", daggy.Task{Type: "plugin", Command: "services"}}, "service", 624, false},
-		{"test shimcache", "example1.forensicstore", args{" testtask", daggy.Task{Type: "plugin", Command: "shimcache"}}, "shimcache", 391, false},
-		{"test software", "example1.forensicstore", args{" testtask", daggy.Task{Type: "plugin", Command: "software"}}, "uninstall_entry", 6, false},
-		{"test prefetch", "example1.forensicstore", args{" testtask", daggy.Task{Type: "plugin", Command: "prefetch"}}, "prefetch", 261, false},
-		{"test plaso", "example1.forensicstore", args{" testtask", daggy.Task{Type: "dockerfile", Dockerfile: "plaso"}}, "event", 72, false},
+		{"test plugin", "example1.forensicstore", args{" testtask", Task{Type: "plugin", Command: "example"}}, "example", 0, false},
+		{"test script not existing", "example1.forensicstore", args{" testtask", Task{Type: "plugin", Command: "foo"}}, "", 0, true},
+		{"unknown type", "example1.forensicstore", args{" testtask", Task{Type: "foo", Command: "foo"}}, "", 0, true},
+		{"test bash", "example1.forensicstore", args{" test bash", Task{Type: "bash", Command: "true"}}, "", 0, false},
+		{"test bash fail", "example1.forensicstore", args{" test bash", Task{Type: "bash", Command: "false"}}, "", 0, true},
+		{"test docker", "example1.forensicstore", args{" testtask", Task{Type: "docker", Image: "alpine", Command: "true"}}, "", 0, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			workflow := daggy.Workflow{Tasks: map[string]daggy.Task{tt.args.taskName: tt.args.task}}
+			workflow := Workflow{Tasks: map[string]Task{tt.args.taskName: tt.args.task}}
 			workflow.SetupGraph()
-			if err := workflow.Run(filepath.Join(storeDir, tt.storeName), pluginDir, process.Plugins, nil); (err != nil) != tt.wantErr {
+
+			plugins := map[string]Plugin{"example": &ExamplePlugin{}}
+
+			if err := workflow.Run(filepath.Join(storeDir, tt.storeName), pluginDir, plugins, nil); (err != nil) != tt.wantErr {
 				t.Errorf("runTask() error = %v, wantErr %v", err, tt.wantErr)
 			}
 

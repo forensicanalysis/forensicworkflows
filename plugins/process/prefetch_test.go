@@ -11,12 +11,12 @@ import (
 
 func TestPrefetchPlugin_Run(t *testing.T) {
 	log.Println("Start setup")
-	storeDir, err := setup()
+	storeDir, pluginDir, err := setup()
 	if err != nil {
 		t.Fatal(err)
 	}
 	log.Println("Setup done")
-	defer cleanup(storeDir)
+	defer cleanup(storeDir, pluginDir)
 
 	type args struct {
 		storeName string
