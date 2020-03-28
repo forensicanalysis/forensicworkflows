@@ -20,7 +20,8 @@ func TestEventlogsPlugin_Run(t *testing.T) {
 
 	type args struct {
 		storeName string
-		data      daggy.Data
+		data      daggy.Arguments
+		filter    daggy.Filter
 	}
 	tests := []struct {
 		name      string
@@ -28,14 +29,14 @@ func TestEventlogsPlugin_Run(t *testing.T) {
 		wantCount int
 		wantErr   bool
 	}{
-		{"Eventlogs Test", args{"example2.forensicstore", nil}, 806, false},
+		{"Eventlogs Test", args{"example2.forensicstore", nil, nil}, 806, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			pr := &EventlogsPlugin{}
 
-			url := filepath.Join(storeDir, tt.args.storeName)
-			if err := pr.Run(url, tt.args.data); (err != nil) != tt.wantErr {
+			url := filepath.Join(storeDir, "data", tt.args.storeName)
+			if err := pr.Run(url, tt.args.data, tt.args.filter); (err != nil) != tt.wantErr {
 				t.Errorf("Run() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
@@ -43,7 +44,7 @@ func TestEventlogsPlugin_Run(t *testing.T) {
 			if err != nil {
 				t.Errorf("goforensicstore.NewJSONLite() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			items, err := store.Select("eventlog")
+			items, err := store.Select("eventlog", nil)
 			if err != nil {
 				t.Errorf("store.All() error = %v, wantErr %v", err, tt.wantErr)
 			}

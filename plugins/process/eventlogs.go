@@ -17,13 +17,17 @@ func init() {
 
 type EventlogsPlugin struct{}
 
-func (*EventlogsPlugin) Run(url string, data daggy.Data) error {
+func (*EventlogsPlugin) Description() string {
+	return "Parse eventlogs into single events"
+}
+
+func (*EventlogsPlugin) Run(url string, data daggy.Arguments, filter daggy.Filter) error {
 	store, err := goforensicstore.NewJSONLite(url)
 	if err != nil {
 		return err
 	}
 
-	fileItems, err := store.Select("file")
+	fileItems, err := store.Select("file", filter)
 	if err != nil {
 		return err
 	}

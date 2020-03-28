@@ -1,37 +1,38 @@
-hotfixes:
-  type: plugin
-  command: hotfixes
+tasks:
+  hotfixes:
+    type: plugin
+    command: hotfixes
 
-networking:
-  type: plugin
-  command: networking
+  networking:
+    type: plugin
+    command: networking
 
-run_keys:
-  type: plugin
-  command: "run-keys"
+  run_keys:
+    type: plugin
+    command: "run-keys"
 
-autoruns_csv:
-  type: plugin
-  command: create-csv runkey Name Command SID
-  requires: [run_keys]
+  autoruns_csv:
+    type: plugin
+    command: create-csv runkey Name Command SID
+    requires: [run_keys]
 
-services:
-  type: plugin
-  command: services
+  services:
+    type: plugin
+    command: services
 
-shimcache:
-  type: plugin
-  command: shimcache
+  shimcache:
+    type: plugin
+    command: shimcache
 
-software:
-  type: plugin
-  command: software
+  software:
+    type: plugin
+    command: software
 
-prefetch:
-  type: plugin
-  command: prefetch
+  prefetch:
+    type: plugin
+    command: prefetch
 
-prefetch_report:
-  type: plugin
-  command: report prefetch prefetch.tmpl.j2
-  requires: [prefetch]
+  prefetch_report:
+    type: plugin
+    command: report prefetch prefetch.tmpl.j2
+    requires: [prefetch]

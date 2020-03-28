@@ -6,8 +6,50 @@ on:
 
 jobs:
 
-  forensicworkflows:
-    name: forensicworkflows
+  unittests:
+    name: Go Unittests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    steps:
+      - name: Setup go 1.13
+        uses: actions/setup-go@v1
+        with: {go-version: '1.13'}
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: Set system path
+        run: echo "##[add-path]$(go env GOPATH)/bin"
+        shell: bash
+      - name: Download dependencies
+        run: go mod download
+      - name: Install golangci-lint & go-acc
+        run: |
+          curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b $(go env GOPATH)/bin v1.19.1
+          go get -u github.com/ory/go-acc
+        shell: bash
+      - name: Setup Build
+        run: go generate
+      - name: Lint
+        run: |
+          go build .
+          golangci-lint run --verbose --config test/.golangci.yml
+        shell: bash
+      - name: Download testdata
+        run: bash test/download_testdata.sh
+        shell: bash
+      - name: Test
+        run: go-acc ./...
+      - name: Upload coverage
+        env:
+          CI: "true"
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: bash <(curl -s https://codecov.io/bash) -f coverage.txt
+        # if: matrix.os == 'windows-latest'
+        shell: bash
+
+  integrationtests:
+    name: Go Integration Tests
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -26,52 +68,97 @@ jobs:
       - name: Download dependencies
         run: go mod download
 
-      - name: Install golangci-lint & go-acc
-        run: |
-          curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b $(go env GOPATH)/bin v1.19.1
-          go get -u github.com/ory/go-acc
-        shell: bash
-
       - name: Setup Build
         run: go generate
 
-      - name: Lint
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with: {node-version: '10.x'}
+      - name: Install bats
+        run: npm install -g bats
+
+      - name: Install
+        run: go install .
+
+      - name: Install forensicstore
+        run: go get github.com/forensicanalysis/forensicstore/cmd/forensicstore
+      - name: Download testdata
+        run: bash test/download_testdata.sh
+        shell: bash
+      - name: Bats test
+        run: bats test/bats/forensicworkflows.bats
+        shell: bash
+
+      - name: Go Build
         run: |
           go build .
-          golangci-lint run --verbose --config test/.golangci.yml
-        shell: bash
-      - name: Test
-        run: go-acc ./...
-        shell: bash
-      - name: Upload coverage
-        env:
-          CI: "true"
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        run: bash <(curl -s https://codecov.io/bash) -f coverage.txt
-        # if: matrix.os == 'windows-latest'
-        shell: bash
-
-      # - name: Setup node
-      #   uses: actions/setup-node@v1
-      #   with: {node-version: '10.x'}
-      # - name: Install bats
-      #   run: npm install -g bats
-
-      - name: Build
-        run: |
-          go build .
-          go install .
-
-      - name: Move Binary
-        run: |
           mkdir bin
           mv forensicworkflows* bin
         shell: bash
-      # - name: Bats test
-      #   run: bats test/bats/forensicworkflows.bats
-      #   shell: bash
       - name: Upload
         uses: actions/upload-artifact@master
         with:
           name: forensicworkflows ${{ matrix.os }}
           path: bin
+
+
+  scripts:
+    name: Python Script Plugin Tests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    steps:
+      - uses: actions/setup-python@v1
+        with: {python-version: '3.8'}
+      - run: pip install pylint pytest pytest-cov
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - run: pip install -r requirements.txt
+      - name: Python Lint
+        run: pylint scripts --rcfile test/.pylintrc
+        shell: bash
+      - name: Download testdata
+        run: bash test/download_testdata.sh
+        shell: bash
+      - name: Python Test
+        run: pytest -v --cov-config .coveragerc --cov-report=xml --cov=scripts scripts
+        shell: bash
+      - name: Upload coverage
+        env:
+          CI: "true"
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: bash <(curl -s https://codecov.io/bash) -f coverage.xml
+        # if: matrix.os == 'windows-latest'
+        shell: bash
+
+  docker:
+    name: Docker Plugin Tests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    steps:
+      - uses: actions/setup-python@v1
+        with: {python-version: '3.8'}
+      - run: pip install pylint pytest pytest-cov
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - run: pip install -r requirements.txt
+      - name: Python Lint
+        run: pylint docker --rcfile test/.pylintrc
+        shell: bash
+        continue-on-error: true
+      - name: Download testdata
+        run: bash test/download_testdata.sh
+        shell: bash
+      - name: Python Test
+        run: pytest -v --cov-config .coveragerc --cov-report=xml --cov=docker docker
+        shell: bash
+      - name: Upload coverage
+        env:
+          CI: "true"
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: bash <(curl -s https://codecov.io/bash) -f coverage.xml
+        # if: matrix.os == 'windows-latest'
+        shell: bash

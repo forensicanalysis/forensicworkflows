@@ -26,7 +26,6 @@ import (
 	"log"
 
 	"github.com/hashicorp/logutils"
-	"github.com/hashicorp/terraform/dag"
 	"gopkg.in/yaml.v2"
 )
 
@@ -42,26 +41,6 @@ func Parse(workflowFile string) (*Workflow, error) {
 		return nil, err
 	}
 	return &workflow, nil
-}
-
-func (workflow *Workflow) SetupGraph() {
-	// Create the dag
-	setupLogging()
-	graph := dag.AcyclicGraph{}
-	tasks := map[string]Task{}
-	for name, task := range workflow.Tasks {
-		graph.Add(name)
-		tasks[name] = task
-	}
-
-	// add edges / requirements
-	for name, task := range workflow.Tasks {
-		for _, requirement := range task.Requires {
-			graph.Connect(dag.BasicEdge(requirement, name))
-		}
-	}
-
-	workflow.graph = &graph
 }
 
 func setupLogging() {

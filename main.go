@@ -88,18 +88,21 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/spf13/cobra"
+
 	"github.com/forensicanalysis/forensicworkflows/cmd"
 )
 
-//go:generate go get github.com/cugu/go-resources/cmd/resources
+//go:generate go get -u github.com/markbates/pkger/cmd/pkger
 //go:generate mkdir -p assets
-//go:generate resources -declare -var=FS -package assets -output assets/assets.go process/* process/templates/*
+//go:generate pkger -o assets
 //go:generate pip install -r requirements.txt
 
 func main() {
 	rootCmd := cmd.Process()
+	rootCmd.AddCommand(cmd.Import(), cmd.Export())
 	rootCmd.Use = "forensicworkflows"
-	// rootCmd.AddCommand(cmd.Import()) //, exportCommand())
+	rootCmd.FParseErrWhitelist = cobra.FParseErrWhitelist{UnknownFlags: true}
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)

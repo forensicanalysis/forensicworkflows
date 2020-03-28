@@ -21,6 +21,7 @@ func TestParse(t *testing.T) {
 			"script":      {Type: "plugin", Requires: []string{"cwd"}, Command: "pyexample"},
 			"true":        {Type: "bash", Requires: []string{"false"}, Command: "true"},
 		},
+		Arguments: map[string]string{"docker-server": "test.com"},
 	}
 
 	type args struct {
@@ -32,7 +33,7 @@ func TestParse(t *testing.T) {
 		want    *Workflow
 		wantErr bool
 	}{
-		{"Parse example-workflow.yml", args{"../example-workflow.yml"}, workflow, false},
+		{"Parse example-workflow.yml", args{"../test/example-workflow.yml"}, workflow, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

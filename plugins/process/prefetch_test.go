@@ -10,17 +10,11 @@ import (
 )
 
 func TestPrefetchPlugin_Run(t *testing.T) {
-	log.Println("Start setup")
-	storeDir, pluginDir, err := setup()
-	if err != nil {
-		t.Fatal(err)
-	}
-	log.Println("Setup done")
-	defer cleanup(storeDir, pluginDir)
 
 	type args struct {
 		storeName string
-		data      daggy.Data
+		data      daggy.Arguments
+		filter    daggy.Filter
 	}
 	tests := []struct {
 		name      string
@@ -28,14 +22,23 @@ func TestPrefetchPlugin_Run(t *testing.T) {
 		wantCount int
 		wantErr   bool
 	}{
-		{"Prefetch Test", args{"example1.forensicstore", nil}, 261, false},
+		// {"Prefetch", args{"example1.forensicstore", nil, nil}, 261, false},
+		{"Prefetch with Filter", args{"example1.forensicstore", nil, daggy.Filter{{"name": "artifactcollector%"}}}, 2, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			log.Println("Start setup")
+			storeDir, pluginDir, err := setup()
+			if err != nil {
+				t.Fatal(err)
+			}
+			log.Println("Setup done")
+			defer cleanup(storeDir, pluginDir)
+
 			pr := &PrefetchPlugin{}
 
-			url := filepath.Join(storeDir, tt.args.storeName)
-			if err := pr.Run(url, tt.args.data); (err != nil) != tt.wantErr {
+			url := filepath.Join(storeDir, "data", tt.args.storeName)
+			if err := pr.Run(url, tt.args.data, tt.args.filter); (err != nil) != tt.wantErr {
 				t.Errorf("Run() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
@@ -43,7 +46,7 @@ func TestPrefetchPlugin_Run(t *testing.T) {
 			if err != nil {
 				t.Errorf("goforensicstore.NewJSONLite() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			items, err := store.Select("prefetch")
+			items, err := store.Select("prefetch", nil)
 			if err != nil {
 				t.Errorf("store.All() error = %v, wantErr %v", err, tt.wantErr)
 			}

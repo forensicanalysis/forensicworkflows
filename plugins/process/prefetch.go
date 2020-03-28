@@ -37,13 +37,17 @@ func init() {
 
 type PrefetchPlugin struct{}
 
-func (*PrefetchPlugin) Run(url string, data daggy.Data) error {
+func (*PrefetchPlugin) Description() string {
+	return "Parse prefetch files"
+}
+
+func (*PrefetchPlugin) Run(url string, data daggy.Arguments, filter daggy.Filter) error {
 	store, err := goforensicstore.NewJSONLite(url)
 	if err != nil {
 		return err
 	}
 
-	fileItems, err := store.Select("file")
+	fileItems, err := store.Select("file", filter)
 	if err != nil {
 		return err
 	}
