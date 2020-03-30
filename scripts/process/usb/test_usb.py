@@ -2,9 +2,9 @@ import os
 import shutil
 import tempfile
 
-# import forensicstore
+import forensicstore
 import pytest
-# from usb import main
+from .usb import main
 
 
 @pytest.fixture
@@ -14,16 +14,16 @@ def data():
     return os.path.join(tmpdir, "data")
 
 
-# def test_usb(data):
-#     cwd = os.getcwd()
-#     os.chdir(os.path.join(data, "data", "example1.forensicstore"))
-#
-#     main()
-#
-#     store = forensicstore.connect(os.path.join(data, "data", "example1.forensicstore"))
-#     items = list(store.select("usb-device"))
-#     store.close()
-#     assert len(items) == 6
-#
-#     os.chdir(cwd)
-#     shutil.rmtree(data)
+def test_usb(data):
+    cwd = os.getcwd()
+    os.chdir(os.path.join(data, "data", "usb.forensicstore"))
+
+    main()
+
+    store = forensicstore.connect(os.path.join(data, "data", "usb.forensicstore"))
+    items = list(store.select("usb-device"))
+    store.close()
+    assert len(items) == 1
+
+    os.chdir(cwd)
+    shutil.rmtree(data)

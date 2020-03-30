@@ -8,6 +8,10 @@ curl --fail --silent --output example2.forensicstore.zip --location https://down
 unzip example2.forensicstore.zip
 mv example2.forensicstore test/data
 
+curl --fail --silent --output usb.forensicstore.zip --location https://download.artifacthub.org/forensics/usb.forensicstore.zip
+unzip usb.forensicstore.zip
+mv usb.forensicstore test/data
+
 curl --fail --silent --output win10_mock.zip --location https://download.artifacthub.org/windows/win10_mock.zip
 unzip win10_mock.zip
 mv win10_mock.vhd test/data
