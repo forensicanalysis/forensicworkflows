@@ -23,10 +23,11 @@ package daggy
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/hashicorp/terraform/dag"
 	"github.com/hashicorp/terraform/tfdiags"
 	"github.com/pkg/errors"
-	"log"
 )
 
 // Workflow can be used to parse workflow.yml files.

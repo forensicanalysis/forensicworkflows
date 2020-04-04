@@ -26,9 +26,10 @@ import (
 	"strings"
 	"time"
 
+	"www.velocidex.com/golang/go-prefetch"
+
 	"github.com/forensicanalysis/forensicstore/goforensicstore"
 	"github.com/forensicanalysis/forensicworkflows/daggy"
-	"www.velocidex.com/golang/go-prefetch"
 )
 
 func init() {

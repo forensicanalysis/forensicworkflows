@@ -4,7 +4,7 @@
  <a href="https://github.com/forensicanalysis/forensicworkflows/actions"><img src="https://github.com/forensicanalysis/forensicworkflows/workflows/CI/badge.svg" alt="build" /></a>
  <a href="https://codecov.io/gh/forensicanalysis/forensicworkflows"><img src="https://codecov.io/gh/forensicanalysis/forensicworkflows/branch/master/graph/badge.svg" alt="coverage" /></a>
  <a href="https://goreportcard.com/report/github.com/forensicanalysis/forensicworkflows"><img src="https://goreportcard.com/badge/github.com/forensicanalysis/forensicworkflows" alt="report" /></a>
- <a href="https://pkg.go.dev/github.com/forensicanalysis/forensicworkflows"><img src="https://godoc.org/github.com/forensicanalysis/forensicworkflows?status.svg" alt="doc" /></a>
+ <a href="https://pkg.go.dev/github.com/forensicanalysis/forensicworkflows"><img src="https://img.shields.io/badge/go.dev-documentation-007d9c?logo=go&logoColor=white" alt="doc" /></a>
 </p>
 
 Packages forensicworkflows provides a workflow engine to automate forensic processes in forensicstores.
@@ -20,7 +20,7 @@ The command line tool requires a workflow yml file which is executed on an
 arbitrary number of forensicstores, e.g.:
 
 ```
-forensicworkflows --workflow workflow.yml test/example1.forensicstore
+forensicworkflows --workflow workflow.yml test/data/example1.forensicstore
 ```
 ## Workflow format
 The workflow.yml file contains a list of tasks like the following:
@@ -77,6 +77,7 @@ dockerfalse:
     dockerfile: jq
     command: echo Dockerfile
 ```
+
 
 
 

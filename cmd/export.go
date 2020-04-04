@@ -22,14 +22,16 @@
 package cmd
 
 import (
-	"github.com/forensicanalysis/forensicworkflows/daggy"
-	"github.com/forensicanalysis/forensicworkflows/plugins/export"
-	"github.com/forensicanalysis/forensicworkflows/plugins/imports"
-	"github.com/pkg/errors"
-	"github.com/spf13/cobra"
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+
+	"github.com/forensicanalysis/forensicworkflows/daggy"
+	"github.com/forensicanalysis/forensicworkflows/plugins/export"
+	"github.com/forensicanalysis/forensicworkflows/plugins/imports"
 )
 
 func Export() *cobra.Command {

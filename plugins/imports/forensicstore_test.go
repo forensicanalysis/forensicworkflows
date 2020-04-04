@@ -22,11 +22,12 @@
 package imports
 
 import (
-	"github.com/forensicanalysis/forensicstore/goforensicstore"
-	"github.com/forensicanalysis/forensicworkflows/daggy"
 	"log"
 	"path/filepath"
 	"testing"
+
+	"github.com/forensicanalysis/forensicstore/goforensicstore"
+	"github.com/forensicanalysis/forensicworkflows/daggy"
 )
 
 func TestJSONLitePlugin_Run(t *testing.T) {

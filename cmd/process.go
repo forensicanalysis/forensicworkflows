@@ -22,7 +22,6 @@
 package cmd
 
 import (
-	"github.com/forensicanalysis/forensicworkflows/plugins/process"
 	"log"
 	"os"
 
@@ -30,6 +29,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/forensicanalysis/forensicworkflows/daggy"
+	"github.com/forensicanalysis/forensicworkflows/plugins/process"
 )
 
 func Process() *cobra.Command {

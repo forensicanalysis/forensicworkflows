@@ -23,7 +23,6 @@ package imports
 
 import (
 	"errors"
-	"github.com/forensicanalysis/forensicstore/gostore"
 	"io"
 	"path/filepath"
 	"strings"
@@ -32,6 +31,7 @@ import (
 
 	"github.com/forensicanalysis/forensicstore/goforensicstore"
 	"github.com/forensicanalysis/forensicstore/gojsonlite"
+	"github.com/forensicanalysis/forensicstore/gostore"
 	"github.com/forensicanalysis/forensicworkflows/daggy"
 )
 
@@ -73,7 +73,7 @@ func jsonLite(db gostore.Store, url string, filter daggy.Filter) (err error) {
 		return err
 	}
 	for _, item := range items {
-		if !filter.Match(item){
+		if !filter.Match(item) {
 			continue
 		}
 

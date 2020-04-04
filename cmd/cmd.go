@@ -25,8 +25,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/markbates/pkger"
-	"github.com/spf13/cobra"
 	"io"
 	"io/ioutil"
 	"log"
@@ -35,6 +33,9 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/markbates/pkger"
+	"github.com/spf13/cobra"
 
 	"github.com/forensicanalysis/forensicworkflows/daggy"
 )
