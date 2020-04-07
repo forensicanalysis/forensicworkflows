@@ -57,7 +57,7 @@ func (*JSONPlugin) Run(url string, data daggy.Arguments, filter daggy.Filter) er
 		return errors.New("missing 'file' in args")
 	}
 
-	b, err := ioutil.ReadFile(file)
+	b, err := ioutil.ReadFile(file) // #nosec
 	if err != nil {
 		return err
 	}

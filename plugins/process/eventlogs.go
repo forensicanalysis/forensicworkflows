@@ -23,6 +23,7 @@ package process
 
 import (
 	"encoding/json"
+	"io"
 	"path"
 	"strings"
 
@@ -30,6 +31,7 @@ import (
 	"www.velocidex.com/golang/evtx"
 
 	"github.com/forensicanalysis/forensicstore/goforensicstore"
+	"github.com/forensicanalysis/forensicstore/gostore"
 	"github.com/forensicanalysis/forensicworkflows/daggy"
 )
 
@@ -41,6 +43,15 @@ type EventlogsPlugin struct{}
 
 func (*EventlogsPlugin) Description() string {
 	return "Parse eventlogs into single events"
+}
+
+func getString(item gostore.Item, key string) (string, bool) {
+	if name, ok := item[key]; ok {
+		if name, ok := name.(string); ok {
+			return name, true
+		}
+	}
+	return "", false
 }
 
 func (*EventlogsPlugin) Run(url string, data daggy.Arguments, filter daggy.Filter) error {
@@ -55,58 +66,63 @@ func (*EventlogsPlugin) Run(url string, data daggy.Arguments, filter daggy.Filte
 	}
 
 	for _, item := range fileItems {
-		if name, ok := item["name"]; ok {
-			if name, ok := name.(string); ok {
-				if strings.HasSuffix(name, ".evtx") {
-					if exportPath, ok := item["export_path"]; ok {
-						if exportPath, ok := exportPath.(string); ok {
-							file, err := store.Open(path.Join(url, exportPath))
-							if err != nil {
-								return err
-							}
-
-							chunks, err := evtx.GetChunks(file)
-							if err != nil {
-								return err
-							}
-
-							for _, chunk := range chunks {
-								records, err := chunk.Parse(int(chunk.Header.FirstEventRecID))
-								if err != nil {
-									return err
-								}
-
-								for _, i := range records {
-									eventMap, ok := i.Event.(*ordereddict.Dict)
-									if ok {
-										event, ok := ordereddict.GetMap(eventMap, "Event")
-										if !ok {
-											continue
-										}
-
-										event.Set("type", "eventlog")
-										// self.maybeExpandMessage(event)
-
-										serialized, err := json.MarshalIndent(event, " ", " ")
-										if err != nil {
-											return err
-										}
-
-										var item map[string]interface{}
-										err = json.Unmarshal(serialized, &item)
-										if err != nil {
-											return err
-										}
-
-										_, err = store.Insert(item)
-										if err != nil {
-											return err
-										}
-									}
-								}
-							}
-						}
+		if name, ok := getString(item, "name"); ok {
+			if strings.HasSuffix(name, ".evtx") {
+				if exportPath, ok := getString(item, "export_path"); ok {
+					file, err := store.Open(path.Join(url, exportPath))
+					if err != nil {
+						return err
 					}
+
+					err = getEvents(file, store)
+					if err != nil {
+						return err
+					}
+				}
+			}
+		}
+	}
+
+	return nil
+}
+
+func getEvents(file io.ReadSeeker, store gostore.Store) error {
+	chunks, err := evtx.GetChunks(file)
+	if err != nil {
+		return err
+	}
+
+	for _, chunk := range chunks {
+		records, err := chunk.Parse(int(chunk.Header.FirstEventRecID))
+		if err != nil {
+			return err
+		}
+
+		for _, i := range records {
+			eventMap, ok := i.Event.(*ordereddict.Dict)
+			if ok {
+				event, ok := ordereddict.GetMap(eventMap, "Event")
+				if !ok {
+					continue
+				}
+
+				event.Set("type", "eventlog")
+				// self.maybeExpandMessage(event)
+
+				serialized, err := json.MarshalIndent(event, " ", " ")
+				if err != nil {
+					return err
+				}
+
+				var item map[string]interface{}
+				err = json.Unmarshal(serialized, &item)
+				if err != nil {
+					return err
+				}
+
+				_, err = store.Insert(item)
+				if err != nil {
+					return err
 				}
 			}
 		}

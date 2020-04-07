@@ -40,6 +40,7 @@ type Task struct {
 	Filter     Filter    `yaml:"filter"`
 }
 
+// A Filter is a list of mappings that should be used for a Task.
 type Filter []map[string]string
 
 func (f Filter) toCommandline() []string {
@@ -57,6 +58,7 @@ func (f Filter) toCommandline() []string {
 	return cmd
 }
 
+// Match tests if an item matches the filter.
 func (f Filter) Match(item gostore.Item) bool {
 	if f == nil {
 		return true
@@ -81,6 +83,7 @@ func (f Filter) matchCondition(condition map[string]string, item gostore.Item) b
 // Arguments is the input into the plugins.
 type Arguments map[string]string
 
+// Get returns a single argument.
 func (a Arguments) Get(name string) string {
 	if value, ok := a[name]; ok {
 		return value

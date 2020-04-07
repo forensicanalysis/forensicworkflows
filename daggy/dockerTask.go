@@ -42,23 +42,8 @@ func docker(image, command string, arguments Arguments, filter Filter, pull bool
 		return err
 	}
 
-	var auth types.AuthConfig
-	auth.Username = workflow.Arguments.Get("docker-user")
-	auth.Password = workflow.Arguments.Get("docker-password")
-	auth.ServerAddress = workflow.Arguments.Get("docker-server")
-
-	body, err := cli.RegistryLogin(ctx, auth)
-	if err != nil {
-		return err
-	}
-	log.Println("login", body)
-
 	if pull {
-		reader, err := cli.ImagePull(ctx, image, types.ImagePullOptions{})
-		if err != nil {
-			return err
-		}
-		_, err = io.Copy(os.Stderr, reader)
+		err = pullImage(ctx, cli, workflow, image)
 		if err != nil {
 			return err
 		}
@@ -84,6 +69,36 @@ func docker(image, command string, arguments Arguments, filter Filter, pull bool
 		workflow.pluginDir = "/" + strings.ToLower(string(workflow.pluginDir[0])) + filepath.ToSlash(workflow.pluginDir[2:])
 	}
 
+	resp, err := createContainer(ctx, cli, workflow, image, command, arguments, filter)
+	if err != nil {
+		return err
+	}
+
+	if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
+		return err
+	}
+
+	statusChannel, errChannel := cli.ContainerWait(ctx, resp.ID, container.WaitConditionNotRunning)
+	select {
+	case err := <-errChannel:
+		if err != nil {
+			return err
+		}
+	case <-statusChannel:
+	}
+
+	out, err := cli.ContainerLogs(ctx, resp.ID, types.ContainerLogsOptions{ShowStdout: true})
+	if err != nil {
+		return err
+	}
+
+	// stdcopy.StdCopy(os.Stdout, os.Stderr, out)
+	// _, err = ioutil.ReadAll(out)
+	_, err = io.Copy(log.Writer(), out)
+	return err
+}
+
+func createContainer(ctx context.Context, cli *client.Client, workflow *Workflow, image, command string, arguments Arguments, filter Filter) (container.ContainerCreateCreatedBody, error) {
 	mounts := []mount.Mount{
 		{Type: mount.TypeBind, Source: workflow.workingDir, Target: "/store"},
 		{Type: mount.TypeBind, Source: workflow.pluginDir, Target: "/plugins"},
@@ -113,29 +128,30 @@ func docker(image, command string, arguments Arguments, filter Filter, pull bool
 		"",
 	)
 	if err != nil {
-		return err
+		return container.ContainerCreateCreatedBody{}, err
 	}
+	return resp, nil
+}
 
-	if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
-		return err
-	}
+func pullImage(ctx context.Context, cli *client.Client, workflow *Workflow, image string) error {
+	var auth types.AuthConfig
+	auth.Username = workflow.Arguments.Get("docker-user")
+	auth.Password = workflow.Arguments.Get("docker-password")
+	auth.ServerAddress = workflow.Arguments.Get("docker-server")
 
-	statusChannel, errChannel := cli.ContainerWait(ctx, resp.ID, container.WaitConditionNotRunning)
-	select {
-	case err := <-errChannel:
-		if err != nil {
-			return err
-		}
-	case <-statusChannel:
-	}
-
-	out, err := cli.ContainerLogs(ctx, resp.ID, types.ContainerLogsOptions{ShowStdout: true})
+	body, err := cli.RegistryLogin(ctx, auth)
 	if err != nil {
 		return err
 	}
+	log.Println("login", body)
 
-	// stdcopy.StdCopy(os.Stdout, os.Stderr, out)
-	// _, err = ioutil.ReadAll(out)
-	_, err = io.Copy(log.Writer(), out)
-	return err
+	reader, err := cli.ImagePull(ctx, image, types.ImagePullOptions{})
+	if err != nil {
+		return err
+	}
+	_, err = io.Copy(os.Stderr, reader)
+	if err != nil {
+		return err
+	}
+	return nil
 }

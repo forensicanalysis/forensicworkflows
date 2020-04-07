@@ -40,6 +40,7 @@ type Workflow struct {
 	plugins    map[string]Plugin
 }
 
+// SetupGraph creates a direct acyclic graph of tasks.
 func (workflow *Workflow) SetupGraph() {
 	// Create the dag
 	setupLogging()
@@ -60,6 +61,7 @@ func (workflow *Workflow) SetupGraph() {
 	workflow.graph = &graph
 }
 
+// Run walks the direct acyclic graph to execute each task.
 func (workflow *Workflow) Run(workingDir, pluginDir string, plugins map[string]Plugin, arguments Arguments) error {
 	workflow.workingDir = workingDir
 	workflow.pluginDir = pluginDir

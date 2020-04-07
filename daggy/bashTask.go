@@ -41,7 +41,7 @@ func bash(command string, arguments Arguments, filter Filter, workflow *Workflow
 	commandArgs = append(commandArgs, workflow.Arguments.toCommandline()...)
 	commandArgs = append(commandArgs, arguments.toCommandline()...)
 	commandArgs = append(commandArgs, filter.toCommandline()...)
-	cmd := exec.Command("sh", commandArgs...)
+	cmd := exec.Command("sh", commandArgs...) // #nosec
 	cmd.Dir = workflow.workingDir
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr

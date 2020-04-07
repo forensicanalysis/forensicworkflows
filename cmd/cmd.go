@@ -86,7 +86,7 @@ func listFunc(plugins map[string]daggy.Plugin, subScriptDir string) func(cmd *co
 		// get script plugins
 		for _, info := range infos {
 			description := ""
-			b, err := ioutil.ReadFile(filepath.Join(scriptDir, subScriptDir, info.Name(), "plugin.json"))
+			b, err := ioutil.ReadFile(filepath.Join(scriptDir, subScriptDir, info.Name(), "plugin.json")) // #nosec
 			if err == nil {
 				pluginJSON := &PluginJSON{}
 				err = json.Unmarshal(b, pluginJSON)

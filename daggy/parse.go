@@ -29,9 +29,10 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// Parse reads a workflow file.
 func Parse(workflowFile string) (*Workflow, error) {
 	// parse the yaml definition
-	data, err := ioutil.ReadFile(workflowFile)
+	data, err := ioutil.ReadFile(workflowFile) // #nosec
 	if err != nil {
 		return nil, err
 	}

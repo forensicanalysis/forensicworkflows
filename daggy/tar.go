@@ -49,7 +49,7 @@ func tarFolder(srcDir string, tw *tar.Writer) error {
 	return nil
 }
 func tarWrite(src string, dest string, tw *tar.Writer) error {
-	dockerFileReader, err := os.Open(src)
+	dockerFileReader, err := os.Open(src) // #nosec
 	if err != nil {
 		return err
 	}

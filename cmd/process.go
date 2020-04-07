@@ -32,6 +32,7 @@ import (
 	"github.com/forensicanalysis/forensicworkflows/plugins/process"
 )
 
+// Process is a subcommand to run a forens
 func Process() *cobra.Command {
 	processCommand := &cobra.Command{
 		Use:   "process",
