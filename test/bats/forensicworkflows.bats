@@ -30,30 +30,42 @@ teardown() {
   rm -rf $TESTDIR
 }
 
-@test "import json" {
+@test "run import-json (go)" {
   forensicstore create $TESTDIR/test.forensicstore
-  run forensicworkflows import --format json --type import --file test/import.json $TESTDIR/test.forensicstore
+  run forensicworkflows run import-json --type import --file test/data/import.json $TESTDIR/test.forensicstore
   [ "$status" -eq 0 ]
 }
 
-# @test "process single (prefetch)" {
-#   cp -r test/example1.forensicstore $TESTDIR/example1.forensicstore
+@test "run prefetch (go)" {
+  cp -r test/data/example1.forensicstore $TESTDIR/example1.forensicstore
+  [ -f "$TESTDIR/example1.forensicstore/item.db" ]
+  forensicworkflows run prefetch $TESTDIR/example1.forensicstore
+}
+
+@test "run usb (python)" {
+  cp -r test/data/usb.forensicstore $TESTDIR/usb.forensicstore
+  [ -f "$TESTDIR/usb.forensicstore/item.db" ]
+  forensicworkflows run usb $TESTDIR/usb.forensicstore
+}
+
+# @test "run plaso (docker)" {
+#   cp -r test/data/example1.forensicstore $TESTDIR/example1.forensicstore
 #   [ -f "$TESTDIR/example1.forensicstore/item.db" ]
-#   forensicworkflows process --task prefetch $TESTDIR/example1.forensicstore
+#   forensicworkflows run plaso $TESTDIR/example1.forensicstore
 # }
 
 @test "process workflow" {
   cp -r test/data/example1.forensicstore $TESTDIR/example2.forensicstore
   [ -f "$TESTDIR/example2.forensicstore/item.db" ]
-  run forensicworkflows --workflow workflow.yml $TESTDIR/example2.forensicstore
+  run forensicworkflows workflow --workflow workflow.yml $TESTDIR/example2.forensicstore
   echo $output
   [ "$status" -eq 0 ]
 }
 
-@test "export json" {
+@test "run export-json (go)" {
   cp -r test/data/example1.forensicstore $TESTDIR/example3.forensicstore
   [ -f "$TESTDIR/example3.forensicstore/item.db" ]
-  run forensicworkflows export --format json --file $TESTDIR/export.json $TESTDIR/example3.forensicstore
+  run forensicworkflows run export-json --file $TESTDIR/export.json $TESTDIR/example3.forensicstore
   echo $output
   [ "$status" -eq 0 ]
   [ -f "$TESTDIR/export.json" ]

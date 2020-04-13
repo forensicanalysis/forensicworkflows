@@ -30,19 +30,31 @@ import (
 func TestParse(t *testing.T) {
 	workflow := &Workflow{
 		Tasks: map[string]Task{
-			"create":      {Type: "bash", Requires: []string{"rm", "cwd"}, Command: "echo \"test\" > foo"},
-			"cwd":         {Type: "bash", Requires: []string(nil), Command: "pwd"},
-			"docker":      {Type: "docker", Requires: []string(nil), Image: "alpine", Command: "echo forensicreports"},
-			"dockerfalse": {Type: "dockerfile", Requires: []string(nil), Image: "", Dockerfile: "jq", Command: "echo Dockerfile"},
-			"false":       {Type: "bash", Requires: []string(nil), Command: "false"},
-			"hello":       {Type: "plugin", Requires: []string{"cwd"}, Command: "hello.exe"},
-			"plugin":      {Type: "plugin", Requires: []string{"hello", "cwd"}, Command: "example"},
-			"read":        {Type: "bash", Requires: []string{"create"}, Command: "cat foo"},
-			"rm":          {Type: "bash", Requires: []string(nil), Command: "rm -rf foo || true"},
-			"script":      {Type: "plugin", Requires: []string{"cwd"}, Command: "pyexample"},
-			"true":        {Type: "bash", Requires: []string{"false"}, Command: "true"},
+			"autoruns_csv": Task{
+				Command: "csv",
+				Arguments: map[string]interface{}{
+					"filter": []interface{}{
+						map[interface{}]interface{}{"name": "test.foo", "type": "file"},
+						map[interface{}]interface{}{"type": "registry"},
+					},
+				},
+				Requires: []string{"run_keys"},
+			},
+			"hotfixes":   Task{Command: "hotfixes"},
+			"networking": Task{Command: "networking"},
+			"prefetch":   Task{Command: "prefetch"},
+			"prefetch_report": Task{
+				Command: "report",
+				Arguments: map[string]interface{}{
+					"filter":   []interface{}{map[interface{}]interface{}{"type": "prefetch"}},
+					"template": "prefetch.tmpl.j2",
+				},
+				Requires: []string{"prefetch"}},
+			"run_keys":  Task{Command: "run-keys"},
+			"services":  Task{Command: "services"},
+			"shimcache": Task{Command: "shimcache"},
+			"software":  Task{Command: "software"},
 		},
-		Arguments: map[string]string{"docker-server": "test.com"},
 	}
 
 	type args struct {
@@ -54,7 +66,7 @@ func TestParse(t *testing.T) {
 		want    *Workflow
 		wantErr bool
 	}{
-		{"Parse example-workflow.yml", args{"../test/example-workflow.yml"}, workflow, false},
+		{"Parse example-workflow.yml", args{"../test/data/test.yml"}, workflow, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -64,14 +76,14 @@ func TestParse(t *testing.T) {
 				return
 			}
 			if got == nil {
-				t.Errorf("Parse() got = %#v, want %v", got, tt.want)
+				t.Errorf("Parse() got = %#v, want %#v", got, tt.want)
 				return
 			}
 
 			got.graph = nil
 
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Parse() got = %#v, want %v", got, tt.want)
+				t.Errorf("Parse() got = %#v, want %#v", got, tt.want)
 			}
 		})
 	}

@@ -4,4 +4,12 @@ assets
 __pycache__
 .coverage
 coverage.xml
-test/data
+
+test/data/*
+!test/data/import.json
+!test/data/test.yml
+
+.DS_Store
+*.zip
+*.json
+item.db

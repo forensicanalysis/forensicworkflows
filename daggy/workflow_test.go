@@ -26,51 +26,32 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"reflect"
 	"testing"
 
 	"github.com/otiai10/copy"
+	"github.com/spf13/cobra"
 
 	"github.com/forensicanalysis/forensicstore/goforensicstore"
 )
 
-func setup() (storeDir, pluginDir string, err error) {
+func setup() (storeDir string, err error) {
 	tempDir, err := ioutil.TempDir("", "forensicstoreprocesstest")
 	if err != nil {
-		return "", "", err
+		return "", err
 	}
 	storeDir = filepath.Join(tempDir, "test")
 	err = os.MkdirAll(storeDir, 0755)
 	if err != nil {
-		return "", "", err
-	}
-
-	pluginDir = filepath.Join(tempDir, "plugins", "process")
-	err = os.MkdirAll(pluginDir, 0755)
-	if err != nil {
-		return "", "", err
+		return "", err
 	}
 
 	err = copy.Copy(filepath.Join("..", "test"), storeDir)
 	if err != nil {
-		return "", "", err
-	}
-	err = copy.Copy(filepath.Join("..", "plugins", "process"), pluginDir)
-	if err != nil {
-		return "", "", err
+		return "", err
 	}
 
-	infos, err := ioutil.ReadDir(pluginDir)
-	if err != nil {
-		return "", "", err
-	}
-	for _, info := range infos {
-		err := os.Chmod(filepath.Join(pluginDir, info.Name()), 0755)
-		if err != nil {
-			return "", "", err
-		}
-	}
-
-	return storeDir, pluginDir, nil
+	return storeDir, nil
 }
 
 func cleanup(folders ...string) (err error) {
@@ -83,27 +64,14 @@ func cleanup(folders ...string) (err error) {
 	return nil
 }
 
-// ExamplePlugin represents a plugin for forensicstore processing.
-type ExamplePlugin struct{}
-
-// Run does nothing for the example plugin.
-func (*ExamplePlugin) Description() string {
-	return ""
-}
-
-// Run does nothing for the example plugin.
-func (*ExamplePlugin) Run(string, Arguments, Filter) error {
-	return nil
-}
-
 func Test_processJob(t *testing.T) {
 	log.Println("Start setup")
-	storeDir, pluginDir, err := setup()
+	storeDir, err := setup()
 	if err != nil {
 		t.Fatal(err)
 	}
 	log.Println("Setup done")
-	defer cleanup(storeDir, pluginDir)
+	defer cleanup(storeDir)
 
 	type args struct {
 		taskName string
@@ -117,21 +85,24 @@ func Test_processJob(t *testing.T) {
 		wantCount int
 		wantErr   bool
 	}{
-		{"dummy plugin", "example1.forensicstore", args{"testtask", Task{Type: "plugin", Command: "example"}}, "example", 0, false},
-		{"script not existing", "example1.forensicstore", args{"testtask", Task{Type: "plugin", Command: "foo"}}, "", 0, true},
-		{"unknown type", "example1.forensicstore", args{"testtask", Task{Type: "foo", Command: "foo"}}, "", 0, true},
-		{"bash", "example1.forensicstore", args{"test bash", Task{Type: "bash", Command: "true"}}, "", 0, false},
-		{"bash fail", "example1.forensicstore", args{"test bash", Task{Type: "bash", Command: "false"}}, "", 0, true},
-		{"docker", "example1.forensicstore", args{"testtask", Task{Type: "docker", Image: "alpine", Command: "true"}}, "", 0, false},
+		{"dummy plugin", "example1.forensicstore", args{"testtask", Task{Command: "example"}}, "example", 0, false},
+		{"command not existing", "example1.forensicstore", args{"testtask", Task{Command: "foo"}}, "", 0, true},
+		// {"bash fail", "example1.forensicstore", args{"test bash", Task{Command: "false"}}, "", 0, true},
+		// {"docker", "example1.forensicstore", args{"testtask", Task{Command: "alpine"}}, "", 0, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			workflow := Workflow{Tasks: map[string]Task{tt.args.taskName: tt.args.task}}
 			workflow.SetupGraph()
 
-			plugins := map[string]Plugin{"example": &ExamplePlugin{}}
+			plugins := map[string]*cobra.Command{"example": &cobra.Command{
+				Use: "example",
+				RunE: func(cmd *cobra.Command, args []string) error {
+					return nil
+				},
+			}}
 
-			if err := workflow.Run(filepath.Join(storeDir, tt.storeName), pluginDir, plugins, nil); (err != nil) != tt.wantErr {
+			if err := workflow.Run(filepath.Join(storeDir, tt.storeName), plugins); (err != nil) != tt.wantErr {
 				t.Errorf("runTask() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
@@ -151,6 +122,33 @@ func Test_processJob(t *testing.T) {
 						t.Errorf("runTask() error, wrong number of resuls = %d, want %d (%v)", len(items), tt.wantCount, len(items))
 					}
 				}
+			}
+		})
+	}
+}
+
+func Test_toCmdline(t *testing.T) {
+	var i interface{}
+	i = []map[string]string{
+		map[string]string{"foo": "bar", "bar": "baz"},
+		map[string]string{"a": "b"},
+	}
+
+	type args struct {
+		name string
+		i    interface{}
+	}
+	tests := []struct {
+		name string
+		args args
+		want []string
+	}{
+		{"filter", args{"filter", i}, []string{"--filter", "bar=baz,foo=bar", "--filter", "a=b"}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := toCmdline(tt.args.name, tt.args.i); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("toCmdline() = %v, want %v", got, tt.want)
 			}
 		})
 	}

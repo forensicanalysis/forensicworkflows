@@ -23,21 +23,26 @@ package daggy
 
 import (
 	"fmt"
-	"log"
+	"reflect"
+	"sort"
+	"strings"
 
 	"github.com/hashicorp/terraform/dag"
 	"github.com/hashicorp/terraform/tfdiags"
-	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 )
+
+// A Task is a single element in a workflow.yml file.
+type Task struct {
+	Command   string                 `yaml:"command"`
+	Arguments map[string]interface{} `yaml:"arguments"`
+	Requires  []string               `yaml:"requires"`
+}
 
 // Workflow can be used to parse workflow.yml files.
 type Workflow struct {
-	Tasks      map[string]Task `yaml:"tasks"`
-	Arguments  Arguments       `yaml:"with"`
-	graph      *dag.AcyclicGraph
-	workingDir string
-	pluginDir  string
-	plugins    map[string]Plugin
+	Tasks map[string]Task `yaml:"tasks"`
+	graph *dag.AcyclicGraph
 }
 
 // SetupGraph creates a direct acyclic graph of tasks.
@@ -62,38 +67,73 @@ func (workflow *Workflow) SetupGraph() {
 }
 
 // Run walks the direct acyclic graph to execute each task.
-func (workflow *Workflow) Run(workingDir, pluginDir string, plugins map[string]Plugin, arguments Arguments) error {
-	workflow.workingDir = workingDir
-	workflow.pluginDir = pluginDir
-	workflow.Arguments = arguments
-	workflow.plugins = plugins
-
+func (workflow *Workflow) Run(storeDir string, plugins map[string]*cobra.Command) error {
 	w := &dag.Walker{Callback: func(v dag.Vertex) tfdiags.Diagnostics {
-		err := workflow.runTask(v.(string))
-		if err != nil {
-			return tfdiags.Diagnostics{tfdiags.Sourceless(tfdiags.Error, fmt.Sprint(v.(string)), err.Error())}
+		task := workflow.Tasks[v.(string)]
+
+		if plugin, ok := plugins[task.Command]; ok {
+			err := workflow.runTask(plugin, task, storeDir)
+			if err != nil {
+				return tfdiags.Diagnostics{tfdiags.Sourceless(tfdiags.Error, fmt.Sprint(v.(string)), err.Error())}
+			}
+			return nil
 		}
-		return nil
+		return tfdiags.Diagnostics{tfdiags.Sourceless(tfdiags.Error, task.Command, "command not found")}
 	}}
 	w.Update(workflow.graph)
 	return w.Wait().Err()
 }
 
-func (workflow *Workflow) runTask(taskName string) (err error) {
-	task := workflow.Tasks[taskName]
+func (workflow *Workflow) runTask(plugin *cobra.Command, task Task, storeDir string) error {
+	args := []string{}
+	for flag, value := range task.Arguments {
+		args = append(args, toCmdline(flag, value)...)
+	}
+	args = append(args, storeDir)
 
-	log.Println("Start", taskName)
-	defer log.Println("End", taskName)
-	switch task.Type {
-	case "bash":
-		return bash(task.Command, task.Arguments, task.Filter, workflow)
-	case "docker":
-		return docker(task.Image, task.Command, task.Arguments, task.Filter, true, workflow)
-	case "dockerfile":
-		return dockerfile(task.Dockerfile, task.Arguments, task.Filter, workflow)
-	case "plugin":
-		return plugin(task.Command, task.Arguments, task.Filter, workflow)
+	// plugin.ParseFlags(args)
+	// plugin.SetArgs(args)
+	if plugin.RunE == nil {
+		return fmt.Errorf("plugin %s cannot be run", plugin.Name())
+	}
+	return plugin.RunE(plugin, args)
+}
+
+func toCmdline(name string, i interface{}) []string {
+	switch reflect.TypeOf(i).Kind() {
+	case reflect.Slice:
+		s := []string{}
+		v := reflect.ValueOf(i)
+		for i := 0; i < v.Len(); i++ {
+			s = append(s, "--"+name, toCmdline2(v.Index(i)))
+		}
+		return s
 	default:
-		return errors.New("unknown type")
+		return []string{"--" + name, fmt.Sprint(i)}
+	}
+}
+
+func toCmdline2(v reflect.Value) string {
+	for v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface {
+		v = v.Elem()
+	}
+	switch v.Kind() {
+	case reflect.Slice:
+		var parts []string
+		for i := 0; i < v.Len(); i++ {
+			parts = append(parts, toCmdline2(v.Index(i)))
+		}
+		sort.Strings(parts)
+		return strings.Join(parts, ",")
+	case reflect.Map:
+		var parts []string
+		for _, k := range v.MapKeys() {
+			i := v.MapIndex(k)
+			parts = append(parts, fmt.Sprintf("%s=%s", k, i))
+		}
+		sort.Strings(parts)
+		return strings.Join(parts, ",")
+	default:
+		return fmt.Sprint(v.Interface())
 	}
 }

@@ -86,6 +86,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -99,11 +100,25 @@ import (
 //go:generate pip install -r requirements.txt
 
 func main() {
-	rootCmd := cmd.Process()
-	rootCmd.AddCommand(cmd.Import(), cmd.Export())
+	log.SetFlags(log.LstdFlags | log.LUTC | log.Lshortfile)
+
+	// log.SetOutput(ioutil.Discard)
+	/*
+		logfile, logfileError := os.OpenFile("my.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0600)
+		if logfileError != nil {
+			log.Printf("Could not open logfile %s\n", logfileError)
+		} else {
+			log.SetOutput(logfile)
+			defer logfile.Close()
+		}
+	*/
+
+	rootCmd := cobra.Command{}
+	rootCmd.AddCommand(cmd.Run(), cmd.Install(), cmd.Workflow())
 	rootCmd.Use = "forensicworkflows"
 	rootCmd.FParseErrWhitelist = cobra.FParseErrWhitelist{UnknownFlags: true}
-	if err := rootCmd.Execute(); err != nil {
+	err := rootCmd.Execute()
+	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}

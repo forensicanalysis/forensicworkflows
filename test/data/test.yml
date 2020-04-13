@@ -1,0 +1,39 @@
+tasks:
+  hotfixes:
+    command: hotfixes
+
+  networking:
+    command: networking
+
+  run_keys:
+    command: run-keys
+
+  autoruns_csv:
+    command: csv
+    # arguments: runkey Name Command SID
+    arguments:
+      filter:
+        - type: file
+          name: test.foo
+        - type: registry
+    requires: [run_keys]
+
+  services:
+    command: services
+
+  shimcache:
+    command: shimcache
+
+  software:
+    command: software
+
+  prefetch:
+    command: prefetch
+
+  prefetch_report:
+    command: report
+    arguments:
+      filter:
+        - type: prefetch
+      template: prefetch.tmpl.j2
+    requires: [prefetch]

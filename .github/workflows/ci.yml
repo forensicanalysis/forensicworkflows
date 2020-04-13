@@ -58,13 +58,15 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [macos-latest, windows-latest, ubuntu-latest]
     steps:
       - name: Setup go 1.13
         uses: actions/setup-go@v1
         with: {go-version: '1.13'}
       - uses: actions/setup-python@v1
         with: {python-version: '3.8'}
+      - run: doskey python3=python
+        if: matrix.os == 'windows-latest'
       - name: Checkout code
         uses: actions/checkout@v1
       - name: Set system path
@@ -83,7 +85,9 @@ jobs:
         run: npm install -g bats
 
       - name: Install
-        run: go install .
+        run: |
+          go install .
+          forensicworkflows install --force
 
       - name: Install forensicstore
         run: go get github.com/forensicanalysis/forensicstore/cmd/forensicstore
@@ -106,7 +110,6 @@ jobs:
           name: forensicworkflows ${{ matrix.os }}
           path: bin
 
-
   scripts:
     name: Python Script Plugin Tests
     runs-on: ${{ matrix.os }}
@@ -121,44 +124,14 @@ jobs:
         uses: actions/checkout@v1
       - run: pip install -r requirements.txt
       - name: Python Lint
-        run: pylint scripts --rcfile test/.pylintrc
+        run: pylint *.py --rcfile ../../test/.pylintrc
         shell: bash
+        working-directory: config/scripts
       - name: Download testdata
         run: bash test/download_testdata.sh
         shell: bash
       - name: Python Test
-        run: pytest -v --cov-config .coveragerc --cov-report=xml --cov=scripts scripts
-        shell: bash
-      - name: Upload coverage
-        env:
-          CI: "true"
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        run: bash <(curl -s https://codecov.io/bash) -f coverage.xml
-        # if: matrix.os == 'windows-latest'
-        shell: bash
-
-  docker:
-    name: Docker Plugin Tests
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-    steps:
-      - uses: actions/setup-python@v1
-        with: {python-version: '3.8'}
-      - run: pip install pylint pytest pytest-cov
-      - name: Checkout code
-        uses: actions/checkout@v1
-      - run: pip install -r requirements.txt
-      - name: Python Lint
-        run: pylint docker --rcfile test/.pylintrc
-        shell: bash
-        continue-on-error: true
-      - name: Download testdata
-        run: bash test/download_testdata.sh
-        shell: bash
-      - name: Python Test
-        run: pytest -v --cov-config .coveragerc --cov-report=xml --cov=docker docker
+        run: pytest -v --cov-config .coveragerc --cov-report=xml --cov=config/scripts test/python
         shell: bash
       - name: Upload coverage
         env:

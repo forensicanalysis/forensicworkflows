@@ -1,38 +1,52 @@
 tasks:
   hotfixes:
-    type: plugin
     command: hotfixes
 
   networking:
-    type: plugin
     command: networking
+    requires: [hotfixes]
 
   run_keys:
-    type: plugin
-    command: "run-keys"
-
-  autoruns_csv:
-    type: plugin
-    command: create-csv runkey Name Command SID
-    requires: [run_keys]
+    command: run-keys
+    requires: [networking]
 
   services:
-    type: plugin
     command: services
-
-  shimcache:
-    type: plugin
-    command: shimcache
+    requires: [run_keys]
 
   software:
-    type: plugin
     command: software
+    requires: [services]
 
   prefetch:
-    type: plugin
     command: prefetch
+    requires: [software]
 
-  prefetch_report:
-    type: plugin
-    command: report prefetch prefetch.tmpl.j2
+  usb:
+    command: usb
     requires: [prefetch]
+
+  eventlogs:
+    command: eventlogs
+    requires: [usb]
+
+#  prefetch_report:
+#    command: report
+#    arguments:
+#      filter:
+#        - type: prefetch
+#      template: prefetch.tmpl.j2
+#    requires: [prefetch]
+
+#  autoruns_csv:
+#    command: csv
+#    # arguments: runkey Name Command SID
+#    arguments:
+#      filter:
+#        - type: file
+#          name: test.foo
+#        - type: registry
+#    requires: [run_keys]
+
+#  shimcache:
+#    command: shimcache
