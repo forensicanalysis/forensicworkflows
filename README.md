@@ -5,6 +5,7 @@
  <a href="https://codecov.io/gh/forensicanalysis/forensicworkflows"><img src="https://codecov.io/gh/forensicanalysis/forensicworkflows/branch/master/graph/badge.svg" alt="coverage" /></a>
  <a href="https://goreportcard.com/report/github.com/forensicanalysis/forensicworkflows"><img src="https://goreportcard.com/badge/github.com/forensicanalysis/forensicworkflows" alt="report" /></a>
  <a href="https://pkg.go.dev/github.com/forensicanalysis/forensicworkflows"><img src="https://img.shields.io/badge/go.dev-documentation-007d9c?logo=go&logoColor=white" alt="doc" /></a>
+ <a href="https://app.fossa.io/projects/git%2Bgithub.com%2Fforensicanalysis%2Fforensicworkflows?ref=badge_shield" alt="FOSSA Status"><img src="https://app.fossa.io/api/projects/git%2Bgithub.com%2Fforensicanalysis%2Fforensicworkflows.svg?type=shield"/></a>
 </p>
 
 Packages forensicworkflows provides a workflow engine to automate forensic processes in forensicstores.
