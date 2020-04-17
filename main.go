@@ -86,6 +86,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 
@@ -94,29 +95,37 @@ import (
 	"github.com/forensicanalysis/forensicworkflows/cmd"
 )
 
-//go:generate go get -u github.com/markbates/pkger/cmd/pkger
-//go:generate mkdir -p assets
-//go:generate pkger -o assets
-//go:generate pip install -r requirements.txt
+//go:generate go get github.com/cugu/go-resources/cmd/resources@v0.3.1
+//go:generate resources -package assets -output assets/config.generated.go -trim "config/" config/scripts/*
+//go:generate go mod tidy
 
 func main() {
-	log.SetFlags(log.LstdFlags | log.LUTC | log.Lshortfile)
+	var debug bool
 
-	// log.SetOutput(ioutil.Discard)
-	/*
-		logfile, logfileError := os.OpenFile("my.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0600)
-		if logfileError != nil {
-			log.Printf("Could not open logfile %s\n", logfileError)
-		} else {
-			log.SetOutput(logfile)
-			defer logfile.Close()
-		}
-	*/
-
-	rootCmd := cobra.Command{}
+	rootCmd := cobra.Command{
+		Use:                "forensicworkflows",
+		FParseErrWhitelist: cobra.FParseErrWhitelist{UnknownFlags: true},
+		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+			if debug {
+				log.SetFlags(log.LstdFlags | log.LUTC | log.Lshortfile)
+				log.Println("debug mode enabled")
+				/*
+					logfile, logfileError := os.OpenFile("my.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0600)
+					if logfileError != nil {
+						log.Printf("Could not open logfile %s\n", logfileError)
+					} else {
+						log.SetOutput(logfile)
+						defer logfile.Close()
+					}
+				*/
+			} else {
+				log.SetOutput(ioutil.Discard)
+			}
+		},
+	}
 	rootCmd.AddCommand(cmd.Run(), cmd.Install(), cmd.Workflow())
-	rootCmd.Use = "forensicworkflows"
-	rootCmd.FParseErrWhitelist = cobra.FParseErrWhitelist{UnknownFlags: true}
+	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "show log messages")
+
 	err := rootCmd.Execute()
 	if err != nil {
 		fmt.Println(err)

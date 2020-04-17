@@ -128,7 +128,6 @@ def filetime_to_timestamp(filetime_64):
     return datetime_stamp.isoformat()
 
 
-
 def main(args):
     parser = storeutil.ScriptArgumentParser(
         'hotfixes',
@@ -138,6 +137,7 @@ def main(args):
     )
     args = parser.parse_args(args)
     for url in args.forensicstore:
+        LOGGER.debug("search for hotfixes in %s", url)
         store = forensicstore.connect(url)
 
         hklmsw = "HKEY_LOCAL_MACHINE\\SOFTWARE\\"
@@ -157,4 +157,5 @@ def main(args):
 
 
 if __name__ == '__main__':
+    logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
     main(sys.argv[1:])

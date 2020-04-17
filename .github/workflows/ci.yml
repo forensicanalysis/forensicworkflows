@@ -84,10 +84,8 @@ jobs:
       - name: Install bats
         run: npm install -g bats
 
-      - name: Install
-        run: |
-          go install .
-          forensicworkflows install --force
+      - run: go install .
+      - run: forensicworkflows install --force --debug
 
       - name: Install forensicstore
         run: go get github.com/forensicanalysis/forensicstore/cmd/forensicstore

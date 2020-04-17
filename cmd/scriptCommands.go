@@ -36,12 +36,21 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const appName = "forensicstore"
-
 func scriptCommands() []*cobra.Command {
-	dir, _ := os.UserConfigDir()
-	scriptDir := filepath.Join(dir, "forensicstore", "scripts")
-	infos, _ := ioutil.ReadDir(scriptDir)
+	dir, err := os.UserConfigDir()
+	if err != nil {
+		log.Println("config dir not found", err)
+		return nil
+	}
+
+	addDir := filepath.Join(dir, appName)
+	scriptDir := filepath.Join(addDir, "scripts")
+
+	infos, err := ioutil.ReadDir(scriptDir)
+	if err != nil {
+		log.Println("scripts dir not readable", err)
+		return nil
+	}
 
 	var commands []*cobra.Command
 	for _, info := range infos {
@@ -49,7 +58,6 @@ func scriptCommands() []*cobra.Command {
 			commands = append(commands, scriptCommand(filepath.Join(scriptDir, info.Name())))
 		}
 	}
-
 	return commands
 }
 
@@ -75,14 +83,15 @@ func scriptCommand(path string) *cobra.Command {
 		cmd.Use = filepath.Base(path)
 	}
 	cmd.Short += " (script)"
-	// cmd.Args = subcommands.RequireStore
 	cmd.RunE = func(cmd *cobra.Command, args []string) error {
-		path = filepath.ToSlash(path)
-		path = strings.ReplaceAll(path, " ", `\ `)
-		scriptArgs := []string{path}
-		scriptArgs = append(scriptArgs, args...)
-		script := exec.Command("sh", "-c", strings.Join(scriptArgs, " ")) // #nosec
-		// script.Dir = url
+		shellCommand := strings.Join(append(
+			[]string{`"` + filepath.ToSlash(path) + `"`},
+			toCommandlineArgs(cmd.Flags(), args)...,
+		), " ")
+
+		log.Println("sh", "-c", shellCommand)
+
+		script := exec.Command("sh", "-c", shellCommand) // #nosec
 		script.Stdout = os.Stdout
 		script.Stderr = log.Writer()
 		err := script.Run()
@@ -92,7 +101,6 @@ func scriptCommand(path string) *cobra.Command {
 		return nil
 	}
 	cmd.FParseErrWhitelist = cobra.FParseErrWhitelist{UnknownFlags: true}
-	cmd.DisableFlagParsing = true
 	cmd.SilenceUsage = true
 	cmd.SilenceErrors = true
 	cmd.SetHelpCommand(&cobra.Command{Use: "no-help", Hidden: true})

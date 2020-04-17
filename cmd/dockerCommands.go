@@ -29,6 +29,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 
@@ -40,13 +41,16 @@ import (
 
 func dockerCommands() []*cobra.Command {
 	ctx := context.Background()
+	timeoutCtx, cancel := context.WithTimeout(ctx, time.Second) // TODO: adjust time
+	defer cancel()
+
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
 		return nil
 	}
 
 	options := types.ImageListOptions{All: true}
-	imageSummaries, err := cli.ImageList(ctx, options)
+	imageSummaries, err := cli.ImageList(timeoutCtx, options)
 	if err != nil {
 		return nil
 	}
@@ -55,7 +59,7 @@ func dockerCommands() []*cobra.Command {
 	for _, imageSummary := range imageSummaries {
 		for _, name := range imageSummary.RepoTags {
 			idx := strings.LastIndex(name, "/")
-			if strings.HasPrefix(name[idx+1:], "forensicstore-") {
+			if strings.HasPrefix(name[idx+1:], appName+"-") {
 				commands = append(commands, dockerCommand(name, imageSummary.Labels))
 			}
 		}
@@ -67,7 +71,7 @@ func dockerCommands() []*cobra.Command {
 func dockerCommand(image string, labels map[string]string) *cobra.Command {
 	var dockerUser, dockerPassword, dockerServer string
 
-	name := image[14:]
+	name := image[len(appName)+1:]
 	parts := strings.Split(name, ":")
 	name = parts[0]
 
@@ -80,16 +84,13 @@ func dockerCommand(image string, labels map[string]string) *cobra.Command {
 			auth.Password = dockerPassword
 			auth.ServerAddress = dockerServer
 
-			i := 1
-			cmd.VisitParents(func(_ *cobra.Command) {
-				i++
-			})
+			args = toCommandlineArgs(cmd.Flags(), args)
 
 			for _, url := range args {
 				mounts := map[string]string{
 					url: "store",
 				}
-				_, err := docker(image, os.Args[i:], auth, mounts)
+				_, err := docker(image, args, auth, mounts)
 				if err != nil {
 					return err
 				}

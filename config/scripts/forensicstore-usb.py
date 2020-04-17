@@ -20,10 +20,13 @@
 #
 #  Author(s): Jonas Plum, Korbinian Karl
 
+import logging
 import sys
 
 import forensicstore
 import storeutil
+
+LOGGER = logging.getLogger(__name__)
 
 
 class USBForensicStoreExtractor:
@@ -167,9 +170,10 @@ def main(args):
         store_arg=True,
         filter_arg=True,
     )
-    args = parser.parse_args(args)
+    args, _ = parser.parse_known_args(args)
 
     for url in args.forensicstore:
+        LOGGER.debug("process usb in %s", url)
         store = forensicstore.connect(url)
 
         usb_usage_data = USBForensicStoreExtractor(store, args.filter).get_usb_usage_data()
@@ -180,4 +184,5 @@ def main(args):
 
 
 if __name__ == '__main__':
+    logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
     main(sys.argv[1:])

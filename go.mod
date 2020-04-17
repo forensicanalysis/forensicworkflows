@@ -16,14 +16,17 @@ require (
 	github.com/hashicorp/logutils v1.0.0
 	github.com/hashicorp/terraform v0.12.17
 	github.com/imdario/mergo v0.3.7
-	github.com/markbates/pkger v0.15.1
+	github.com/kr/pretty v0.2.0 // indirect
 	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
 	github.com/opencontainers/image-spec v1.0.1 // indirect
 	github.com/otiai10/copy v1.0.2
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/cobra v0.0.5
-	gopkg.in/yaml.v2 v2.2.7
+	github.com/spf13/pflag v1.0.3
+	github.com/stretchr/testify v1.5.1 // indirect
+	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
+	gopkg.in/yaml.v2 v2.2.8
 	gotest.tools v2.2.0+incompatible // indirect
 	www.velocidex.com/golang/evtx v0.0.1
 	www.velocidex.com/golang/go-prefetch v0.0.0-20190703150313-0469fa2f85cf

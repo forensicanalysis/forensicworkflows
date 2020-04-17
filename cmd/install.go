@@ -30,30 +30,32 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
-	"strings"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
-	"github.com/markbates/pkger"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+
+	"github.com/forensicanalysis/forensicworkflows/assets"
 )
 
-// Install is a subcommand to run a forens
+// Install required assets
 func Install() *cobra.Command {
 	var force bool
 	var dockerUser, dockerPassword, dockerServer string
 	cmd := &cobra.Command{
-		Use:   "install",
-		Short: "Setup required artifacts",
+		Use:          "install",
+		Short:        "Setup required assets",
+		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			configDir, err := os.UserConfigDir()
 			if err != nil {
 				return err
 			}
 
-			appDir := filepath.Join(configDir, "forensicstore") // TODO: appname
+			appDir := filepath.Join(configDir, appName)
 
 			info, err := os.Stat(appDir)
 			if err != nil && !os.IsNotExist(err) {
@@ -85,9 +87,28 @@ func Install() *cobra.Command {
 }
 
 func setup(auth types.AuthConfig) error {
+	// unpack scripts
 	err := unpack()
 	if err != nil {
 		return err
+	}
+
+	// install python requirements
+	pipPath, err := exec.LookPath("pip3")
+	if err != nil {
+		pipPath, err = exec.LookPath("pip")
+		if err != nil {
+			fmt.Println("pip is not installed")
+			pipPath = ""
+		}
+	}
+	log.Println(pipPath, "install", "-r", "requirements.txt")
+	if pipPath != "" {
+		pip := exec.Command(pipPath, "install", "-r", "requirements.txt") // #nosec
+		err := pip.Run()
+		if err != nil {
+			return err
+		}
 	}
 
 	ctx := context.Background()
@@ -96,13 +117,17 @@ func setup(auth types.AuthConfig) error {
 		return err
 	}
 
+	// pull docker images
 	for _, image := range []string{} {
+		log.Println("pull docker image", image)
 		err = pullImage(ctx, cli, image, auth)
 		if err != nil {
 			return err
 		}
 	}
 
+	// build docker files
+	log.Println("build dockerfiles")
 	return buildDockerfiles(ctx, cli, auth)
 }
 
@@ -112,43 +137,23 @@ func unpack() error {
 		return err
 	}
 
-	appDir := filepath.Join(configDir, "forensicstore") // TODO: appname
+	appDir := filepath.Join(configDir, appName)
 
 	_ = os.RemoveAll(appDir)
 
-	log.Printf("unpack to %s\n", appDir)
-
-	err = pkger.Walk("/config", func(path string, info os.FileInfo, err error) error {
+	for name, data := range assets.FS {
+		name = filepath.FromSlash(name)
+		dest := filepath.Join(appDir, name[1:])
+		log.Println("unpack", dest)
+		err = os.MkdirAll(filepath.Dir(dest), 0700)
 		if err != nil {
 			return err
 		}
-
-		parts := strings.SplitN(path, ":", 2)
-		if len(parts) != 2 {
-			return errors.New("could not split path")
-		}
-		unpackDir := parts[1][7:]
-
-		if info.IsDir() {
-			return os.MkdirAll(filepath.Join(appDir, unpackDir), 0700)
-		}
-
-		// Copy file
-		err = os.MkdirAll(filepath.Join(appDir, filepath.Dir(unpackDir)), 0700)
+		err = ioutil.WriteFile(dest, data, 0700)
 		if err != nil {
 			return err
 		}
-		srcFile, err := pkger.Open(path)
-		if err != nil {
-			return err
-		}
-		dstFile, err := os.OpenFile(filepath.Join(appDir, unpackDir), os.O_RDWR|os.O_CREATE, 0700) // #nosec
-		if err != nil {
-			return err
-		}
-		_, err = io.Copy(dstFile, srcFile)
-		return err
-	})
+	}
 
 	return err
 }
@@ -158,7 +163,7 @@ func buildDockerfiles(ctx context.Context, cli *client.Client, auth types.AuthCo
 	if err != nil {
 		return err
 	}
-	dockerDir := filepath.Join(configDir, "forensicstore", "docker") // TODO: appname
+	dockerDir := filepath.Join(configDir, appName, "docker")
 	infos, err := ioutil.ReadDir(dockerDir)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -200,7 +205,7 @@ func dockerfile(ctx context.Context, cli *client.Client, name, dir string, auth 
 		PullParent:     true,
 		Dockerfile:     "Dockerfile",
 		Context:        dockerFileTarReader,
-		Tags:           []string{"forensicstore-" + name}, // TODO: appname
+		Tags:           []string{appName + "-" + name},
 		AuthConfigs:    authConfigs,
 	}
 	imageBuildResponse, err := cli.ImageBuild(ctx, dockerFileTarReader, opt)
