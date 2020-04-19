@@ -83,7 +83,7 @@ func jsonLite(db gostore.Store, url string, filter daggy.Filter) (err error) {
 	// TODO: import items with "_path" on sublevel"…
 	// TODO: import does not need to unflatten and flatten
 
-	importStore, err := gojsonlite.New(url, "")
+	importStore, err := gojsonlite.New(url)
 	if err != nil {
 		return err
 	}
