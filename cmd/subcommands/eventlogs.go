@@ -26,6 +26,7 @@ package subcommands
 import (
 	"encoding/json"
 	"io"
+	"log"
 	"path"
 	"strings"
 
@@ -43,11 +44,12 @@ func init() {
 
 func Eventlogs() *cobra.Command {
 	var filtersets []string
-	cmd := &cobra.Command{
+	eventlogsCmd := &cobra.Command{
 		Use:   "eventlogs <forensicstore>...",
 		Short: "Process eventlogs into single events",
 		Args:  RequireStore,
-		RunE: func(_ *cobra.Command, args []string) error {
+		RunE: func(cmd *cobra.Command, args []string) error {
+			log.Println("run eventlogs", args)
 			filter := extractFilter(filtersets)
 
 			for _, url := range args {
@@ -62,6 +64,7 @@ func Eventlogs() *cobra.Command {
 					return err
 				}
 
+				var items []gostore.Item
 				for _, item := range fileItems {
 					if name, ok := getString(item, "name"); ok {
 						if strings.HasSuffix(name, ".evtx") {
@@ -71,20 +74,37 @@ func Eventlogs() *cobra.Command {
 									return err
 								}
 
-								err = getEvents(file, store)
+								events, err := getEvents(file)
 								if err != nil {
 									return err
 								}
+
+								items = append(items, events...)
 							}
 						}
 					}
 				}
+
+				config := &outputConfig{
+					Header: []string{
+						"System.Computer",
+						"System.TimeCreated.SystemTime",
+						"System.EventRecordID",
+						"System.EventID.Value",
+						"System.Level",
+						"System.Channel",
+						"System.Provider.Name",
+					},
+					Template: "", // TODO
+				}
+				printItem(cmd, config, items, store)
 			}
 			return nil
 		},
 	}
-	cmd.PersistentFlags().StringArrayVar(&filtersets, "filter", nil, "filter processed events")
-	return cmd
+	AddOutputFlags(eventlogsCmd)
+	eventlogsCmd.Flags().StringArrayVar(&filtersets, "filter", nil, "filter processed events")
+	return eventlogsCmd
 }
 
 func getString(item gostore.Item, key string) (string, bool) {
@@ -96,16 +116,18 @@ func getString(item gostore.Item, key string) (string, bool) {
 	return "", false
 }
 
-func getEvents(file io.ReadSeeker, store gostore.Store) error {
+func getEvents(file io.ReadSeeker) ([]gostore.Item, error) {
+	var items []gostore.Item
+
 	chunks, err := evtx.GetChunks(file)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	for _, chunk := range chunks {
 		records, err := chunk.Parse(int(chunk.Header.FirstEventRecID))
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		for _, i := range records {
@@ -121,22 +143,19 @@ func getEvents(file io.ReadSeeker, store gostore.Store) error {
 
 				serialized, err := json.MarshalIndent(event, " ", " ")
 				if err != nil {
-					return err
+					return nil, err
 				}
 
 				var item map[string]interface{}
 				err = json.Unmarshal(serialized, &item)
 				if err != nil {
-					return err
+					return nil, err
 				}
 
-				_, err = store.Insert(item)
-				if err != nil {
-					return err
-				}
+				items = append(items, item)
 			}
 		}
 	}
 
-	return nil
+	return items, nil
 }

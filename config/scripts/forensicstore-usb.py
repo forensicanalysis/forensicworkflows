@@ -19,7 +19,7 @@
 #  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 #  Author(s): Jonas Plum, Korbinian Karl
-
+import json
 import logging
 import sys
 
@@ -164,6 +164,10 @@ class USBForensicStoreExtractor:
 
 
 def main(args):
+    print(json.dumps({
+        "header": ["vendor_name", "product_name", "usb_revision", "usb_uid", "volume_guid", "user_sid"],
+        "template": ""
+    }))
     parser = storeutil.ScriptArgumentParser(
         'usb',
         description='Process windows usb artifacts',
@@ -179,7 +183,8 @@ def main(args):
         usb_usage_data = USBForensicStoreExtractor(store, args.filter).get_usb_usage_data()
         for result in usb_usage_data:
             result["type"] = "usb-device"
-            store.insert(result)
+            # store.insert(result)
+            print(json.dumps(result))
         store.close()
 
 

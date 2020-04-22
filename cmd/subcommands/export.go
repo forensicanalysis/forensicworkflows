@@ -24,26 +24,30 @@
 package subcommands
 
 import (
-	"encoding/json"
-	"os"
-
 	"github.com/spf13/cobra"
 
+	"github.com/forensicanalysis/forensicstore/goflatten"
 	"github.com/forensicanalysis/forensicstore/goforensicstore"
 )
 
 func init() {
-	Commands = append(Commands, JSONExport())
+	Commands = append(Commands, Export())
 }
 
-func JSONExport() *cobra.Command {
-	var file string
+func Export() *cobra.Command {
+	var itemType string
 	var filtersets []string
-	cmd := &cobra.Command{
-		Use:   "export-json <forensicstore>...",
-		Short: "Export json files",
-		Args:  RequireStore,
-		RunE: func(_ *cobra.Command, args []string) error {
+	outputCommand := &cobra.Command{
+		Use:   "export <forensicstore>...",
+		Short: "Export selected items",
+		Args: func(cmd *cobra.Command, args []string) error {
+			err := cmd.MarkFlagRequired("type")
+			if err != nil {
+				return err
+			}
+			return RequireStore(cmd, args)
+		},
+		RunE: func(rcmd *cobra.Command, args []string) error {
 			filter := extractFilter(filtersets)
 
 			for _, url := range args {
@@ -53,49 +57,33 @@ func JSONExport() *cobra.Command {
 				}
 				defer store.Close()
 
-				items, err := store.All()
+				items, err := store.Select(itemType, filter)
 				if err != nil {
 					return err
 				}
+				if len(items) == 0 {
+					continue
+				}
 
-				f, err := os.Create(file)
+				var header []string
+				flatItem, err := goflatten.Flatten(items[0])
 				if err != nil {
 					return err
 				}
-
-				_, err = f.WriteString("[\n")
-				if err != nil {
-					return err
+				for attribute := range flatItem {
+					header = append(header, attribute)
 				}
-
-				encoder := json.NewEncoder(f)
-				first := true
-				for _, item := range items {
-					if filter.Match(item) {
-						if !first {
-							_, err = f.WriteString(",\n")
-							if err != nil {
-								return err
-							}
-						} else {
-							first = false
-						}
-						err = encoder.Encode(item)
-						if err != nil {
-							return err
-						}
-					}
+				config := &outputConfig{
+					Header:   header,
+					Template: "", // TODO
 				}
-
-				_, err = f.WriteString("]\n")
-				if err != nil {
-					return err
-				}
+				printItem(rcmd, config, items, nil)
 			}
 			return nil
 		},
 	}
-	cmd.PersistentFlags().StringVar(&file, "file", "", "forensicstore")
-	cmd.PersistentFlags().StringArrayVar(&filtersets, "filter", nil, "filter processed events")
-	return cmd
+	AddOutputFlags(outputCommand)
+	outputCommand.Flags().StringArrayVar(&filtersets, "filter", nil, "filter processed events")
+	outputCommand.Flags().StringVar(&itemType, "type", "", "type")
+	return outputCommand
 }

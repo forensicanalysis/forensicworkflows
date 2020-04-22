@@ -65,7 +65,7 @@ teardown() {
 @test "run export-json (go)" {
   cp -r test/data/example1.forensicstore $TESTDIR/example3.forensicstore
   [ -f "$TESTDIR/example3.forensicstore/item.db" ]
-  run forensicworkflows run export-json --file $TESTDIR/export.json $TESTDIR/example3.forensicstore --debug
+  run forensicworkflows run export --format jsonl --type file --output $TESTDIR/export.json $TESTDIR/example3.forensicstore --debug
   echo $output
   [ "$status" -eq 0 ]
   [ -f "$TESTDIR/export.json" ]

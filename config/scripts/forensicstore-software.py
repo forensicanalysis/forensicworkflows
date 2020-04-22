@@ -23,7 +23,7 @@
 """
 This plugin parses the Windows Uninstaller registry keys for a list of installed software
 """
-
+import json
 import sys
 
 import forensicstore
@@ -68,13 +68,17 @@ def transform(obj):
 
 
 def main(args):
+    print(json.dumps({
+        "header": ["Name", "Version", "Publisher", "InstallDate",
+                   "Source", "Location", "Uninstall", "Key", "Key Timestamp"],
+        "template": ""}))
     parser = storeutil.ScriptArgumentParser(
         'software',
         description='Process uninstall entries',
         store_arg=True,
         filter_arg=True,
     )
-    args = parser.parse_args(args)
+    args, _ = parser.parse_known_args(args)
 
     for url in args.forensicstore:
         store = forensicstore.connect(url)
@@ -88,7 +92,8 @@ def main(args):
         for item in items:
             results = transform(item)
             for result in results:
-                store.insert(result)
+                # store.insert(result)
+                print(json.dumps(result))
         store.close()
 
 

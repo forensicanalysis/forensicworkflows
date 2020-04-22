@@ -19,13 +19,14 @@
 #
 #  Author(s): Jonas Plum
 
+import contextlib
 import importlib
+import io
 import os
 import shutil
 import sys
 import tempfile
 
-import forensicstore
 import pytest
 
 sys.path.append("config/scripts")
@@ -40,11 +41,10 @@ def data():
 
 
 def test_hotfixes(data):
-    hotfixes.main([os.path.join(data, "example1.forensicstore")])
+    with io.StringIO() as buf, contextlib.redirect_stdout(buf):
+        hotfixes.main([os.path.join(data, "example1.forensicstore")])
 
-    store = forensicstore.connect(os.path.join(data, "example1.forensicstore"))
-    items = list(store.select("hotfix"))
-    store.close()
-    assert len(items) == 14
+        lines = buf.getvalue().split("\n")
+        assert len(lines) == 14 + 2
 
     shutil.rmtree(data)

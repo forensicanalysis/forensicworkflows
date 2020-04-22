@@ -18,14 +18,14 @@
 #  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 #  Author(s): Jonas Plum
-
+import contextlib
 import importlib
+import io
 import os
 import shutil
 import sys
 import tempfile
 
-import forensicstore
 import pytest
 
 sys.path.append("config/scripts")
@@ -40,11 +40,10 @@ def data():
 
 
 def test_networking(data):
-    networking.main([os.path.join(data, "example1.forensicstore")])
+    with io.StringIO() as buf, contextlib.redirect_stdout(buf):
+        networking.main([os.path.join(data, "example1.forensicstore")])
 
-    store = forensicstore.connect(os.path.join(data, "example1.forensicstore"))
-    items = list(store.select("known_network"))
-    store.close()
-    assert len(items) == 9
+        lines = buf.getvalue().split("\n")
+        assert len(lines) == 9 + 2
 
     shutil.rmtree(data)

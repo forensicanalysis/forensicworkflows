@@ -19,7 +19,7 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 # Author(s): Jonas Plum
-
+import json
 import sys
 
 import forensicstore
@@ -43,13 +43,14 @@ def transform(items):
 
 
 def main(args):
+    print(json.dumps({"header": ["Name", "Command", "SID", "Key"], "template": ""}))
     parser = storeutil.ScriptArgumentParser(
         'run-keys',
         description='Process windows run keys',
         store_arg=True,
         filter_arg=True,
     )
-    args = parser.parse_args(args)
+    args, _ = parser.parse_known_args(args)
 
     for url in args.forensicstore:
         store = forensicstore.connect(url)
@@ -81,7 +82,8 @@ def main(args):
         items = store.select("windows-registry-key", combined_conditions)
         results = transform(items)
         for result in results:
-            store.insert(result)
+            # store.insert(result)
+            print(json.dumps(result))
         store.close()
 
 

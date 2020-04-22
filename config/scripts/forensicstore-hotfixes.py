@@ -23,7 +23,7 @@
 This plugin parses different registry entries for installed Hotfixes (patches) to the Windows system
 as well as to other software components
 """
-
+import json
 import logging
 import re
 import struct
@@ -129,13 +129,17 @@ def filetime_to_timestamp(filetime_64):
 
 
 def main(args):
+    print(json.dumps({
+        "header": ["Hotfix", "Installed", "Source", "Component"],
+        "template": ""
+    }))
     parser = storeutil.ScriptArgumentParser(
         'hotfixes',
         description='Process windows hotfixes',
         store_arg=True,
         filter_arg=True,
     )
-    args = parser.parse_args(args)
+    args, _ = parser.parse_known_args(args)
     for url in args.forensicstore:
         LOGGER.debug("search for hotfixes in %s", url)
         store = forensicstore.connect(url)
@@ -152,7 +156,8 @@ def main(args):
         for item in store.select("windows-registry-key", combined_conditions):
             results = transform(item)
             for result in results:
-                store.insert(result)
+                # store.insert(result)
+                print(json.dumps(result))
         store.close()
 
 

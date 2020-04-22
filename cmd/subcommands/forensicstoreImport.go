@@ -28,9 +28,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/spf13/cobra"
-
 	"github.com/imdario/mergo"
+	"github.com/spf13/cobra"
 
 	"github.com/forensicanalysis/forensicstore/goforensicstore"
 	"github.com/forensicanalysis/forensicstore/gojsonlite"
@@ -73,8 +72,9 @@ func ForensicStoreImport() *cobra.Command {
 			return nil
 		},
 	}
-	cmd.PersistentFlags().StringVar(&file, "file", "", "forensicstore")
-	cmd.PersistentFlags().StringArrayVar(&filtersets, "filter", nil, "filter processed events")
+	AddOutputFlags(cmd)
+	cmd.Flags().StringVar(&file, "file", "", "forensicstore")
+	cmd.Flags().StringArrayVar(&filtersets, "filter", nil, "filter processed events")
 	return cmd
 }
 

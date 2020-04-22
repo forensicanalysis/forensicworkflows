@@ -125,6 +125,7 @@ func main() {
 	}
 	rootCmd.AddCommand(cmd.Run(), cmd.Install(), cmd.Workflow())
 	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "show log messages")
+	_ = rootCmd.PersistentFlags().MarkHidden("debug")
 
 	err := rootCmd.Execute()
 	if err != nil {

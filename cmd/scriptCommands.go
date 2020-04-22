@@ -24,6 +24,7 @@
 package cmd
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -34,6 +35,8 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
+
+	"github.com/forensicanalysis/forensicworkflows/cmd/subcommands"
 )
 
 func scriptCommands() []*cobra.Command {
@@ -62,7 +65,7 @@ func scriptCommands() []*cobra.Command {
 }
 
 func scriptCommand(path string) *cobra.Command {
-	var cmd cobra.Command
+	cmd := &cobra.Command{}
 
 	out, err := ioutil.ReadFile(path + ".info") // #nosec
 	if err != nil {
@@ -73,7 +76,7 @@ func scriptCommand(path string) *cobra.Command {
 			log.Println(path, err)
 		}
 	} else {
-		err = json.Unmarshal(out, &cmd)
+		err = json.Unmarshal(out, cmd)
 		if err != nil {
 			log.Println(err)
 		}
@@ -83,20 +86,28 @@ func scriptCommand(path string) *cobra.Command {
 		cmd.Use = filepath.Base(path)
 	}
 	cmd.Short += " (script)"
+	cmd.Args = subcommands.RequireStore
 	cmd.RunE = func(cmd *cobra.Command, args []string) error {
-		shellCommand := strings.Join(append(
-			[]string{`"` + filepath.ToSlash(path) + `"`},
-			toCommandlineArgs(cmd.Flags(), args)...,
-		), " ")
+		log.Println("run", cmd.Name(), args)
+		for _, url := range args {
+			shellCommand := strings.Join(append(
+				[]string{`"` + filepath.ToSlash(path) + `"`},
+				toCommandlineArgs(cmd.Flags(), []string{filepath.ToSlash(url)})...,
+			), " ")
 
-		log.Println("sh", "-c", shellCommand)
+			log.Println("sh", "-c", shellCommand)
 
-		script := exec.Command("sh", "-c", shellCommand) // #nosec
-		script.Stdout = os.Stdout
-		script.Stderr = log.Writer()
-		err := script.Run()
-		if err != nil {
-			return fmt.Errorf("%s script failed with %s", cmd.Use, err)
+			buf := &bytes.Buffer{}
+
+			script := exec.Command("sh", "-c", shellCommand) // #nosec
+			script.Stdout = buf
+			script.Stderr = log.Writer()
+			err := script.Run()
+			if err != nil {
+				return fmt.Errorf("%s script failed with %s", cmd.Use, err)
+			}
+
+			subcommands.Print(buf, cmd, url)
 		}
 		return nil
 	}
@@ -104,5 +115,6 @@ func scriptCommand(path string) *cobra.Command {
 	cmd.SilenceUsage = true
 	cmd.SilenceErrors = true
 	cmd.SetHelpCommand(&cobra.Command{Use: "no-help", Hidden: true})
-	return &cmd
+	subcommands.AddOutputFlags(cmd)
+	return cmd
 }

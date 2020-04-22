@@ -31,12 +31,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/spf13/cobra"
-
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/client"
+	"github.com/spf13/cobra"
+
+	"github.com/forensicanalysis/forensicworkflows/cmd/subcommands"
 )
 
 func dockerCommands() []*cobra.Command {
@@ -52,6 +53,7 @@ func dockerCommands() []*cobra.Command {
 	options := types.ImageListOptions{All: true}
 	imageSummaries, err := cli.ImageList(timeoutCtx, options)
 	if err != nil {
+		log.Printf("could not list docker plugins: %s\n", err)
 		return nil
 	}
 
@@ -69,8 +71,6 @@ func dockerCommands() []*cobra.Command {
 }
 
 func dockerCommand(image string, labels map[string]string) *cobra.Command {
-	var dockerUser, dockerPassword, dockerServer string
-
 	name := image[len(appName)+1:]
 	parts := strings.Split(name, ":")
 	name = parts[0]
@@ -78,30 +78,49 @@ func dockerCommand(image string, labels map[string]string) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   name,
 		Short: "(docker: " + image + ")",
+		Args:  subcommands.RequireStore,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			var auth types.AuthConfig
-			auth.Username = dockerUser
-			auth.Password = dockerPassword
-			auth.ServerAddress = dockerServer
+			log.Println("run", cmd.Name(), args)
 
-			args = toCommandlineArgs(cmd.Flags(), args)
+			var mountPoints []string
+			if mountsList, ok := labels["mounts"]; ok {
+				mountPoints = strings.Split(mountsList, ",")
+			}
 
 			for _, url := range args {
-				mounts := map[string]string{
-					url: "store",
-				}
-				_, err := docker(image, args, auth, mounts)
+				abs, err := filepath.Abs(url)
 				if err != nil {
 					return err
 				}
+				mounts := map[string]string{
+					abs: "store",
+				}
+
+				for _, mountPoint := range mountPoints {
+					path, err := cmd.Flags().GetString(mountPoint)
+					if err != nil {
+						return err
+					}
+					abs, err := filepath.Abs(path)
+					if err != nil {
+						return err
+					}
+					mounts[abs] = mountPoint
+				}
+
+				args = toCommandlineArgs(cmd.Flags(), args)
+				out, err := docker(image, args, mounts)
+				if err != nil {
+					return err
+				}
+
+				subcommands.Print(out, cmd, url)
 			}
 			return nil
 		},
 	}
 	cmd.FParseErrWhitelist = cobra.FParseErrWhitelist{UnknownFlags: true}
-	cmd.PersistentFlags().StringVar(&dockerUser, "docker-user", "", "docker registry username")
-	cmd.PersistentFlags().StringVar(&dockerPassword, "docker-password", "", "docker registry password")
-	cmd.PersistentFlags().StringVar(&dockerServer, "docker-server", "", "docker registry server")
+	subcommands.AddOutputFlags(cmd)
 
 	if use, ok := labels["use"]; ok {
 		cmd.Use = use
@@ -113,7 +132,7 @@ func dockerCommand(image string, labels map[string]string) *cobra.Command {
 	return cmd
 }
 
-func docker(image string, args []string, auth types.AuthConfig, mountDirs map[string]string) (io.ReadCloser, error) {
+func docker(image string, args []string, mountDirs map[string]string) (io.ReadCloser, error) {
 	fmt.Println(image, args, mountDirs)
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
@@ -133,21 +152,26 @@ func docker(image string, args []string, auth types.AuthConfig, mountDirs map[st
 		} else if err != nil {
 			return nil, err
 		}
-
+	}
+	for localDir := range mountDirs {
 		if localDir[1] == ':' {
-			mountDirs[localDir] = "/" + strings.ToLower(string(localDir[0])) + filepath.ToSlash(localDir[2:])
+			mountDirs["/"+strings.ToLower(string(localDir[0]))+filepath.ToSlash(localDir[2:])] = mountDirs[localDir]
+			delete(mountDirs, localDir)
 		}
 	}
 
+	log.Println("mountDirs", mountDirs)
 	resp, err := createContainer(ctx, cli, image, args, mountDirs)
 	if err != nil {
 		return nil, err
 	}
 
+	log.Println("start docker container")
 	if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
 		return nil, err
 	}
 
+	log.Println("wait for docker container")
 	statusChannel, errChannel := cli.ContainerWait(ctx, resp.ID, container.WaitConditionNotRunning)
 	select {
 	case err := <-errChannel:
@@ -157,14 +181,18 @@ func docker(image string, args []string, auth types.AuthConfig, mountDirs map[st
 	case <-statusChannel:
 	}
 
-	out, err := cli.ContainerLogs(ctx, resp.ID, types.ContainerLogsOptions{ShowStdout: true})
+	log.Println("get docker container logs")
+	out, err := cli.ContainerLogs(ctx, resp.ID, types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true})
 	if err != nil {
 		return nil, err
 	}
+	// defer out.Close()
 
-	// stdcopy.StdCopy(os.Stdout, os.Stderr, out)
-	// _, err = ioutil.ReadAll(out)
-	// _, err = io.Copy(log.Writer(), out)
+	// _, err =
+	//stdcopy.StdCopy(os.Stdout, os.Stderr, out)
+	/*if err != nil {*/
+	// _, err = io.Copy(os.Stdout, out)
+	/*}*/
 	return out, err
 }
 

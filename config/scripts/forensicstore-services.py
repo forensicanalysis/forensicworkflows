@@ -21,7 +21,7 @@
 # Author(s): Demian Kellermann
 
 """ Windows services plugin """
-
+import json
 import sys
 
 import forensicstore
@@ -121,13 +121,18 @@ def _servicetype_from_bitmask(mask):
 
 
 def main(args):
+    print(json.dumps({
+        "header": ['Name', 'Description', 'DisplayName', 'Group', 'Start Mode',
+                   'Service Type', 'ImagePath', 'Service DLL',
+                   'Service Key Changed', 'Parameters Key Changed', 'Source Key'],
+        "template": ""}))
     parser = storeutil.ScriptArgumentParser(
         'services',
         description='Process windows services',
         store_arg=True,
         filter_arg=True,
     )
-    args = parser.parse_args(args)
+    args, _ = parser.parse_known_args(args)
 
     for url in args.forensicstore:
         store = forensicstore.connect(url)
@@ -136,7 +141,8 @@ def main(args):
         items = list(store.select("windows-registry-key", combined_conditions))
         results = transform(items)
         for result in results:
-            store.insert(result)
+            # store.insert(result)
+            print(json.dumps(result))
         store.close()
 
 

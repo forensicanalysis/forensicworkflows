@@ -19,7 +19,7 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 # Author(s): Demian Kellermann
-
+import json
 import sys
 
 import forensicstore
@@ -95,13 +95,18 @@ def transform(objs):
 
 
 def main(args):
+    print(json.dumps({
+        "header": ["GUID", "DHCP", "IPs", "SubNetMask", "NameServer",
+                   "IP Key Changed", "Network Key Changed", "Friendly Name"],
+        "template": ""
+    }))
     parser = storeutil.ScriptArgumentParser(
         'networking',
         description='Process windows network interfaces',
         store_arg=True,
         filter_arg=True,
     )
-    args = parser.parse_args(args)
+    args, _ = parser.parse_known_args(args)
 
     for url in args.forensicstore:
         store = forensicstore.connect(url)
@@ -112,7 +117,8 @@ def main(args):
         combined_conditions = storeutil.merge_conditions(args.filter, conditions)
         items = store.select("windows-registry-key", combined_conditions)
         for result in transform(items):
-            store.insert(result)
+            # store.insert(result)
+            print(json.dumps(result))
         store.close()
 
 

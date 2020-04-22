@@ -80,9 +80,9 @@ func Install() *cobra.Command {
 		},
 	}
 	cmd.Flags().BoolVarP(&force, "force", "f", false, "workflow definition file")
-	cmd.PersistentFlags().StringVar(&dockerUser, "docker-user", "", "docker registry username")
-	cmd.PersistentFlags().StringVar(&dockerPassword, "docker-password", "", "docker registry password")
-	cmd.PersistentFlags().StringVar(&dockerServer, "docker-server", "", "docker registry server")
+	cmd.Flags().StringVar(&dockerUser, "docker-user", "", "docker registry username")
+	cmd.Flags().StringVar(&dockerPassword, "docker-password", "", "docker registry password")
+	cmd.Flags().StringVar(&dockerServer, "docker-server", "", "docker registry server")
 	return cmd
 }
 

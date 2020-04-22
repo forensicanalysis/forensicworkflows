@@ -25,12 +25,12 @@ package subcommands
 
 import (
 	"strings"
-	"time"
 
 	"github.com/spf13/cobra"
 	"www.velocidex.com/golang/go-prefetch"
 
 	"github.com/forensicanalysis/forensicstore/goforensicstore"
+	"github.com/forensicanalysis/forensicstore/gostore"
 )
 
 func init() {
@@ -39,11 +39,11 @@ func init() {
 
 func Prefetch() *cobra.Command {
 	var filtersets []string
-	cmd := &cobra.Command{
+	prefetchCommand := &cobra.Command{
 		Use:   "prefetch <forensicstore>...",
 		Short: "Process prefetch files",
 		Args:  RequireStore,
-		RunE: func(c *cobra.Command, args []string) error {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			filter := extractFilter(filtersets)
 
 			for _, url := range args {
@@ -58,6 +58,7 @@ func Prefetch() *cobra.Command {
 					return err
 				}
 
+				var items []gostore.Item
 				for _, item := range fileItems {
 					if name, ok := item["name"]; ok {
 						if name, ok := name.(string); ok {
@@ -75,39 +76,42 @@ func Prefetch() *cobra.Command {
 											return err
 										}
 
-										_, err = store.InsertStruct(struct {
-											Executable    string
-											FileSize      uint32
-											Hash          string
-											Version       string
-											LastRunTimes  []time.Time
-											FilesAccessed []string
-											RunCount      uint32
-											Type          string
-										}{
-											prefetchInfo.Executable,
-											prefetchInfo.FileSize,
-											prefetchInfo.Hash,
-											prefetchInfo.Version,
-											prefetchInfo.LastRunTimes,
-											prefetchInfo.FilesAccessed,
-											prefetchInfo.RunCount,
-											"prefetch",
+										items = append(items, gostore.Item{
+											"Executable":    prefetchInfo.Executable,
+											"FileSize":      prefetchInfo.FileSize,
+											"Hash":          prefetchInfo.Hash,
+											"Version":       prefetchInfo.Version,
+											"LastRunTimes":  prefetchInfo.LastRunTimes,
+											"FilesAccessed": prefetchInfo.FilesAccessed,
+											"RunCount":      prefetchInfo.RunCount,
+											"type":          "prefetch",
 										})
-										if err != nil {
-											return err
-										}
 									}
 								}
 							}
 						}
 					}
 				}
+
+				config := &outputConfig{
+					Header: []string{
+						"Executable",
+						"FileSize",
+						"Hash",
+						"Version",
+						"LastRunTimes",
+						"FilesAccessed",
+						"RunCount",
+					},
+					Template: "",
+				}
+				printItem(cmd, config, items, store)
 			}
 
 			return nil
 		},
 	}
-	cmd.PersistentFlags().StringArrayVar(&filtersets, "filter", nil, "filter processed events")
-	return cmd
+	AddOutputFlags(prefetchCommand)
+	prefetchCommand.Flags().StringArrayVar(&filtersets, "filter", nil, "filter processed events")
+	return prefetchCommand
 }

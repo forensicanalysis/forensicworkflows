@@ -57,8 +57,11 @@ func TestJSONImportPlugin_Run(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			command := JSONImport()
+
+			command.Flags().Set("format", "none")
+			command.Flags().Set("add-to-store", "true")
 			command.SetArgs(append(tt.args.args, tt.args.url))
-			err := command.Execute()
+			err = command.Execute()
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Run() error = %v, wantErr %v", err, tt.wantErr)

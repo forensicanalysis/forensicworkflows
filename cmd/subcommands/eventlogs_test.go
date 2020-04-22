@@ -57,24 +57,32 @@ func TestEventlogsPlugin_Run(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			command := Eventlogs()
+
+			command.Flags().Set("format", "none")
+			command.Flags().Set("add-to-store", "true")
 			command.SetArgs(append(tt.args.args, tt.args.url))
-			err := command.Execute()
+			err = command.Execute()
 
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Run() error = %v, wantErr %v", err, tt.wantErr)
+				t.Fatalf("Run() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
 			store, err := goforensicstore.NewJSONLite(tt.args.url)
 			if err != nil {
-				t.Errorf("goforensicstore.NewJSONLite() error = %v, wantErr %v", err, tt.wantErr)
+				t.Fatalf("goforensicstore.NewJSONLite() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			defer store.Close()
+
 			items, err := store.Select("eventlog", nil)
 			if err != nil {
-				t.Errorf("store.Select() error = %v, wantErr %v", err, tt.wantErr)
+				t.Fatalf("store.Select() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			if len(items) != tt.wantCount {
-				t.Errorf("len(items) = %v, wantCount %v", len(items), tt.wantCount)
+				t.Fatalf("len(items) = %v, wantCount %v", len(items), tt.wantCount)
+			}
+
+			err = store.Close()
+			if err != nil {
+				t.Fatal(err)
 			}
 		})
 	}

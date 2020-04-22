@@ -85,24 +85,28 @@ func (workflow *Workflow) Run(storeDir string, plugins map[string]*cobra.Command
 }
 
 func (workflow *Workflow) runTask(plugin *cobra.Command, task Task, storeDir string) error {
-	args := []string{}
+	var args []string
 	for flag, value := range task.Arguments {
 		args = append(args, toCmdline(flag, value)...)
 	}
 	args = append(args, storeDir)
 
-	// plugin.ParseFlags(args)
+	err := plugin.ParseFlags(args)
+	if err != nil {
+		return err
+	}
+
 	// plugin.SetArgs(args)
 	if plugin.RunE == nil {
 		return fmt.Errorf("plugin %s cannot be run", plugin.Name())
 	}
-	return plugin.RunE(plugin, args)
+	return plugin.RunE(plugin, plugin.Flags().Args())
 }
 
 func toCmdline(name string, i interface{}) []string {
 	switch reflect.TypeOf(i).Kind() {
 	case reflect.Slice:
-		s := []string{}
+		var s []string
 		v := reflect.ValueOf(i)
 		for i := 0; i < v.Len(); i++ {
 			s = append(s, "--"+name, toCmdline2(v.Index(i)))

@@ -28,6 +28,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
+	"github.com/forensicanalysis/forensicworkflows/cmd/subcommands"
 	"github.com/forensicanalysis/forensicworkflows/daggy"
 )
 
@@ -39,19 +40,15 @@ func Workflow() *cobra.Command {
 		Long: `process can run parallel workflows locally. Those workflows are a directed acyclic graph of tasks.
 Those tasks can be defined to be run on the system itself or in a containerized way.`,
 		Args: func(cmd *cobra.Command, args []string) error {
-			if len(args) < 1 {
-				return errors.New("requires at least one store")
-			}
-			for _, arg := range args {
-				if _, err := os.Stat(arg); os.IsNotExist(err) {
-					return errors.Wrap(os.ErrNotExist, arg)
-				}
+			err := subcommands.RequireStore(cmd, args)
+			if err != nil {
+				return err
 			}
 			return cmd.MarkFlagRequired("workflow")
 		},
 		Run: func(cmd *cobra.Command, args []string) {
 			// parse workflow yaml
-			workflowFile := cmd.Flags().Lookup("workflow").Value.String()
+			workflowFile, _ := cmd.Flags().GetString("workflow")
 			if _, err := os.Stat(workflowFile); os.IsNotExist(err) {
 				log.Fatal(errors.Wrap(os.ErrNotExist, workflowFile))
 			}
