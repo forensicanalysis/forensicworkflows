@@ -24,18 +24,18 @@
 package subcommands
 
 import (
+	"log"
 	"strings"
 
-	"github.com/spf13/cobra"
 	"www.velocidex.com/golang/go-prefetch"
+
+	"github.com/forensicanalysis/forensicworkflows/daggy"
+
+	"github.com/spf13/cobra"
 
 	"github.com/forensicanalysis/forensicstore/goforensicstore"
 	"github.com/forensicanalysis/forensicstore/gostore"
 )
-
-func init() {
-	Commands = append(Commands, Prefetch())
-}
 
 func Prefetch() *cobra.Command {
 	var filtersets []string
@@ -44,68 +44,14 @@ func Prefetch() *cobra.Command {
 		Short: "Process prefetch files",
 		Args:  RequireStore,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			log.Printf("run prefetch %s", args)
 			filter := extractFilter(filtersets)
 
 			for _, url := range args {
-				store, err := goforensicstore.NewJSONLite(url)
+				err := prefetchFromStore(url, filter, cmd)
 				if err != nil {
 					return err
 				}
-				defer store.Close()
-
-				fileItems, err := store.Select("file", filter)
-				if err != nil {
-					return err
-				}
-
-				var items []gostore.Item
-				for _, item := range fileItems {
-					if name, ok := item["name"]; ok {
-						if name, ok := name.(string); ok {
-							if strings.HasSuffix(name, ".pf") {
-								if exportPath, ok := item["export_path"]; ok {
-									if exportPath, ok := exportPath.(string); ok {
-										file, err := store.LoadFile(exportPath)
-										if err != nil {
-											return err
-										}
-
-										prefetchInfo, err := prefetch.LoadPrefetch(file)
-										file.Close()
-										if err != nil {
-											return err
-										}
-
-										items = append(items, gostore.Item{
-											"Executable":    prefetchInfo.Executable,
-											"FileSize":      prefetchInfo.FileSize,
-											"Hash":          prefetchInfo.Hash,
-											"Version":       prefetchInfo.Version,
-											"LastRunTimes":  prefetchInfo.LastRunTimes,
-											"FilesAccessed": prefetchInfo.FilesAccessed,
-											"RunCount":      prefetchInfo.RunCount,
-											"type":          "prefetch",
-										})
-									}
-								}
-							}
-						}
-					}
-				}
-
-				config := &outputConfig{
-					Header: []string{
-						"Executable",
-						"FileSize",
-						"Hash",
-						"Version",
-						"LastRunTimes",
-						"FilesAccessed",
-						"RunCount",
-					},
-					Template: "",
-				}
-				printItem(cmd, config, items, store)
 			}
 
 			return nil
@@ -114,4 +60,61 @@ func Prefetch() *cobra.Command {
 	AddOutputFlags(prefetchCommand)
 	prefetchCommand.Flags().StringArrayVar(&filtersets, "filter", nil, "filter processed events")
 	return prefetchCommand
+}
+
+func prefetchFromStore(url string, filter daggy.Filter, cmd *cobra.Command) error {
+	store, err := goforensicstore.NewJSONLite(url)
+	if err != nil {
+		return err
+	}
+	defer store.Close()
+
+	fileItems, err := store.Select("file", filter)
+	if err != nil {
+		return err
+	}
+
+	var items []gostore.Item
+	for _, item := range fileItems {
+		name, hasName := getString(item, "name")
+		exportPath, hasExportPath := getString(item, "export_path")
+		if hasName && strings.HasSuffix(name, ".pf") && hasExportPath {
+			file, err := store.LoadFile(exportPath)
+			if err != nil {
+				return err
+			}
+
+			prefetchInfo, err := prefetch.LoadPrefetch(file)
+			file.Close()
+			if err != nil {
+				return err
+			}
+
+			items = append(items, gostore.Item{
+				"Executable":    prefetchInfo.Executable,
+				"FileSize":      prefetchInfo.FileSize,
+				"Hash":          prefetchInfo.Hash,
+				"Version":       prefetchInfo.Version,
+				"LastRunTimes":  prefetchInfo.LastRunTimes,
+				"FilesAccessed": prefetchInfo.FilesAccessed,
+				"RunCount":      prefetchInfo.RunCount,
+				"type":          "prefetch",
+			})
+		}
+	}
+
+	config := &outputConfig{
+		Header: []string{
+			"Executable",
+			"FileSize",
+			"Hash",
+			"Version",
+			"LastRunTimes",
+			"FilesAccessed",
+			"RunCount",
+		},
+		Template: "",
+	}
+	printItem(cmd, config, items, store)
+	return nil
 }

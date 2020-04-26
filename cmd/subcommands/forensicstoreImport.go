@@ -37,10 +37,6 @@ import (
 	"github.com/forensicanalysis/forensicworkflows/daggy"
 )
 
-func init() {
-	Commands = append(Commands, ForensicStoreImport())
-}
-
 func ForensicStoreImport() *cobra.Command {
 	var file string
 	var filtersets []string

@@ -57,7 +57,8 @@ func scriptCommands() []*cobra.Command {
 
 	var commands []*cobra.Command
 	for _, info := range infos {
-		if info.Mode().IsRegular() && strings.HasPrefix(info.Name(), appName+"-") && !strings.HasSuffix(info.Name(), ".info") {
+		validName := strings.HasPrefix(info.Name(), appName+"-") && !strings.HasSuffix(info.Name(), ".info")
+		if info.Mode().IsRegular() && validName {
 			commands = append(commands, scriptCommand(filepath.Join(scriptDir, info.Name())))
 		}
 	}
@@ -70,8 +71,7 @@ func scriptCommand(path string) *cobra.Command {
 	out, err := ioutil.ReadFile(path + ".info") // #nosec
 	if err != nil {
 		if os.IsNotExist(err) {
-			// TODO: info file not exists
-			log.Println(path, err)
+			log.Println(path + ".info does not exist")
 		} else {
 			log.Println(path, err)
 		}
@@ -88,7 +88,7 @@ func scriptCommand(path string) *cobra.Command {
 	cmd.Short += " (script)"
 	cmd.Args = subcommands.RequireStore
 	cmd.RunE = func(cmd *cobra.Command, args []string) error {
-		log.Println("run", cmd.Name(), args)
+		log.Printf("run %s %s", cmd.Name(), args)
 		for _, url := range args {
 			shellCommand := strings.Join(append(
 				[]string{`"` + filepath.ToSlash(path) + `"`},

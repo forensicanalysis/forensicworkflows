@@ -30,10 +30,6 @@ import (
 	"github.com/forensicanalysis/forensicstore/goforensicstore"
 )
 
-func init() {
-	Commands = append(Commands, Export())
-}
-
 func Export() *cobra.Command {
 	var itemType string
 	var filtersets []string

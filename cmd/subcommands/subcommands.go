@@ -27,6 +27,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/forensicanalysis/forensicstore/gostore"
+
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -51,7 +53,7 @@ func extractFilter(filtersets []string) daggy.Filter {
 		filterelement := map[string]string{}
 		for _, kv := range strings.Split(filterset, ",") {
 			kvl := strings.SplitN(kv, "=", 2)
-			if len(kvl) == 2 {
+			if len(kvl) == 2 { //nolint: gomnd
 				filterelement[kvl[0]] = kvl[1]
 			}
 		}
@@ -59,4 +61,13 @@ func extractFilter(filtersets []string) daggy.Filter {
 		filter = append(filter, filterelement)
 	}
 	return filter
+}
+
+func getString(item gostore.Item, key string) (string, bool) {
+	if name, ok := item[key]; ok {
+		if name, ok := name.(string); ok {
+			return name, true
+		}
+	}
+	return "", false
 }

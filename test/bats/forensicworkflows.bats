@@ -57,7 +57,7 @@ teardown() {
 @test "process workflow" {
   cp -r test/data/example1.forensicstore $TESTDIR/example2.forensicstore
   [ -f "$TESTDIR/example2.forensicstore/item.db" ]
-  run forensicworkflows workflow --workflow workflow.yml $TESTDIR/example2.forensicstore --debug
+  run forensicworkflows workflow --file default.yml $TESTDIR/example2.forensicstore --debug
   echo $output
   [ "$status" -eq 0 ]
 }

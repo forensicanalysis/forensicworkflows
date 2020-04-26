@@ -100,31 +100,22 @@ import (
 //go:generate go mod tidy
 
 func main() {
-	var debug bool
+	var debugLog bool
 
 	rootCmd := cobra.Command{
 		Use:                "forensicworkflows",
 		FParseErrWhitelist: cobra.FParseErrWhitelist{UnknownFlags: true},
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
-			if debug {
+			if debugLog {
 				log.SetFlags(log.LstdFlags | log.LUTC | log.Lshortfile)
-				log.Println("debug mode enabled")
-				/*
-					logfile, logfileError := os.OpenFile("my.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0600)
-					if logfileError != nil {
-						log.Printf("Could not open logfile %s\n", logfileError)
-					} else {
-						log.SetOutput(logfile)
-						defer logfile.Close()
-					}
-				*/
+				log.Println("debugLog mode enabled")
 			} else {
 				log.SetOutput(ioutil.Discard)
 			}
 		},
 	}
 	rootCmd.AddCommand(cmd.Run(), cmd.Install(), cmd.Workflow())
-	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "show log messages")
+	rootCmd.PersistentFlags().BoolVar(&debugLog, "debug", false, "show log messages")
 	_ = rootCmd.PersistentFlags().MarkHidden("debug")
 
 	err := rootCmd.Execute()

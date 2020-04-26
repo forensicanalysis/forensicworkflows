@@ -34,10 +34,6 @@ import (
 	"github.com/forensicanalysis/forensicstore/gojsonlite"
 )
 
-func init() {
-	Commands = append(Commands, JSONImport())
-}
-
 func JSONImport() *cobra.Command {
 	var file, itemType string
 	var filtersets []string

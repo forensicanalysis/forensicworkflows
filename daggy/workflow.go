@@ -32,14 +32,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// A Task is a single element in a workflow.yml file.
+// A Task is a single element in a workflow yml file.
 type Task struct {
 	Command   string                 `yaml:"command"`
 	Arguments map[string]interface{} `yaml:"arguments"`
 	Requires  []string               `yaml:"requires"`
 }
 
-// Workflow can be used to parse workflow.yml files.
+// Workflow can be used to parse workflow yml files.
 type Workflow struct {
 	Tasks map[string]Task `yaml:"tasks"`
 	graph *dag.AcyclicGraph

@@ -32,7 +32,7 @@ import (
 	"github.com/forensicanalysis/forensicworkflows/daggy"
 )
 
-// Workflow is a subcommand to run a forensic worklow
+// Workflow is a subcommand to run a forensic workflow.
 func Workflow() *cobra.Command {
 	workflowCmd := &cobra.Command{
 		Use:   "workflow",
@@ -44,11 +44,11 @@ Those tasks can be defined to be run on the system itself or in a containerized 
 			if err != nil {
 				return err
 			}
-			return cmd.MarkFlagRequired("workflow")
+			return cmd.MarkFlagRequired("file")
 		},
 		Run: func(cmd *cobra.Command, args []string) {
 			// parse workflow yaml
-			workflowFile, _ := cmd.Flags().GetString("workflow")
+			workflowFile, _ := cmd.Flags().GetString("file")
 			if _, err := os.Stat(workflowFile); os.IsNotExist(err) {
 				log.Fatal(errors.Wrap(os.ErrNotExist, workflowFile))
 			}
@@ -71,6 +71,6 @@ Those tasks can be defined to be run on the system itself or in a containerized 
 			}
 		},
 	}
-	workflowCmd.Flags().String("workflow", "", "workflow definition file")
+	workflowCmd.Flags().StringP("file", "f", "", "workflow definition file")
 	return workflowCmd
 }

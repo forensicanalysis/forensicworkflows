@@ -23,9 +23,15 @@
 
 package subcommands
 
-import (
-	"github.com/spf13/cobra"
-)
+import "github.com/spf13/cobra"
 
-// Commands is a map of all implemented commands.
-var Commands []*cobra.Command
+// Commands returns a map of all implemented commands.
+func Commands() []*cobra.Command {
+	return []*cobra.Command{
+		Eventlogs(),
+		Export(),
+		ForensicStoreImport(),
+		JSONImport(),
+		Prefetch(),
+	}
+}

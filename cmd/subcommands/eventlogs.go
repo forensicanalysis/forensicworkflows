@@ -30,6 +30,8 @@ import (
 	"path"
 	"strings"
 
+	"github.com/forensicanalysis/forensicworkflows/daggy"
+
 	"github.com/Velocidex/ordereddict"
 	"github.com/spf13/cobra"
 	"www.velocidex.com/golang/evtx"
@@ -38,10 +40,6 @@ import (
 	"github.com/forensicanalysis/forensicstore/gostore"
 )
 
-func init() {
-	Commands = append(Commands, Eventlogs())
-}
-
 func Eventlogs() *cobra.Command {
 	var filtersets []string
 	eventlogsCmd := &cobra.Command{
@@ -49,55 +47,14 @@ func Eventlogs() *cobra.Command {
 		Short: "Process eventlogs into single events",
 		Args:  RequireStore,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			log.Println("run eventlogs", args)
+			log.Printf("run eventlogs %s", args)
 			filter := extractFilter(filtersets)
 
 			for _, url := range args {
-				store, err := goforensicstore.NewJSONLite(url)
+				err := eventlogsFromStore(url, filter, cmd)
 				if err != nil {
 					return err
 				}
-				defer store.Close()
-
-				fileItems, err := store.Select("file", filter)
-				if err != nil {
-					return err
-				}
-
-				var items []gostore.Item
-				for _, item := range fileItems {
-					if name, ok := getString(item, "name"); ok {
-						if strings.HasSuffix(name, ".evtx") {
-							if exportPath, ok := getString(item, "export_path"); ok {
-								file, err := store.Open(path.Join(url, exportPath))
-								if err != nil {
-									return err
-								}
-
-								events, err := getEvents(file)
-								if err != nil {
-									return err
-								}
-
-								items = append(items, events...)
-							}
-						}
-					}
-				}
-
-				config := &outputConfig{
-					Header: []string{
-						"System.Computer",
-						"System.TimeCreated.SystemTime",
-						"System.EventRecordID",
-						"System.EventID.Value",
-						"System.Level",
-						"System.Channel",
-						"System.Provider.Name",
-					},
-					Template: "", // TODO
-				}
-				printItem(cmd, config, items, store)
 			}
 			return nil
 		},
@@ -107,13 +64,51 @@ func Eventlogs() *cobra.Command {
 	return eventlogsCmd
 }
 
-func getString(item gostore.Item, key string) (string, bool) {
-	if name, ok := item[key]; ok {
-		if name, ok := name.(string); ok {
-			return name, true
+func eventlogsFromStore(url string, filter daggy.Filter, cmd *cobra.Command) error {
+	store, err := goforensicstore.NewJSONLite(url)
+	if err != nil {
+		return err
+	}
+	defer store.Close()
+
+	fileItems, err := store.Select("file", filter)
+	if err != nil {
+		return err
+	}
+
+	var items []gostore.Item
+	for _, item := range fileItems {
+		name, hasName := getString(item, "name")
+		exportPath, hasExportPath := getString(item, "export_path")
+		if hasName && strings.HasSuffix(name, ".evtx") && hasExportPath {
+			file, err := store.Open(path.Join(url, exportPath))
+			if err != nil {
+				return err
+			}
+
+			events, err := getEvents(file)
+			if err != nil {
+				return err
+			}
+
+			items = append(items, events...)
 		}
 	}
-	return "", false
+
+	config := &outputConfig{
+		Header: []string{
+			"System.Computer",
+			"System.TimeCreated.SystemTime",
+			"System.EventRecordID",
+			"System.EventID.Value",
+			"System.Level",
+			"System.Channel",
+			"System.Provider.Name",
+		},
+		Template: "", // TODO
+	}
+	printItem(cmd, config, items, store)
+	return nil
 }
 
 func getEvents(file io.ReadSeeker) ([]gostore.Item, error) {

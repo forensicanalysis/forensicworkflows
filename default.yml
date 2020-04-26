@@ -7,70 +7,45 @@ tasks:
 
   networking:
     command: networking
-    requires: [hotfixes]
     arguments:
       format: table
       output: networking.txt
 
   run_keys:
     command: run-keys
-    requires: [networking]
     arguments:
       format: table
       output: run-keys.txt
 
   services:
     command: services
-    requires: [run_keys]
     arguments:
       format: table
       output: services.txt
 
   software:
     command: software
-    requires: [services]
     arguments:
       format: table
       output: software.txt
 
   prefetch:
     command: prefetch
-    requires: [software]
     arguments:
       format: table
       output: prefetch.txt
 
   usb:
     command: usb
-    requires: [prefetch]
     arguments:
       format: table
       output: usb.txt
 
   eventlogs:
     command: eventlogs
-    requires: [usb]
     arguments:
       format: table
       output: eventlogs.txt
 
-#  prefetch_report:
-#    command: report
-#    arguments:
-#      filter:
-#        - type: prefetch
-#      template: prefetch.tmpl.j2
-#    requires: [prefetch]
-
-#  autoruns_csv:
-#    command: csv
-#    # arguments: runkey Name Command SID
-#    arguments:
-#      filter:
-#        - type: file
-#          name: test.foo
-#        - type: registry
-#    requires: [run_keys]
-
-#  shimcache:
-#    command: shimcache
+# plaso
+# shimcache

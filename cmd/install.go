@@ -41,7 +41,7 @@ import (
 	"github.com/forensicanalysis/forensicworkflows/assets"
 )
 
-// Install required assets
+// Install required assets.
 func Install() *cobra.Command {
 	var force bool
 	var dockerUser, dockerPassword, dockerServer string

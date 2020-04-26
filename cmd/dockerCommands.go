@@ -140,28 +140,19 @@ func docker(image string, args []string, mountDirs map[string]string) (io.ReadCl
 		return nil, err
 	}
 
-	for localDir := range mountDirs {
-		// create directory if not exists
-		_, err = os.Open(localDir) // #nosec
-		if os.IsNotExist(err) {
-			log.Println("creating directory", localDir)
-			err = os.MkdirAll(localDir, os.ModePerm)
-			if err != nil {
-				return nil, err
-			}
-		} else if err != nil {
-			return nil, err
-		}
-	}
-	for localDir := range mountDirs {
-		if localDir[1] == ':' {
-			mountDirs["/"+strings.ToLower(string(localDir[0]))+filepath.ToSlash(localDir[2:])] = mountDirs[localDir]
-			delete(mountDirs, localDir)
-		}
+	mounts, err := getMounts(mountDirs)
+	if err != nil {
+		return nil, err
 	}
 
-	log.Println("mountDirs", mountDirs)
-	resp, err := createContainer(ctx, cli, image, args, mountDirs)
+	resp, err := cli.ContainerCreate(
+		ctx,
+		&container.Config{Image: image, Cmd: args, Tty: true, WorkingDir: "/store"},
+		&container.HostConfig{Mounts: mounts}, // , AutoRemove: true
+		nil,
+		"",
+	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -186,20 +177,29 @@ func docker(image string, args []string, mountDirs map[string]string) (io.ReadCl
 	if err != nil {
 		return nil, err
 	}
-	// defer out.Close()
 
-	// _, err =
-	//stdcopy.StdCopy(os.Stdout, os.Stderr, out)
-	/*if err != nil {*/
-	// _, err = io.Copy(os.Stdout, out)
-	/*}*/
 	return out, err
 }
 
-func createContainer(ctx context.Context, cli *client.Client, image string, args []string, mountDirs map[string]string) (container.ContainerCreateCreatedBody, error) {
-	var mounts []mount.Mount
-	for localDir, containerDir := range mountDirs {
-		mounts = append(mounts, mount.Mount{Type: mount.TypeBind, Source: localDir, Target: "/" + containerDir})
+func getMounts(mountDirs map[string]string) ([]mount.Mount, error) {
+	for localDir := range mountDirs {
+		// create directory if not exists
+		_, err := os.Open(localDir) // #nosec
+		if os.IsNotExist(err) {
+			log.Println("creating directory", localDir)
+			err = os.MkdirAll(localDir, os.ModePerm)
+			if err != nil {
+				return nil, err
+			}
+		} else if err != nil {
+			return nil, err
+		}
+	}
+	for localDir := range mountDirs {
+		if localDir[1] == ':' {
+			mountDirs["/"+strings.ToLower(string(localDir[0]))+filepath.ToSlash(localDir[2:])] = mountDirs[localDir]
+			delete(mountDirs, localDir)
+		}
 	}
 
 	/*
@@ -215,11 +215,9 @@ func createContainer(ctx context.Context, cli *client.Client, image string, args
 		}
 	*/
 
-	return cli.ContainerCreate(
-		ctx,
-		&container.Config{Image: image, Cmd: args, Tty: true, WorkingDir: "/store"},
-		&container.HostConfig{Mounts: mounts}, // , AutoRemove: true
-		nil,
-		"",
-	)
+	var mounts []mount.Mount
+	for localDir, containerDir := range mountDirs {
+		mounts = append(mounts, mount.Mount{Type: mount.TypeBind, Source: localDir, Target: "/" + containerDir})
+	}
+	return mounts, nil
 }
