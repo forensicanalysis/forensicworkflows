@@ -28,7 +28,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/forensicanalysis/forensicstore/goforensicstore"
+	"github.com/forensicanalysis/forensicstore"
+	"github.com/forensicanalysis/forensicworkflows/daggy"
 )
 
 func TestJSONImportPlugin_Run(t *testing.T) {
@@ -52,7 +53,7 @@ func TestJSONImportPlugin_Run(t *testing.T) {
 		wantCount int
 		wantErr   bool
 	}{
-		{"json", args{example, []string{"--type", "import", "--file", filepath.Join(storeDir, "import.json")}}, 1, false},
+		{"json", args{example, []string{"--file", filepath.Join(storeDir, "import.json")}}, 1, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -66,19 +67,19 @@ func TestJSONImportPlugin_Run(t *testing.T) {
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Run() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			store, err := goforensicstore.NewJSONLite(tt.args.url)
+			store, teardown, err := forensicstore.Open(tt.args.url)
 			if err != nil {
 				t.Fatal(err)
 			}
-			defer store.Close()
+			defer teardown()
 
-			items, err := store.Select("import", nil)
+			elements, err := store.Select(daggy.Filter{{"type": "import"}})
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			if len(items) != tt.wantCount {
-				t.Errorf("Run() error, wrong number of resuls = %d, want %d", len(items), tt.wantCount)
+			if len(elements) != tt.wantCount {
+				t.Errorf("Run() error, wrong number of resuls = %d, want %d", len(elements), tt.wantCount)
 			}
 		})
 	}

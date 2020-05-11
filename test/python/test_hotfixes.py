@@ -30,7 +30,7 @@ import tempfile
 import pytest
 
 sys.path.append("config/scripts")
-hotfixes = importlib.import_module("forensicstore-hotfixes")
+hotfixes = importlib.import_module("elementary-hotfixes")
 
 
 @pytest.fixture

@@ -81,14 +81,14 @@ def main(args):
     args, _ = parser.parse_known_args(args)
 
     for url in args.forensicstore:
-        store = forensicstore.connect(url)
+        store = forensicstore.open(url)
         conditions = [{
             'key': "HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\%"
         }, {
             'key': "HKEY_USERS\\%\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\%"
         }]
         combined_conditions = storeutil.merge_conditions(args.filter, conditions)
-        items = list(store.select("windows-registry-key", combined_conditions))
+        items = list(store.select(combined_conditions))
         for item in items:
             results = transform(item)
             for result in results:

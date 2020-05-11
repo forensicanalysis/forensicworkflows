@@ -1,24 +1,21 @@
 mkdir -p test/data
 
 rm -rf test/data/example1.forensicstore
-if [ ! -f "example1.forensicstore.zip" ]; then
-    curl --fail --silent --output example1.forensicstore.zip --location https://download.artifacthub.org/forensics/example1.forensicstore.zip
+if [ ! -f "example1.forensicstore" ]; then
+    curl --fail --silent --output example1.forensicstore --location https://download.artifacthub.org/forensics/example1.forensicstore
 fi
-unzip example1.forensicstore.zip
 mv example1.forensicstore test/data
 
 rm -rf test/data/example2.forensicstore
-if [ ! -f "example2.forensicstore.zip" ]; then
-    curl --fail --silent --output example2.forensicstore.zip --location https://download.artifacthub.org/forensics/example2.forensicstore.zip
+if [ ! -f "example2.forensicstore" ]; then
+    curl --fail --silent --output example2.forensicstore --location https://download.artifacthub.org/forensics/example2.forensicstore
 fi
-unzip example2.forensicstore.zip
 mv example2.forensicstore test/data
 
 rm -rf test/data/usb.forensicstore
-if [ ! -f "usb.forensicstore.zip" ]; then
-    curl --fail --silent --output usb.forensicstore.zip --location https://download.artifacthub.org/forensics/usb.forensicstore.zip
+if [ ! -f "usb.forensicstore" ]; then
+    curl --fail --silent --output usb.forensicstore --location https://download.artifacthub.org/forensics/usb.forensicstore
 fi
-unzip usb.forensicstore.zip
 mv usb.forensicstore test/data
 
 if [ ! -f "win10_mock.zip" ]; then

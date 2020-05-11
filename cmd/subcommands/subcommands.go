@@ -24,14 +24,16 @@
 package subcommands
 
 import (
+	"bytes"
+	"io/ioutil"
 	"os"
 	"strings"
 
-	"github.com/forensicanalysis/forensicstore/gostore"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"github.com/tidwall/gjson"
 
+	"github.com/forensicanalysis/forensicstore"
 	"github.com/forensicanalysis/forensicworkflows/daggy"
 )
 
@@ -63,11 +65,21 @@ func extractFilter(filtersets []string) daggy.Filter {
 	return filter
 }
 
-func getString(item gostore.Item, key string) (string, bool) {
-	if name, ok := item[key]; ok {
-		if name, ok := name.(string); ok {
-			return name, true
-		}
+func fileToReader(store *forensicstore.ForensicStore, exportPath gjson.Result) (*bytes.Reader, error) {
+	file, err := store.LoadFile(exportPath.String())
+	if err != nil {
+		return nil, err
 	}
-	return "", false
+
+	b, err := ioutil.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
+
+	err = file.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	return bytes.NewReader(b), nil
 }

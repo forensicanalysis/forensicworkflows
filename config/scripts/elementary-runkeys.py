@@ -53,7 +53,7 @@ def main(args):
     args, _ = parser.parse_known_args(args)
 
     for url in args.forensicstore:
-        store = forensicstore.connect(url)
+        store = forensicstore.open(url)
         hklmsw = "HKEY_LOCAL_MACHINE\\Software\\"
         hkusw = "HKEY_USERS\\%\\Software\\"
         conditions = [
@@ -79,7 +79,7 @@ def main(args):
             {'key': hkusw + r"Wow6432Node\Microsoft\Windows\CurrentVersion\RunOnceEx"}
         ]
         combined_conditions = storeutil.merge_conditions(args.filter, conditions)
-        items = store.select("windows-registry-key", combined_conditions)
+        items = store.select(combined_conditions)
         results = transform(items)
         for result in results:
             # store.insert(result)

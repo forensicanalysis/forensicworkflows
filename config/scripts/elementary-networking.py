@@ -69,7 +69,7 @@ def transform(objs):
                                                    missing_value)
         result['NameServer'] = interface_infos.get('nameserver',
                                                    missing_value)
-        result['IP Key Changed'] = interface_key['modified']
+        result['IP Key Changed'] = interface_key['modified_time']
 
         # search names key
         name_key = None
@@ -84,7 +84,7 @@ def transform(objs):
                 for v in name_key["values"]
             }
 
-            result['Network Key Changed'] = name_key["modified"]
+            result['Network Key Changed'] = name_key["modified_time"]
             result['Friendly Name'] = name_infos["name"]
         else:
             result['Network Key Changed'] = missing_value
@@ -109,13 +109,13 @@ def main(args):
     args, _ = parser.parse_known_args(args)
 
     for url in args.forensicstore:
-        store = forensicstore.connect(url)
+        store = forensicstore.open(url)
         conditions = [
             {'key': r"HKEY_LOCAL_MACHINE\SYSTEM\%ControlSet%\Control\Network\{4D36E972-E325-11CE-BFC1-08002BE10318}\%"},
             {'key': r"HKEY_LOCAL_MACHINE\SYSTEM\%ControlSet%\Services\Tcpip\Parameters\Interfaces\%"}
         ]
         combined_conditions = storeutil.merge_conditions(args.filter, conditions)
-        items = store.select("windows-registry-key", combined_conditions)
+        items = store.select(combined_conditions)
         for result in transform(items):
             # store.insert(result)
             print(json.dumps(result))

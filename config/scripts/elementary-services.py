@@ -52,7 +52,7 @@ def transform(objs):
         parameters_key = params_for_services.get(obj["key"].lower(), None)
         if parameters_key and "values" in parameters_key:
             parameters = {v["name"].lower(): v["data"] for v in parameters_key["values"] if "data" in v and "name" in v}
-            parameters_last_written = parameters_key["modified"]
+            parameters_last_written = parameters_key["modified_time"]
         else:
             parameters = {}
             parameters_last_written = ''
@@ -74,7 +74,7 @@ def transform(objs):
             'Service Type': _servicetype_from_bitmask(service_type),
             'ImagePath': service_values.get('imagepath', ''),
             'Service DLL': parameters.get('servicedll'),
-            'Service Key Changed': obj["modified"],
+            'Service Key Changed': obj["modified_time"],
             'Parameters Key Changed': parameters_last_written,
             'Source Key': obj["key"]
         }
@@ -135,10 +135,10 @@ def main(args):
     args, _ = parser.parse_known_args(args)
 
     for url in args.forensicstore:
-        store = forensicstore.connect(url)
+        store = forensicstore.open(url)
         conditions = [{'key': "HKEY_LOCAL_MACHINE\\SYSTEM\\%ControlSet%\\Services\\%"}]
         combined_conditions = storeutil.merge_conditions(args.filter, conditions)
-        items = list(store.select("windows-registry-key", combined_conditions))
+        items = list(store.select(combined_conditions))
         results = transform(items)
         for result in results:
             # store.insert(result)

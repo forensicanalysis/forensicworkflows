@@ -24,16 +24,15 @@
 package subcommands
 
 import (
+	"encoding/json"
+	"fmt"
 	"io"
-	"path/filepath"
 	"strings"
 
-	"github.com/imdario/mergo"
 	"github.com/spf13/cobra"
+	"github.com/tidwall/gjson"
 
-	"github.com/forensicanalysis/forensicstore/goforensicstore"
-	"github.com/forensicanalysis/forensicstore/gojsonlite"
-	"github.com/forensicanalysis/forensicstore/gostore"
+	"github.com/forensicanalysis/forensicstore"
 	"github.com/forensicanalysis/forensicworkflows/daggy"
 )
 
@@ -44,8 +43,7 @@ func ForensicStoreImport() *cobra.Command {
 		Use:   "import-forensicstore <forensicstore>...",
 		Short: "Import forensicstore files",
 		Args: func(cmd *cobra.Command, args []string) error {
-			err := RequireStore(cmd, args)
-			if err != nil {
+			if err := RequireStore(cmd, args); err != nil {
 				return err
 			}
 			return cmd.MarkFlagRequired("file")
@@ -54,14 +52,7 @@ func ForensicStoreImport() *cobra.Command {
 			filter := extractFilter(filtersets)
 
 			for _, url := range args {
-				store, err := goforensicstore.NewJSONLite(url)
-				if err != nil {
-					return err
-				}
-				defer store.Close()
-
-				err = jsonLite(store, file, filter)
-				if err != nil {
+				if err := singleImport(url, file, filter); err != nil {
 					return err
 				}
 			}
@@ -74,51 +65,92 @@ func ForensicStoreImport() *cobra.Command {
 	return cmd
 }
 
-// jsonLite merges another JSONLite into this one.
-func jsonLite(db gostore.Store, url string, filter daggy.Filter) (err error) {
-	// TODO: import items with "_path" on sublevel"…
+func singleImport(url string, file string, filter daggy.Filter) error {
+	store, teardown, err := forensicstore.Open(url)
+	if err != nil {
+		return err
+	}
+	defer teardown()
+
+	err = merge(store, file, filter)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// Merge merges another JSONLite into this one.
+func merge(db *forensicstore.ForensicStore, url string, filter daggy.Filter) (err error) {
+	// TODO: import elements with "_path" on sublevel"…
 	// TODO: import does not need to unflatten and flatten
 
-	importStore, err := gojsonlite.New(url)
+	importStore, teardown, err := forensicstore.Open(url)
 	if err != nil {
 		return err
 	}
-	items, err := importStore.All()
+	defer teardown()
+
+	elements, err := importStore.All()
 	if err != nil {
 		return err
 	}
 
-	for _, item := range items {
-		if !filter.Match(item) {
+	for _, element := range elements {
+		element := element
+		if !filter.Match(element) {
 			continue
 		}
 
-		for field := range item {
-			item := item
-			if strings.HasSuffix(field, "_path") {
-				dstPath, writer, err := db.StoreFile(item[field].(string))
+		var ferr error
+		r := gjson.GetBytes(element, "@this")
+		r.ForEach(func(field, value gjson.Result) bool {
+			if strings.HasSuffix(field.String(), "_path") {
+				dstPath, writer, err := db.StoreFile(value.String())
 				if err != nil {
-					return err
+					ferr = fmt.Errorf("could not store file: %w", err)
+					return false
 				}
-				reader, err := importStore.Open(filepath.Join(url, item[field].(string)))
+				reader, err := importStore.LoadFile(value.String())
 				if err != nil {
-					return err
+					ferr = fmt.Errorf("could not load file: %w", err)
+					return false
 				}
 				_, err = io.Copy(writer, reader)
 				reader.Close()
 				writer.Close()
 				if err != nil {
-					return err
+					ferr = err
+					return false
 				}
-				if err := mergo.Merge(&item, gojsonlite.Item{field: dstPath}); err != nil {
-					return err
+
+				element, err = setField(element, field.String(), dstPath)
+				if err != nil {
+					ferr = err
+					return false
 				}
 			}
+			return true
+		})
+		if ferr != nil {
+			return ferr
 		}
-		_, err = db.Insert(item)
+
+		_, err = db.Insert(element)
 		if err != nil {
 			return err
 		}
 	}
 	return err
+}
+
+func setField(element forensicstore.JSONElement, field, value string) (forensicstore.JSONElement, error) {
+	var je map[string]interface{}
+	err := json.Unmarshal(element, &je)
+	if err != nil {
+		return nil, err
+	}
+
+	je[field] = value
+
+	return json.Marshal(je)
 }

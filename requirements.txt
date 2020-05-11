@@ -1,3 +1,2 @@
-Jinja2
-forensicstore==0.14.1
-docker
+forensicstore==0.16.0
+docker==4.2.0

@@ -31,7 +31,7 @@ import (
 	"github.com/spf13/pflag"
 )
 
-const appName = "forensicstore"
+const appName = "elementary"
 
 func readAsCSV(val string) ([]string, error) {
 	if val == "" {

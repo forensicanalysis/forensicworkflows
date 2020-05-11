@@ -32,31 +32,34 @@ teardown() {
 
 @test "run import-json (go)" {
   forensicstore create $TESTDIR/test.forensicstore
-  run forensicworkflows run import-json --type import --file test/data/import.json $TESTDIR/test.forensicstore --debug
+  run forensicworkflows run import-json --file test/data/import.json $TESTDIR/test.forensicstore --debug
+  echo $output
   [ "$status" -eq 0 ]
 }
 
 @test "run prefetch (go)" {
   cp -r test/data/example1.forensicstore $TESTDIR/example1.forensicstore
-  [ -f "$TESTDIR/example1.forensicstore/item.db" ]
+  [ -f "$TESTDIR/example1.forensicstore" ]
   forensicworkflows run prefetch $TESTDIR/example1.forensicstore --debug
 }
 
 @test "run usb (python)" {
   cp -r test/data/usb.forensicstore $TESTDIR/usb.forensicstore
-  [ -f "$TESTDIR/usb.forensicstore/item.db" ]
-  forensicworkflows run usb $TESTDIR/usb.forensicstore --debug
+  [ -f "$TESTDIR/usb.forensicstore" ]
+  run forensicworkflows run usb $TESTDIR/usb.forensicstore --debug
+  echo $output
+  [ "$status" -eq 0 ]
 }
 
 # @test "run plaso (docker)" {
 #   cp -r test/data/example1.forensicstore $TESTDIR/example1.forensicstore
-#   [ -f "$TESTDIR/example1.forensicstore/item.db" ]
+#   [ -f "$TESTDIR/example1.forensicstore" ]
 #   forensicworkflows run plaso $TESTDIR/example1.forensicstore --debug
 # }
 
 @test "process workflow" {
   cp -r test/data/example1.forensicstore $TESTDIR/example2.forensicstore
-  [ -f "$TESTDIR/example2.forensicstore/item.db" ]
+  [ -f "$TESTDIR/example2.forensicstore" ]
   run forensicworkflows workflow --file default.yml $TESTDIR/example2.forensicstore --debug
   echo $output
   [ "$status" -eq 0 ]
@@ -64,8 +67,8 @@ teardown() {
 
 @test "run export-json (go)" {
   cp -r test/data/example1.forensicstore $TESTDIR/example3.forensicstore
-  [ -f "$TESTDIR/example3.forensicstore/item.db" ]
-  run forensicworkflows run export --format jsonl --type file --output $TESTDIR/export.json $TESTDIR/example3.forensicstore --debug
+  [ -f "$TESTDIR/example3.forensicstore" ]
+  run forensicworkflows run export --format jsonl --filter type=file --output $TESTDIR/export.json $TESTDIR/example3.forensicstore --debug
   echo $output
   [ "$status" -eq 0 ]
   [ -f "$TESTDIR/export.json" ]

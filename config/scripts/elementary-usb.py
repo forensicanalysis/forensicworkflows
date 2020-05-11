@@ -51,7 +51,7 @@ class USBForensicStoreExtractor:
     def _get_system_usb_data(self):
         system_mounted_usb_info = {}
         combined_conditions = storeutil.merge_conditions(self.filter, [{"artifact": "WindowsUSBVolumeAndDriveMapping"}])
-        usb_system_mounted_devices = list(self.forensicstore.select("windows-registry-key", combined_conditions))
+        usb_system_mounted_devices = list(self.forensicstore.select(combined_conditions))
         if not usb_system_mounted_devices:
             return {}
         usb_system_mounted_devices = [device.get('values') for device in usb_system_mounted_devices].pop()
@@ -80,7 +80,7 @@ class USBForensicStoreExtractor:
 
     def _get_user_usb_data(self, system_mounted_usb_info: dict):
         combined_conditions = storeutil.merge_conditions(self.filter, [{"artifact": "WindowsUSBUserMountedDevices"}])
-        usb_user_mounted_data = self.forensicstore.select("windows-registry-key", combined_conditions)
+        usb_user_mounted_data = self.forensicstore.select(combined_conditions)
 
         # Categorises found system usb usage to user usb usage.
         usb_user_mounted_devices = []
@@ -98,7 +98,7 @@ class USBForensicStoreExtractor:
 
     def _get_all_usb_data(self, usb_user_mounted_devices: list):
         combined_conditions = storeutil.merge_conditions(self.filter, [{"artifact": "WindowsUSBDeviceInformations"}])
-        usb_device_information = self.forensicstore.select("windows-registry-key", combined_conditions)
+        usb_device_information = self.forensicstore.select(combined_conditions)
 
         # Combines the gathered information to create a dictionary of actual used usb devices and some meta data.
         # Also keeps track about non mounted usb devices.
@@ -131,12 +131,12 @@ class USBForensicStoreExtractor:
 
     def _get_first_insert_timestamps(self, device_id):
         combined_conditions = storeutil.merge_conditions(self.filter, [{"name": "setupapi.dev.log"}])
-        items = self.forensicstore.select("file", combined_conditions)
+        items = self.forensicstore.select(combined_conditions)
         # fsf = self.forensicstore.remote_fs.open("WindowsDeviceSetup/setupapi.dev.log", mode='rb')
         for item in items:
             if "export_path" not in item:
                 continue
-            fsf = self.forensicstore.remote_fs.open(item["export_path"], mode='rb')
+            fsf = self.forensicstore.fs.open(item["export_path"], mode='rt')
 
             inital_timestamp = {"first_insert": None}
             if device_id:
@@ -178,7 +178,7 @@ def main(args):
 
     for url in args.forensicstore:
         LOGGER.debug("process usb in %s", url)
-        store = forensicstore.connect(url)
+        store = forensicstore.open(url)
 
         usb_usage_data = USBForensicStoreExtractor(store, args.filter).get_usb_usage_data()
         for result in usb_usage_data:

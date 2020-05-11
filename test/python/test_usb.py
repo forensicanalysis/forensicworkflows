@@ -29,7 +29,7 @@ import tempfile
 import pytest
 
 sys.path.append("config/scripts")
-usb = importlib.import_module("forensicstore-usb")
+usb = importlib.import_module("elementary-usb")
 
 
 @pytest.fixture

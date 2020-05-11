@@ -97,6 +97,7 @@ jobs:
       - name: Bats test
         run: bats test/bats/forensicworkflows.bats
         shell: bash
+        if: matrix.os != 'windows-latest'
 
       - name: Go Build
         run: |

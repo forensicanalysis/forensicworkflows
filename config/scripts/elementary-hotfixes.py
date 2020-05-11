@@ -89,7 +89,7 @@ def _analyze_additional(key):
     product = key["key"].split('\\')[-2]
     return [{
         'Hotfix': hotfix,
-        'Installed': key["modified"],
+        'Installed': key["modified_time"],
         'Source': 'Microsoft Updates',
         'Component': product,
         "type": "hotfix"
@@ -142,21 +142,18 @@ def main(args):
     args, _ = parser.parse_known_args(args)
     for url in args.forensicstore:
         LOGGER.debug("search for hotfixes in %s", url)
-        store = forensicstore.connect(url)
+        store = forensicstore.open(url)
 
         hklmsw = "HKEY_LOCAL_MACHINE\\SOFTWARE\\"
-        conditions = [{
-            'key': hklmsw + "Microsoft\\Windows\\CurrentVersion\\Component Based Servicing\\Packages\\%"
-        }, {
-            'key': hklmsw + "WOW6432Node\\Microsoft\\Updates\\%\\%"
-        }, {
-            'key': hklmsw + "Microsoft\\Updates\\%\\%"
-        }]
+        conditions = [
+            {'key': hklmsw + "Microsoft\\Windows\\CurrentVersion\\Component Based Servicing\\Packages\\%"},
+            {'key': hklmsw + "WOW6432Node\\Microsoft\\Updates\\%\\%"},
+            {'key': hklmsw + "Microsoft\\Updates\\%\\%"}
+        ]
         combined_conditions = storeutil.merge_conditions(args.filter, conditions)
-        for item in store.select("windows-registry-key", combined_conditions):
+        for item in store.select(combined_conditions):
             results = transform(item)
             for result in results:
-                # store.insert(result)
                 print(json.dumps(result))
         store.close()
 

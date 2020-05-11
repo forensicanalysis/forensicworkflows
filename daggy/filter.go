@@ -22,31 +22,32 @@
 package daggy
 
 import (
-	"fmt"
 	"strings"
 
-	"github.com/forensicanalysis/forensicstore/gostore"
+	"github.com/tidwall/gjson"
+
+	"github.com/forensicanalysis/forensicstore"
 )
 
 // A Filter is a list of mappings that should be used for a Task.
 type Filter []map[string]string
 
-// Match tests if an item matches the filter.
-func (f Filter) Match(item gostore.Item) bool {
+// Match tests if an element matches the filter.
+func (f Filter) Match(element forensicstore.JSONElement) bool {
 	if len(f) == 0 {
 		return true
 	}
 	for _, condition := range f {
-		if f.matchCondition(condition, item) {
+		if f.matchCondition(condition, element) {
 			return true
 		}
 	}
 	return false
 }
 
-func (f Filter) matchCondition(condition map[string]string, item gostore.Item) bool {
+func (f Filter) matchCondition(condition map[string]string, element forensicstore.JSONElement) bool {
 	for attribute, value := range condition {
-		if !strings.Contains(fmt.Sprint(item[attribute]), value) {
+		if !strings.Contains(gjson.GetBytes(element, attribute).String(), value) {
 			return false
 		}
 	}

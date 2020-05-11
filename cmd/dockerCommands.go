@@ -23,7 +23,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -133,7 +132,6 @@ func dockerCommand(image string, labels map[string]string) *cobra.Command {
 }
 
 func docker(image string, args []string, mountDirs map[string]string) (io.ReadCloser, error) {
-	fmt.Println(image, args, mountDirs)
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {

@@ -30,7 +30,7 @@ import forensicstore
 import pytest
 
 sys.path.append("config/scripts")
-software = importlib.import_module("forensicstore-software")
+software = importlib.import_module("elementary-software")
 
 
 @pytest.fixture

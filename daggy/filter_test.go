@@ -22,14 +22,13 @@
 package daggy
 
 import (
+	"github.com/forensicanalysis/forensicstore"
 	"testing"
-
-	"github.com/forensicanalysis/forensicstore/gostore"
 )
 
 func TestFilter_Match(t *testing.T) {
 	type args struct {
-		item gostore.Item
+		element string
 	}
 	tests := []struct {
 		name string
@@ -37,17 +36,17 @@ func TestFilter_Match(t *testing.T) {
 		args args
 		want bool
 	}{
-		{"simple match", Filter{{"name": "foo"}}, args{gostore.Item{"name": "foo"}}, true},
-		{"no match", Filter{{"name": "foo"}}, args{gostore.Item{"name": "bar"}}, false},
-		{"nil filter", nil, args{gostore.Item{"name": "foo"}}, true},
-		{"contains match", Filter{{"name": "foo"}}, args{gostore.Item{"name": "xfool"}}, true},
-		{"simple match", Filter{{"name": "foo"}}, args{gostore.Item{"name": "foo", "bar": "baz"}}, true},
-		{"multi match", Filter{{"name": "foo", "bar": "baz"}}, args{gostore.Item{"name": "foo", "bar": "baz"}}, true},
-		{"any match", Filter{{"x": "y"}, {"name": "foo", "bar": "baz"}}, args{gostore.Item{"name": "foo", "bar": "baz"}}, true},
+		{"simple match", Filter{{"name": "foo"}}, args{`{"name": "foo"}`}, true},
+		{"no match", Filter{{"name": "foo"}}, args{`{"name": "bar"}`}, false},
+		{"nil filter", nil, args{`{"name": "foo"}`}, true},
+		{"contains match", Filter{{"name": "foo"}}, args{`{"name": "xfool"}`}, true},
+		{"simple match", Filter{{"name": "foo"}}, args{`{"name": "foo", "bar": "baz"}`}, true},
+		{"multi match", Filter{{"name": "foo", "bar": "baz"}}, args{`{"name": "foo", "bar": "baz"}`}, true},
+		{"any match", Filter{{"x": "y"}, {"name": "foo", "bar": "baz"}}, args{`{"name": "foo", "bar": "baz"}`}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.f.Match(tt.args.item); got != tt.want {
+			if got := tt.f.Match(forensicstore.JSONElement(tt.args.element)); got != tt.want {
 				t.Errorf("Match() = %v, want %v", got, tt.want)
 			}
 		})

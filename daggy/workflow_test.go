@@ -32,7 +32,7 @@ import (
 	"github.com/otiai10/copy"
 	"github.com/spf13/cobra"
 
-	"github.com/forensicanalysis/forensicstore/goforensicstore"
+	"github.com/forensicanalysis/forensicstore"
 )
 
 func setup() (storeDir string, err error) {
@@ -107,19 +107,20 @@ func Test_processJob(t *testing.T) {
 			}
 
 			if !tt.wantErr {
-				store, err := goforensicstore.NewJSONLite(filepath.Join(storeDir, tt.storeName))
+				store, teardown, err := forensicstore.New(filepath.Join(storeDir, tt.storeName))
 				if err != nil {
 					t.Fatal(err)
 				}
+				defer teardown()
 
 				log.Println("Start select")
 				if tt.wantCount > 0 {
-					items, err := store.Select(tt.wantType, nil)
+					elements, err := store.Select(Filter{{"type": tt.wantType}})
 					if err != nil {
 						t.Fatal(err)
 					}
-					if tt.wantCount != len(items) {
-						t.Errorf("runTask() error, wrong number of resuls = %d, want %d (%v)", len(items), tt.wantCount, len(items))
+					if tt.wantCount != len(elements) {
+						t.Errorf("runTask() error, wrong number of resuls = %d, want %d (%v)", len(elements), tt.wantCount, len(elements))
 					}
 				}
 			}

@@ -25,61 +25,50 @@ package subcommands
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/tidwall/gjson"
 
-	"github.com/forensicanalysis/forensicstore/goflatten"
-	"github.com/forensicanalysis/forensicstore/goforensicstore"
+	"github.com/forensicanalysis/forensicstore"
 )
 
 func Export() *cobra.Command {
-	var itemType string
 	var filtersets []string
 	outputCommand := &cobra.Command{
 		Use:   "export <forensicstore>...",
-		Short: "Export selected items",
-		Args: func(cmd *cobra.Command, args []string) error {
-			err := cmd.MarkFlagRequired("type")
-			if err != nil {
-				return err
-			}
-			return RequireStore(cmd, args)
-		},
+		Short: "Export selected elements",
+		Args:  RequireStore,
 		RunE: func(rcmd *cobra.Command, args []string) error {
 			filter := extractFilter(filtersets)
 
 			for _, url := range args {
-				store, err := goforensicstore.NewJSONLite(url)
+				store, teardown, err := forensicstore.Open(url)
 				if err != nil {
 					return err
 				}
-				defer store.Close()
+				defer teardown()
 
-				items, err := store.Select(itemType, filter)
+				elements, err := store.Select(filter)
 				if err != nil {
 					return err
 				}
-				if len(items) == 0 {
+				if len(elements) == 0 {
 					continue
 				}
 
 				var header []string
-				flatItem, err := goflatten.Flatten(items[0])
-				if err != nil {
-					return err
-				}
-				for attribute := range flatItem {
-					header = append(header, attribute)
-				}
+				gjson.GetBytes(elements[0], "@this").ForEach(func(key, _ gjson.Result) bool {
+					header = append(header, key.String())
+					return true
+				})
 				config := &outputConfig{
 					Header:   header,
 					Template: "", // TODO
 				}
-				printItem(rcmd, config, items, nil)
+				printElement(rcmd, config, elements, nil)
 			}
 			return nil
 		},
 	}
 	AddOutputFlags(outputCommand)
 	outputCommand.Flags().StringArrayVar(&filtersets, "filter", nil, "filter processed events")
-	outputCommand.Flags().StringVar(&itemType, "type", "", "type")
 	return outputCommand
 }

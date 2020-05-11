@@ -29,7 +29,7 @@ import tempfile
 import pytest
 
 sys.path.append("config/scripts")
-networking = importlib.import_module("forensicstore-networking")
+networking = importlib.import_module("elementary-networking")
 
 
 @pytest.fixture

@@ -28,23 +28,26 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/forensicanalysis/forensicstore/goforensicstore"
+	"github.com/forensicanalysis/forensicstore"
 )
 
-func TestJSONLitePlugin_Run(t *testing.T) {
+func TestForensicstoreImportPlugin_Run(t *testing.T) {
 	log.Println("Start setup")
-	storeDir, err := setup("example1.forensicstore")
+	storeDir, err := setup()
 	if err != nil {
 		t.Fatal(err)
 	}
 	log.Println("Setup done")
 	defer cleanup(storeDir)
 
-	store, err := goforensicstore.NewJSONLite(filepath.Join(storeDir, "example.forensicstore"))
+	newStorePath := filepath.Join(storeDir, "example.forensicstore")
+	example1 := filepath.Join(storeDir, "example1.forensicstore")
+
+	_, teardown, err := forensicstore.New(newStorePath)
 	if err != nil {
 		t.Fatal(err)
 	}
-	store.Close()
+	teardown()
 
 	type args struct {
 		url  string
@@ -56,10 +59,7 @@ func TestJSONLitePlugin_Run(t *testing.T) {
 		wantCount int
 		wantErr   bool
 	}{
-		{"jsonlite", args{
-			filepath.Join(storeDir, "example.forensicstore"),
-			[]string{"--file", filepath.Join(storeDir, "example1.forensicstore")},
-		}, 3527, false},
+		{"forensicstore import", args{newStorePath, []string{"--file", example1},}, 3527, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -74,18 +74,18 @@ func TestJSONLitePlugin_Run(t *testing.T) {
 				t.Errorf("Run() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
-			store, err := goforensicstore.NewJSONLite(tt.args.url)
+			store, teardown, err := forensicstore.Open(tt.args.url)
 			if err != nil {
 				t.Fatal(err)
 			}
-			defer store.Close()
-			items, err := store.All()
+			defer teardown()
+			elements, err := store.All()
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			if len(items) != tt.wantCount {
-				t.Errorf("Run() error, wrong number of resuls = %d, want %d", len(items), tt.wantCount)
+			if len(elements) != tt.wantCount {
+				t.Errorf("Run() error, wrong number of resuls = %d, want %d", len(elements), tt.wantCount)
 			}
 		})
 	}

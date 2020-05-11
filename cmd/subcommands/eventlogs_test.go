@@ -28,7 +28,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/forensicanalysis/forensicstore/goforensicstore"
+	"github.com/forensicanalysis/forensicstore"
+	"github.com/forensicanalysis/forensicworkflows/daggy"
 )
 
 func TestEventlogsPlugin_Run(t *testing.T) {
@@ -67,22 +68,18 @@ func TestEventlogsPlugin_Run(t *testing.T) {
 				t.Fatalf("Run() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
-			store, err := goforensicstore.NewJSONLite(tt.args.url)
+			store, teardown, err := forensicstore.Open(tt.args.url)
 			if err != nil {
-				t.Fatalf("goforensicstore.NewJSONLite() error = %v, wantErr %v", err, tt.wantErr)
+				t.Fatalf("forensicstore.Open() error = %v, wantErr %v", err, tt.wantErr)
 			}
+			defer teardown()
 
-			items, err := store.Select("eventlog", nil)
+			elements, err := store.Select(daggy.Filter{{"type": "eventlog"}})
 			if err != nil {
 				t.Fatalf("store.Select() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			if len(items) != tt.wantCount {
-				t.Fatalf("len(items) = %v, wantCount %v", len(items), tt.wantCount)
-			}
-
-			err = store.Close()
-			if err != nil {
-				t.Fatal(err)
+			if len(elements) != tt.wantCount {
+				t.Fatalf("len(elements) = %v, wantCount %v", len(elements), tt.wantCount)
 			}
 		})
 	}

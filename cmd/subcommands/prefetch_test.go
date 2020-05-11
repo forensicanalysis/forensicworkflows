@@ -28,7 +28,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/forensicanalysis/forensicstore/goforensicstore"
+	"github.com/forensicanalysis/forensicstore"
+	"github.com/forensicanalysis/forensicworkflows/daggy"
 )
 
 func TestPrefetchPlugin_Run(t *testing.T) {
@@ -53,7 +54,7 @@ func TestPrefetchPlugin_Run(t *testing.T) {
 		wantErr   bool
 	}{
 		// {"Prefetch", args{"example1.forensicstore", nil, nil}, 261, false},
-		{"Prefetch with Filter", args{example1, []string{"--filter", "name=artifactcollector%"}}, 2, false},
+		{"Prefetch with Filter", args{example1, []string{"--filter", "origin.path=%artifactcollector%"}}, 3, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -68,17 +69,17 @@ func TestPrefetchPlugin_Run(t *testing.T) {
 				t.Errorf("Run() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
-			store, err := goforensicstore.NewJSONLite(tt.args.url)
+			store, teardown, err := forensicstore.Open(tt.args.url)
 			if err != nil {
-				t.Errorf("goforensicstore.NewJSONLite() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("forensicstore.Open() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			defer store.Close()
-			items, err := store.Select("prefetch", nil)
+			defer teardown()
+			elements, err := store.Select(daggy.Filter{{"type": "prefetch"}})
 			if err != nil {
 				t.Errorf("store.All() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			if len(items) != tt.wantCount {
-				t.Errorf("len(items) = %v, wantCount %v", len(items), tt.wantCount)
+			if len(elements) != tt.wantCount {
+				t.Errorf("len(elements) = %v, wantCount %v", len(elements), tt.wantCount)
 			}
 		})
 	}

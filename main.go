@@ -21,67 +21,6 @@
 
 // Packages forensicworkflows provides a workflow engine to automate forensic
 // processes in forensicstores.
-//
-// Usage
-//
-// The command line tool requires a workflow yml file which is executed on an
-// arbitrary number of forensicstores, e.g.:
-//
-//     forensicworkflows --workflow workflow.yml test/data/example1.forensicstore
-//
-// Workflow format
-//
-// The workflow.yml file contains a list of tasks like the following:
-//
-//     hello_task:
-//         type: plugin
-//         command: hello.exe
-//
-//     docker_task:
-//         type: docker
-//         image: alpine
-//         command: echo bye
-//         requires:
-//             - hello_task
-//
-// There are currently 4 different types of tasks.
-//
-// Bash
-//
-// Run a script from bash. The working directory is the forensicstore. Example:
-//
-//     list_dir:
-//         type: bash
-//         command: ls
-//
-// Plugin
-//
-// Run either a builtin Go plugin or an executeable from the process folder. The
-// working directory is the forensicstore. Example:
-//
-//     hotfixes:
-//         type: plugin
-//         command: hotfixes
-//
-// Docker
-//
-// Run a docker container. The forensicstore is located at '/store' and the plugin
-// folder is located at '/process'. Example:
-//
-//     docker_task:
-//         type: docker
-//         image: alpine
-//         command: echo bye
-//
-// Dockerfile
-//
-// Build a dockerfile from 'plugin/{dockerfile}/Dockerfile' and run the created
-// image. Otherwise behaved as the docker type. Example:
-//
-//     dockerfalse:
-//         type: dockerfile
-//         dockerfile: jq
-//         command: echo Dockerfile
 package main
 
 import (

@@ -29,7 +29,7 @@ import tempfile
 import pytest
 
 sys.path.append("config/scripts")
-runkeys = importlib.import_module("forensicstore-runkeys")
+runkeys = importlib.import_module("elementary-runkeys")
 
 
 @pytest.fixture

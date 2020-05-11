@@ -36,10 +36,9 @@ import (
 
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
+	"github.com/tidwall/gjson"
 
-	"github.com/forensicanalysis/forensicstore/goflatten"
-	"github.com/forensicanalysis/forensicstore/goforensicstore"
-	"github.com/forensicanalysis/forensicstore/gostore"
+	"github.com/forensicanalysis/forensicstore"
 )
 
 type format int
@@ -68,21 +67,22 @@ func fromString(s string) format {
 func Print(r io.Reader, cmd *cobra.Command, url string) {
 	destination, format, addToStore := parseOutputFlags(cmd)
 
-	var store *goforensicstore.ForensicStore
+	var store *forensicstore.ForensicStore
+	var teardown func() error
 
 	if addToStore {
 		var err error
-		store, err = goforensicstore.NewJSONLite(url)
+		store, teardown, err = forensicstore.Open(url)
 		if err != nil {
 			store = nil
 		} else {
-			defer store.Close()
+			defer teardown()
 		}
 	}
 	processOutput(destination, r, format, store)
 }
 
-func printItem(cmd *cobra.Command, config *outputConfig, items []gostore.Item, store *goforensicstore.ForensicStore) {
+func printElement(cmd *cobra.Command, config *outputConfig, elements []forensicstore.JSONElement, store *forensicstore.ForensicStore) { //nolint: lll
 	destination, format, addToStore := parseOutputFlags(cmd)
 
 	if !addToStore {
@@ -90,8 +90,8 @@ func printItem(cmd *cobra.Command, config *outputConfig, items []gostore.Item, s
 	}
 	o := newOutputWriter(destination, format, store)
 	o.writeHeaderConfig(config)
-	for _, item := range items {
-		o.writeItem(item)
+	for _, element := range elements {
+		o.writeElement(element)
 	}
 	o.writeFooter()
 }
@@ -125,7 +125,7 @@ func parseOutputFlags(cmd *cobra.Command) (io.Writer, format, bool) {
 	return destination, format, addToStore
 }
 
-func processOutput(w io.Writer, r io.Reader, format format, store *goforensicstore.ForensicStore) {
+func processOutput(w io.Writer, r io.Reader, format format, store *forensicstore.ForensicStore) {
 	o := newOutputWriter(w, format, store)
 
 	firstLine := true
@@ -157,7 +157,7 @@ type outputConfig struct {
 
 type outputWriter struct {
 	format      format
-	store       *goforensicstore.ForensicStore
+	store       *forensicstore.ForensicStore
 	config      *outputConfig
 	destination io.Writer
 
@@ -165,10 +165,10 @@ type outputWriter struct {
 	tableWriter *tablewriter.Table
 	csvWriter   *csv.Writer
 
-	items []gostore.Item
+	elements []forensicstore.JSONElement
 }
 
-func newOutputWriter(w io.Writer, format format, store *goforensicstore.ForensicStore) *outputWriter {
+func newOutputWriter(w io.Writer, format format, store *forensicstore.ForensicStore) *outputWriter {
 	output := &outputWriter{
 		format:      format,
 		store:       store,
@@ -229,22 +229,17 @@ func (o *outputWriter) writeLine(line []byte) {
 	}
 
 	// unmarshal line
-	var item gostore.Item
-	err := json.Unmarshal(line, &item)
+	_, err := fmt.Fprintln(o.destination, string(line))
 	if err != nil {
-		_, err = fmt.Fprintln(o.destination, string(line))
-		if err != nil {
-			log.Println(err)
-		}
-		return
+		log.Println(err)
 	}
 
-	o.writeItem(item)
+	o.writeElement(line)
 }
-func (o *outputWriter) writeItem(item gostore.Item) {
+func (o *outputWriter) writeElement(element forensicstore.JSONElement) {
 	// add to forensicstore
 	if o.store != nil {
-		_, err := o.store.Insert(item)
+		_, err := o.store.Insert(element)
 		if err != nil {
 			log.Println(err)
 		}
@@ -252,11 +247,10 @@ func (o *outputWriter) writeItem(item gostore.Item) {
 
 	var columns []string
 	if o.format == csvFormat || o.format == tableFormat {
-		flatItem, _ := goflatten.Flatten(item)
-
 		for _, header := range o.config.Header {
-			if value, ok := flatItem[header]; ok {
-				columns = append(columns, fmt.Sprint(value))
+			value := gjson.GetBytes(element, header)
+			if value.Exists() {
+				columns = append(columns, value.String())
 			} else {
 				columns = append(columns, "")
 			}
@@ -268,14 +262,14 @@ func (o *outputWriter) writeItem(item gostore.Item) {
 	case tableFormat:
 		o.tableWriter.Append(columns)
 	case reportFormat:
-		o.items = append(o.items, item)
+		o.elements = append(o.elements, element)
 	case csvFormat:
 		err := o.csvWriter.Write(columns)
 		if err != nil {
 			log.Println(err)
 		}
 	case jsonlFormat:
-		b, _ := json.Marshal(item)
+		b, _ := json.Marshal(element)
 		_, err := fmt.Fprintln(o.destination, string(b))
 		if err != nil {
 			log.Println(err)
@@ -291,7 +285,7 @@ func (o *outputWriter) writeFooter() {
 		o.tableWriter.Render()
 	case reportFormat:
 		tmpl, _ := template.New("output").Parse(o.config.Template)
-		_ = tmpl.Execute(o.destination, o.items)
+		_ = tmpl.Execute(o.destination, o.elements)
 	}
 
 	if closer, ok := o.destination.(io.Closer); ok {

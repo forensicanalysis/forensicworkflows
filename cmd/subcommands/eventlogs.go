@@ -27,17 +27,14 @@ import (
 	"encoding/json"
 	"io"
 	"log"
-	"path"
-	"strings"
-
-	"github.com/forensicanalysis/forensicworkflows/daggy"
 
 	"github.com/Velocidex/ordereddict"
 	"github.com/spf13/cobra"
+	"github.com/tidwall/gjson"
 	"www.velocidex.com/golang/evtx"
 
-	"github.com/forensicanalysis/forensicstore/goforensicstore"
-	"github.com/forensicanalysis/forensicstore/gostore"
+	"github.com/forensicanalysis/forensicstore"
+	"github.com/forensicanalysis/forensicworkflows/daggy"
 )
 
 func Eventlogs() *cobra.Command {
@@ -65,36 +62,43 @@ func Eventlogs() *cobra.Command {
 }
 
 func eventlogsFromStore(url string, filter daggy.Filter, cmd *cobra.Command) error {
-	store, err := goforensicstore.NewJSONLite(url)
+	store, teardown, err := forensicstore.Open(url)
 	if err != nil {
 		return err
 	}
-	defer store.Close()
+	defer teardown()
 
-	fileItems, err := store.Select("file", filter)
+	for idx := range filter {
+		filter[idx]["type"] = "file"
+		filter[idx]["name"] = "%.evtx"
+	}
+
+	if len(filter) == 0 {
+		filter = daggy.Filter{{"type": "file", "name": "%.evtx"}}
+	}
+
+	fileElements, err := store.Select(filter)
 	if err != nil {
 		return err
 	}
 
-	var items []gostore.Item
-	for _, item := range fileItems {
-		name, hasName := getString(item, "name")
-		exportPath, hasExportPath := getString(item, "export_path")
-		if hasName && strings.HasSuffix(name, ".evtx") && hasExportPath {
-			file, err := store.Open(path.Join(url, exportPath))
+	var elements []forensicstore.JSONElement
+	for _, element := range fileElements {
+		exportPath := gjson.GetBytes(element, "export_path")
+		if exportPath.Exists() && exportPath.String() != "" {
+			r, err := fileToReader(store, exportPath)
 			if err != nil {
 				return err
 			}
 
-			events, err := getEvents(file)
+			events, err := getEvents(r)
 			if err != nil {
 				return err
 			}
 
-			items = append(items, events...)
+			elements = append(elements, events...)
 		}
 	}
-
 	config := &outputConfig{
 		Header: []string{
 			"System.Computer",
@@ -107,12 +111,12 @@ func eventlogsFromStore(url string, filter daggy.Filter, cmd *cobra.Command) err
 		},
 		Template: "", // TODO
 	}
-	printItem(cmd, config, items, store)
+	printElement(cmd, config, elements, store)
 	return nil
 }
 
-func getEvents(file io.ReadSeeker) ([]gostore.Item, error) {
-	var items []gostore.Item
+func getEvents(file io.ReadSeeker) ([]forensicstore.JSONElement, error) {
+	var elements []forensicstore.JSONElement
 
 	chunks, err := evtx.GetChunks(file)
 	if err != nil {
@@ -141,16 +145,10 @@ func getEvents(file io.ReadSeeker) ([]gostore.Item, error) {
 					return nil, err
 				}
 
-				var item map[string]interface{}
-				err = json.Unmarshal(serialized, &item)
-				if err != nil {
-					return nil, err
-				}
-
-				items = append(items, item)
+				elements = append(elements, serialized)
 			}
 		}
 	}
 
-	return items, nil
+	return elements, nil
 }

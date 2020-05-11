@@ -24,28 +24,23 @@
 package subcommands
 
 import (
-	"encoding/json"
 	"errors"
 	"io/ioutil"
 
 	"github.com/spf13/cobra"
+	"github.com/tidwall/gjson"
 
-	"github.com/forensicanalysis/forensicstore/goforensicstore"
-	"github.com/forensicanalysis/forensicstore/gojsonlite"
+	"github.com/forensicanalysis/forensicstore"
 )
 
 func JSONImport() *cobra.Command {
-	var file, itemType string
+	var file string
 	var filtersets []string
 	cmd := &cobra.Command{
 		Use:   "import-json <forensicstore>...",
 		Short: "Import json files",
 		Args: func(cmd *cobra.Command, args []string) error {
-			err := cmd.MarkFlagRequired("type")
-			if err != nil {
-				return err
-			}
-			err = RequireStore(cmd, args)
+			err := RequireStore(cmd, args)
 			if err != nil {
 				return err
 			}
@@ -55,32 +50,32 @@ func JSONImport() *cobra.Command {
 			filter := extractFilter(filtersets)
 
 			for _, url := range args {
-				store, err := goforensicstore.NewJSONLite(url)
+				store, teardown, err := forensicstore.Open(url)
 				if err != nil {
 					return err
 				}
-				defer store.Close()
+				defer teardown()
 
 				b, err := ioutil.ReadFile(file) // #nosec
 				if err != nil {
 					return err
 				}
 
-				var items []gojsonlite.Item
-				err = json.Unmarshal(b, &items)
-				if err != nil {
+				topLevel := gjson.GetBytes(b, "@this")
+				if !topLevel.IsArray() {
 					return errors.New("imported json must have a top level array containing objects")
 				}
 
-				for _, item := range items {
-					item["type"] = itemType
-					if filter.Match(item) {
-						_, err = store.Insert(item)
+				topLevel.ForEach(func(_, element gjson.Result) bool {
+					elementType := element.Get("type")
+					if elementType.Exists() && filter.Match(forensicstore.JSONElement(element.Raw)) {
+						_, err = store.Insert(forensicstore.JSONElement(element.Raw))
 						if err != nil {
-							return err
+							return false
 						}
 					}
-				}
+					return true
+				})
 			}
 
 			return nil
@@ -88,7 +83,6 @@ func JSONImport() *cobra.Command {
 	}
 	AddOutputFlags(cmd)
 	cmd.Flags().StringVar(&file, "file", "", "forensicstore")
-	cmd.Flags().StringVar(&itemType, "type", "", "type")
 	cmd.Flags().StringArrayVar(&filtersets, "filter", nil, "filter processed events")
 	return cmd
 }

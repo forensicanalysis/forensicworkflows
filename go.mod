@@ -12,7 +12,7 @@ require (
 	github.com/docker/docker v1.4.2-0.20191108192604-36ffe9edc2b3
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
-	github.com/forensicanalysis/forensicstore v0.15.1
+	github.com/forensicanalysis/forensicstore v0.16.0
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/protobuf v1.4.0 // indirect
 	github.com/gorilla/mux v1.7.4 // indirect
@@ -20,7 +20,6 @@ require (
 	github.com/hashicorp/hcl/v2 v2.4.0 // indirect
 	github.com/hashicorp/logutils v1.0.0
 	github.com/hashicorp/terraform v0.12.24
-	github.com/imdario/mergo v0.3.9
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/kr/pretty v0.2.0 // indirect
 	github.com/morikuni/aec v1.0.0 // indirect
@@ -33,10 +32,9 @@ require (
 	github.com/sirupsen/logrus v1.5.0 // indirect
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5
-	github.com/stretchr/testify v1.5.1 // indirect
+	github.com/tidwall/gjson v1.6.0
 	github.com/zclconf/go-cty v1.4.0 // indirect
 	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e // indirect
-	golang.org/x/sys v0.0.0-20200413165638-669c56c373c4 // indirect
 	google.golang.org/genproto v0.0.0-20200417142217-fb6d0575620b // indirect
 	google.golang.org/grpc v1.28.1 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
