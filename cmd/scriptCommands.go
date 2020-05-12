@@ -40,18 +40,11 @@ import (
 )
 
 func scriptCommands() []*cobra.Command {
-	dir, err := os.UserConfigDir()
-	if err != nil {
-		log.Println("config dir not found", err)
-		return nil
-	}
-
-	addDir := filepath.Join(dir, appName)
-	scriptDir := filepath.Join(addDir, "scripts")
+	scriptDir := filepath.Join(appDir(), "scripts")
 
 	infos, err := ioutil.ReadDir(scriptDir)
 	if err != nil {
-		log.Println("scripts dir not readable", err)
+		log.Printf("script plugins disabled: %s, ", err)
 		return nil
 	}
 

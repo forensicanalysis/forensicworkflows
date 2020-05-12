@@ -15,14 +15,11 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
     steps:
-      - name: Setup go 1.13
-        uses: actions/setup-go@v1
-        with: {go-version: '1.13'}
+      - name: Setup go 1.14
+        uses: actions/setup-go@v2
+        with: {go-version: '1.14'}
       - name: Checkout code
         uses: actions/checkout@v1
-      - name: Set system path
-        run: echo "##[add-path]$(go env GOPATH)/bin"
-        shell: bash
       - name: Download dependencies
         run: go mod download
       - name: Install golangci-lint & go-acc
@@ -62,18 +59,15 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
     steps:
-      - name: Setup go 1.13
-        uses: actions/setup-go@v1
-        with: {go-version: '1.13'}
+      - name: Setup go 1.14
+        uses: actions/setup-go@v2
+        with: {go-version: '1.14'}
       - uses: actions/setup-python@v1
         with: {python-version: '3.8'}
       - run: doskey python3=python
         if: matrix.os == 'windows-latest'
       - name: Checkout code
         uses: actions/checkout@v1
-      - name: Set system path
-        run: echo "##[add-path]$(go env GOPATH)/bin"
-        shell: bash
       - name: Download dependencies
         run: go mod download
 
@@ -87,10 +81,9 @@ jobs:
         run: npm install -g bats
 
       - run: go install .
-      - run: forensicworkflows install --force --debug
-
       - name: Install forensicstore
         run: go get github.com/forensicanalysis/forensicstore/cmd/forensicstore
+
       - name: Download testdata
         run: bash test/download_testdata.sh
         shell: bash
@@ -127,7 +120,7 @@ jobs:
       - run: pip install pylint pytest pytest-cov
       - name: Checkout code
         uses: actions/checkout@v1
-      - run: pip install -r requirements.txt
+      - run: pip install -r config/requirements.txt
       - name: Python Lint
         run: pylint *.py --rcfile ../../test/.pylintrc
         shell: bash
@@ -150,12 +143,9 @@ jobs:
     name: Documentation
     runs-on: ubuntu-latest
     steps:
-      - name: Setup go 1.13
-        uses: actions/setup-go@v1
-        with: {go-version: '1.13'}
-      - name: Set system path
-        run: echo "##[add-path]$(go env GOPATH)/bin"
-        shell: bash
+      - name: Setup go 1.14
+        uses: actions/setup-go@v2
+        with: {go-version: '1.14'}
       - run: go get -u github.com/cugu/godoc2readme
 
       - name: Checkout code

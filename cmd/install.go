@@ -25,7 +25,6 @@ import (
 	"archive/tar"
 	"bytes"
 	"context"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -50,31 +49,13 @@ func Install() *cobra.Command {
 		Short:        "Setup required assets",
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			configDir, err := os.UserConfigDir()
-			if err != nil {
-				return err
-			}
-
-			appDir := filepath.Join(configDir, appName)
-
-			info, err := os.Stat(appDir)
-			if err != nil && !os.IsNotExist(err) {
-				return err
-			}
-
 			var auth types.AuthConfig
 			auth.Username = dockerUser
 			auth.Password = dockerPassword
 			auth.ServerAddress = dockerServer
 
-			if os.IsNotExist(err) {
-				return setup(auth)
-			}
-			if !info.IsDir() {
-				return fmt.Errorf("%s is not a directory", appDir)
-			}
 			if force {
-				return setup(auth)
+				setup(&auth)
 			}
 			return nil // fmt.Errorf("%s already exists, use --force to recreate", appDir)
 		},
@@ -86,11 +67,32 @@ func Install() *cobra.Command {
 	return cmd
 }
 
-func setup(auth types.AuthConfig) error {
-	// unpack scripts
-	err := unpack()
+func ensureSetup() {
+	_, err := os.UserConfigDir()
 	if err != nil {
-		return err
+		log.Printf("config dir not found: %s, using current directory", err)
+	}
+	appDir := appDir()
+	info, err := os.Stat(appDir)
+	if os.IsNotExist(err) {
+		setup(nil)
+		return
+	}
+	if err != nil {
+		log.Println(err)
+	}
+	if !info.IsDir() {
+		log.Printf("%s is not a directory", appDir)
+	}
+}
+
+func setup(auth *types.AuthConfig) {
+	appDir := appDir()
+
+	// unpack scripts
+	err := unpack(appDir)
+	if err != nil {
+		log.Println("error unpacking scripts:", err)
 	}
 
 	// install python requirements
@@ -98,23 +100,23 @@ func setup(auth types.AuthConfig) error {
 	if err != nil {
 		pipPath, err = exec.LookPath("pip")
 		if err != nil {
-			fmt.Println("pip is not installed")
+			log.Println("pip is not installed")
 			pipPath = ""
 		}
 	}
-	log.Println(pipPath, "install", "-r", "requirements.txt")
 	if pipPath != "" {
-		pip := exec.Command(pipPath, "install", "-r", "requirements.txt") // #nosec
+		log.Println(pipPath, "install", "-r", filepath.Join(appDir, "requirements.txt"))
+		pip := exec.Command(pipPath, "install", "-r", filepath.Join(appDir, "requirements.txt")) // #nosec
 		err := pip.Run()
 		if err != nil {
-			return err
+			log.Println("error installing python requirements:", err)
 		}
 	}
 
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
-		return err
+		log.Println("error setting up docker client:", err)
 	}
 
 	// pull docker images
@@ -122,25 +124,19 @@ func setup(auth types.AuthConfig) error {
 		log.Println("pull docker image", image)
 		err = pullImage(ctx, cli, image, auth)
 		if err != nil {
-			return err
+			log.Println("error pulling docker images:", err)
 		}
 	}
 
 	// build docker files
 	log.Println("build dockerfiles")
-	return buildDockerfiles(ctx, cli, auth)
+	err = buildDockerfiles(ctx, cli, auth)
+	if err != nil {
+		log.Println("error building dockerfiles:", err)
+	}
 }
 
-func unpack() error {
-	configDir, err := os.UserConfigDir()
-	if err != nil {
-		return err
-	}
-
-	appDir := filepath.Join(configDir, appName)
-
-	_ = os.RemoveAll(appDir)
-
+func unpack(appDir string) (err error) {
 	for name, data := range assets.FS {
 		name = filepath.FromSlash(name)
 		dest := filepath.Join(appDir, name[1:])
@@ -154,11 +150,10 @@ func unpack() error {
 			return err
 		}
 	}
-
 	return err
 }
 
-func buildDockerfiles(ctx context.Context, cli *client.Client, auth types.AuthConfig) error {
+func buildDockerfiles(ctx context.Context, cli *client.Client, auth *types.AuthConfig) error {
 	configDir, err := os.UserConfigDir()
 	if err != nil {
 		return err
@@ -180,7 +175,7 @@ func buildDockerfiles(ctx context.Context, cli *client.Client, auth types.AuthCo
 	return nil
 }
 
-func dockerfile(ctx context.Context, cli *client.Client, name, dir string, auth types.AuthConfig) error {
+func dockerfile(ctx context.Context, cli *client.Client, name, dir string, auth *types.AuthConfig) error {
 	buf := new(bytes.Buffer)
 	tw := tar.NewWriter(buf)
 	defer tw.Close()
@@ -194,7 +189,7 @@ func dockerfile(ctx context.Context, cli *client.Client, name, dir string, auth 
 	var authConfigs map[string]types.AuthConfig
 	if auth.ServerAddress != "" {
 		authConfigs = map[string]types.AuthConfig{
-			auth.ServerAddress: auth,
+			auth.ServerAddress: *auth,
 		}
 	}
 
@@ -222,8 +217,8 @@ func dockerfile(ctx context.Context, cli *client.Client, name, dir string, auth 
 	return nil // docker("plugin"+dockerfile, "", arguments, filter, false, workflow)
 }
 
-func pullImage(ctx context.Context, cli *client.Client, image string, auth types.AuthConfig) error {
-	body, err := cli.RegistryLogin(ctx, auth)
+func pullImage(ctx context.Context, cli *client.Client, image string, auth *types.AuthConfig) error {
+	body, err := cli.RegistryLogin(ctx, *auth)
 	if err != nil {
 		return err
 	}

@@ -29,7 +29,8 @@ import (
 
 // Run is a subcommand to run a single task.
 func Run() *cobra.Command {
-	// Install().Execute()
+	ensureSetup()
+
 	command := &cobra.Command{
 		Use:   "run",
 		Short: "Run single task",

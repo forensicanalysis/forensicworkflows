@@ -26,12 +26,23 @@ package cmd
 import (
 	"encoding/csv"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/spf13/pflag"
 )
 
 const appName = "elementary"
+
+func appDir() string {
+	configDir, err := os.UserConfigDir()
+	if err != nil {
+		configDir = ""
+	}
+
+	return filepath.Join(configDir, appName)
+}
 
 func readAsCSV(val string) ([]string, error) {
 	if val == "" {

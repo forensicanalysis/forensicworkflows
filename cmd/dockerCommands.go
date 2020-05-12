@@ -52,7 +52,7 @@ func dockerCommands() []*cobra.Command {
 	options := types.ImageListOptions{All: true}
 	imageSummaries, err := cli.ImageList(timeoutCtx, options)
 	if err != nil {
-		log.Printf("could not list docker plugins: %s\n", err)
+		log.Printf("docker plugins disabled: %s", err)
 		return nil
 	}
 

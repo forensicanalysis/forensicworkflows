@@ -35,7 +35,7 @@ import (
 )
 
 //go:generate go get github.com/cugu/go-resources/cmd/resources@v0.3.1
-//go:generate resources -package assets -output assets/config.generated.go -trim "config/" config/scripts/*
+//go:generate resources -package assets -output assets/config.generated.go -trim "config/" config/scripts/* config/req*
 //go:generate go mod tidy
 
 func main() {

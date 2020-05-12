@@ -26,6 +26,7 @@ import (
 	"reflect"
 	"sort"
 	"strings"
+	"sync"
 
 	"github.com/hashicorp/terraform/dag"
 	"github.com/hashicorp/terraform/tfdiags"
@@ -43,6 +44,7 @@ type Task struct {
 type Workflow struct {
 	Tasks map[string]Task `yaml:"tasks"`
 	graph *dag.AcyclicGraph
+	mux   sync.Mutex
 }
 
 // SetupGraph creates a direct acyclic graph of tasks.
@@ -72,7 +74,9 @@ func (workflow *Workflow) Run(storeDir string, plugins map[string]*cobra.Command
 		task := workflow.Tasks[v.(string)]
 
 		if plugin, ok := plugins[task.Command]; ok {
+			workflow.mux.Lock() // serialize tasks
 			err := workflow.runTask(plugin, task, storeDir)
+			workflow.mux.Unlock()
 			if err != nil {
 				return tfdiags.Diagnostics{tfdiags.Sourceless(tfdiags.Error, fmt.Sprint(v.(string)), err.Error())}
 			}

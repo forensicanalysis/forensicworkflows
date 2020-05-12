@@ -269,8 +269,7 @@ func (o *outputWriter) writeElement(element forensicstore.JSONElement) {
 			log.Println(err)
 		}
 	case jsonlFormat:
-		b, _ := json.Marshal(element)
-		_, err := fmt.Fprintln(o.destination, string(b))
+		_, err := fmt.Fprintln(o.destination, string(element))
 		if err != nil {
 			log.Println(err)
 		}
