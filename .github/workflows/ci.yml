@@ -94,10 +94,14 @@ jobs:
       - name: Download testdata
         run: bash test/download_testdata.sh
         shell: bash
-      - name: Bats test
-        run: bats test/bats/forensicworkflows.bats
+      - name: Bats test Unix
+        run: bats test/bats/forensicworkflows.bats test/bats/forensicworkflows_unix.bats
         shell: bash
         if: matrix.os != 'windows-latest'
+      - name: Bats test Windows
+        run: bats test/bats/forensicworkflows.bats
+        shell: bash
+        if: matrix.os == 'windows-latest'
 
       - name: Go Build
         run: |
