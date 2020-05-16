@@ -27,15 +27,11 @@ jobs:
         run: go build .
 
       - name: Pack UNIX
-        run: |
-          zip -r ${{ matrix.os }}.zip forensicworkflows*
-          mv ${{ matrix.os }}.zip ../..
+        run: zip -r ${{ matrix.os }}.zip forensicworkflows*
         shell: bash
         if: matrix.os != 'windows-latest'
       - name: Pack Windows
-        run: |
-          7z a ${{ matrix.os }}.zip forensicworkflows*
-          mv ${{ matrix.os }}.zip ../..
+        run: 7z a ${{ matrix.os }}.zip forensicworkflows*
         shell: bash
         if: matrix.os == 'windows-latest'
 
