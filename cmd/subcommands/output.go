@@ -51,9 +51,9 @@ const (
 	noneFormat
 )
 
-func (f format) string() string {
+/* func (f format) string() string {
 	return []string{"table", "csv", "jsonl", "report", "none"}[f]
-}
+} */
 
 func fromString(s string) format {
 	for i, f := range []string{"table", "csv", "jsonl", "report", "none"} {
@@ -109,19 +109,17 @@ func parseOutputFlags(cmd *cobra.Command) (io.Writer, format, bool) {
 		}
 	}
 
-	format := tableFormat
 	formatString, err := cmd.Flags().GetString("format")
 	if err != nil {
 		log.Println(err)
 	}
-	format = fromString(formatString)
+	format := fromString(formatString)
 
 	addToStore, err := cmd.Flags().GetBool("add-to-store")
 	if err != nil {
 		log.Println(err)
 	}
 
-	log.Println("OUTPUT", output, format.string(), addToStore)
 	return destination, format, addToStore
 }
 
@@ -226,12 +224,6 @@ func (o *outputWriter) writeLine(line []byte) {
 			log.Println(err)
 		}
 		return
-	}
-
-	// unmarshal line
-	_, err := fmt.Fprintln(o.destination, string(line))
-	if err != nil {
-		log.Println(err)
 	}
 
 	o.writeElement(line)

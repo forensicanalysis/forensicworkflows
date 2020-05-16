@@ -88,6 +88,13 @@ func scriptCommand(path string) *cobra.Command {
 				toCommandlineArgs(cmd.Flags(), []string{filepath.ToSlash(url)})...,
 			), " ")
 
+			if strings.HasSuffix(path, ".py") {
+				name, err := exec.LookPath("python3")
+				if err == nil {
+					shellCommand = name + " " + shellCommand
+				}
+			}
+
 			log.Println("sh", "-c", shellCommand)
 
 			buf := &bytes.Buffer{}
