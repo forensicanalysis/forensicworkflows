@@ -92,19 +92,17 @@ func dockerCommand(image string, labels map[string]string) *cobra.Command {
 					return err
 				}
 				mounts := map[string]string{
-					abs: "store",
+					filepath.Dir(abs): "store",
 				}
 
 				for _, mountPoint := range mountPoints {
-					path, err := cmd.Flags().GetString(mountPoint)
-					if err != nil {
-						return err
+					if values, ok := cmd.Flags().UnknownFlags[mountPoint]; ok && len(values) > 0 {
+						abs, err := filepath.Abs(values[0].Value)
+						if err != nil {
+							continue
+						}
+						mounts[abs] = mountPoint
 					}
-					abs, err := filepath.Abs(path)
-					if err != nil {
-						return err
-					}
-					mounts[abs] = mountPoint
 				}
 
 				args = toCommandlineArgs(cmd.Flags(), args)
