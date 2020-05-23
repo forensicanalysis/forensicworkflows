@@ -117,10 +117,11 @@ func setup(auth *types.AuthConfig) {
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
 		log.Println("error setting up docker client:", err)
+		return
 	}
 
 	// pull docker images
-	for _, image := range []string{} {
+	for _, image := range dockerImages {
 		log.Println("pull docker image", image)
 		err = pullImage(ctx, cli, image, auth)
 		if err != nil {
@@ -218,17 +219,19 @@ func dockerfile(ctx context.Context, cli *client.Client, name, dir string, auth 
 }
 
 func pullImage(ctx context.Context, cli *client.Client, image string, auth *types.AuthConfig) error {
-	body, err := cli.RegistryLogin(ctx, *auth)
-	if err != nil {
-		return err
+	if auth != nil {
+		body, err := cli.RegistryLogin(ctx, *auth)
+		if err != nil {
+			return err
+		}
+		log.Println("login", body)
 	}
-	log.Println("login", body)
 
 	reader, err := cli.ImagePull(ctx, image, types.ImagePullOptions{})
 	if err != nil {
 		return err
 	}
-	_, err = io.Copy(os.Stderr, reader)
+	_, err = io.Copy(log.Writer(), reader)
 	if err != nil {
 		return err
 	}
