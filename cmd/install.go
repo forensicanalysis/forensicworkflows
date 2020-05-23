@@ -25,6 +25,7 @@ import (
 	"archive/tar"
 	"bytes"
 	"context"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -34,7 +35,6 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/forensicanalysis/forensicworkflows/assets"
@@ -205,13 +205,13 @@ func dockerfile(ctx context.Context, cli *client.Client, name, dir string, auth 
 	}
 	imageBuildResponse, err := cli.ImageBuild(ctx, dockerFileTarReader, opt)
 	if err != nil {
-		return errors.Wrap(err, "image build failed")
+		return fmt.Errorf("image build failed: %w", err)
 	}
 
 	defer imageBuildResponse.Body.Close()
-	_, err = io.Copy(os.Stdout, imageBuildResponse.Body)
+	_, err = io.Copy(os.Stderr, imageBuildResponse.Body)
 	if err != nil {
-		return errors.Wrap(err, "unable to read image build response")
+		return fmt.Errorf("unable to read image build response: %w", err)
 	}
 
 	return nil // docker("plugin"+dockerfile, "", arguments, filter, false, workflow)

@@ -24,13 +24,13 @@
 package subcommands
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
+	"github.com/tidwall/sjson"
 
 	"github.com/forensicanalysis/forensicstore"
 	"github.com/forensicanalysis/forensicworkflows/daggy"
@@ -116,14 +116,14 @@ func merge(db *forensicstore.ForensicStore, url string, filter daggy.Filter) (er
 					return false
 				}
 				_, err = io.Copy(writer, reader)
-				reader.Close()
-				writer.Close()
+				_ = reader.Close()
+				_ = writer.Close()
 				if err != nil {
 					ferr = err
 					return false
 				}
 
-				element, err = setField(element, field.String(), dstPath)
+				element, err = sjson.SetBytes(element, field.String(), dstPath)
 				if err != nil {
 					ferr = err
 					return false
@@ -141,16 +141,4 @@ func merge(db *forensicstore.ForensicStore, url string, filter daggy.Filter) (er
 		}
 	}
 	return err
-}
-
-func setField(element forensicstore.JSONElement, field, value string) (forensicstore.JSONElement, error) {
-	var je map[string]interface{}
-	err := json.Unmarshal(element, &je)
-	if err != nil {
-		return nil, err
-	}
-
-	je[field] = value
-
-	return json.Marshal(je)
 }

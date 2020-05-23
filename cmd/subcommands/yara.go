@@ -23,112 +23,123 @@
 
 package subcommands
 
+/*
 import (
 	"encoding/json"
+	"io/ioutil"
 	"log"
+	"os"
+	"path/filepath"
+	"time"
 
+	"github.com/hillu/go-yara"
+	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
-	"github.com/tidwall/gjson"
-	"www.velocidex.com/golang/go-prefetch"
 
 	"github.com/forensicanalysis/forensicstore"
-	"github.com/forensicanalysis/forensicworkflows/daggy"
 )
 
-func Prefetch() *cobra.Command {
-	var filtersets []string
+func Yara() *cobra.Command {
+	var rulesPath string
 	prefetchCommand := &cobra.Command{
-		Use:   "prefetch <forensicstore>...",
+		Use:   "yara <forensicstore>...",
 		Short: "Process prefetch files",
 		Args:  RequireStore,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			log.Printf("run prefetch %s", args)
-			filter := extractFilter(filtersets)
+			log.Printf("run yara %s", args)
+
+			c, err := yara.NewCompiler()
+			if err != nil {
+				return err
+			}
+
+			f, err := os.Open(rulesPath) // #nosec
+			if err != nil {
+				return err
+			}
+			err = c.AddFile(f, "default")
+			if err != nil {
+				return err
+			}
+			err = f.Close()
+			if err != nil {
+				return err
+			}
+
+			rules, err := c.GetRules()
+			if err != nil {
+				return err
+			}
 
 			for _, url := range args {
-				err := prefetchFromStore(url, filter, cmd)
+				err = yaraStore(url, rules, cmd)
 				if err != nil {
 					return err
 				}
 			}
-
 			return nil
 		},
 	}
 	AddOutputFlags(prefetchCommand)
-	prefetchCommand.Flags().StringArrayVar(&filtersets, "filter", nil, "filter processed events")
+	prefetchCommand.Flags().StringVar(&rulesPath, "rules", "", "yara rule directory")
 	return prefetchCommand
 }
 
-func prefetchFromStore(url string, filter daggy.Filter, cmd *cobra.Command) error {
+func yaraStore(url string, rules *yara.Rules, cmd *cobra.Command) error {
 	store, teardown, err := forensicstore.Open(url)
 	if err != nil {
 		return err
 	}
 	defer teardown()
 
-	for idx := range filter {
-		filter[idx]["type"] = "file"
-		filter[idx]["name"] = "%.pf"
-	}
+	var elements []forensicstore.JSONElement
 
-	if len(filter) == 0 {
-		filter = daggy.Filter{{"type": "file", "name": "%.pf"}}
-	}
+	err = afero.Walk(store.Fs, "/", func(path string, info os.FileInfo, err error) error {
+		if err != nil || info.IsDir() {
+			return err
+		}
+		f, err := store.LoadFile(filepath.ToSlash(path))
+		if err != nil {
+			return err
+		}
+		defer f.Close()
 
-	fileElements, err := store.Select(filter)
+		b, err := ioutil.ReadAll(f)
+		if err != nil {
+			return err
+		}
+
+		matches, err := rules.ScanMem(b, 0, time.Second*10) // nolint: gomnd
+		if err != nil {
+			return err
+		}
+		for _, match := range matches {
+			b, err := json.Marshal(struct {
+				Type string                 `json:"type"`
+				Rule string                 `json:"rule"`
+				Meta map[string]interface{} `json:"meta"`
+			}{
+				Type: "yara",
+				Rule: match.Rule,
+				Meta: match.Meta,
+			})
+			if err != nil {
+				return err
+			}
+			elements = append(elements, b)
+		}
+		return nil
+	})
 	if err != nil {
 		return err
 	}
 
-	var elements []forensicstore.JSONElement
-	for _, element := range fileElements {
-		exportPath := gjson.GetBytes(element, "export_path")
-		if exportPath.Exists() && exportPath.String() != "" {
-			buff, err := fileToReader(store, exportPath)
-			if err != nil {
-				return err
-			}
-
-			prefetchInfo, err := prefetch.LoadPrefetch(buff)
-			if err != nil {
-				return err
-			}
-
-			elem, err := prefetchToElement(prefetchInfo)
-			if err != nil {
-				return err
-			}
-
-			elements = append(elements, elem)
-		}
-	}
-
 	config := &outputConfig{
 		Header: []string{
-			"Executable",
-			"FileSize",
-			"Hash",
-			"Version",
-			"LastRunTimes",
-			"FilesAccessed",
-			"RunCount",
+			"Rule",
 		},
-		Template: "",
 	}
 	printElements(cmd, config, elements, store)
 	return nil
 }
-
-func prefetchToElement(prefetchInfo *prefetch.PrefetchInfo) (forensicstore.JSONElement, error) {
-	return json.Marshal(map[string]interface{}{
-		"Executable":    prefetchInfo.Executable,
-		"FileSize":      prefetchInfo.FileSize,
-		"Hash":          prefetchInfo.Hash,
-		"Version":       prefetchInfo.Version,
-		"LastRunTimes":  prefetchInfo.LastRunTimes,
-		"FilesAccessed": prefetchInfo.FilesAccessed,
-		"RunCount":      prefetchInfo.RunCount,
-		"type":          "prefetch",
-	})
-}
+*/

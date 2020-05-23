@@ -23,17 +23,16 @@ package cmd
 
 import (
 	"archive/tar"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-
-	"github.com/pkg/errors"
 )
 
 func tarFolder(srcDir string, tw *tar.Writer) error {
 	infos, err := ioutil.ReadDir(srcDir)
 	if err != nil {
-		return errors.Wrap(err, "reading directory failed")
+		return fmt.Errorf("reading directory failed: %w", err)
 	}
 
 	for _, info := range infos {
@@ -43,7 +42,7 @@ func tarFolder(srcDir string, tw *tar.Writer) error {
 			err = tarWrite(filepath.Join(srcDir, info.Name()), info.Name(), tw)
 		}
 		if err != nil {
-			return errors.Wrap(err, "packing tars failed")
+			return fmt.Errorf("packing tars failed: %w", err)
 		}
 	}
 	return nil

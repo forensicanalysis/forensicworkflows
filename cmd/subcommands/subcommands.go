@@ -25,11 +25,12 @@ package subcommands
 
 import (
 	"bytes"
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 
@@ -37,13 +38,27 @@ import (
 	"github.com/forensicanalysis/forensicworkflows/daggy"
 )
 
+// Commands returns a map of all implemented commands.
+func Commands() []*cobra.Command {
+	return []*cobra.Command{
+		Eventlogs(),
+		Export(),
+		ForensicStoreImport(),
+		JSONImport(),
+		Prefetch(),
+		ImportFile(),
+		// Yara(),
+		ExportTimesketch(),
+	}
+}
+
 func RequireStore(_ *cobra.Command, args []string) error {
 	if len(args) < 1 {
 		return errors.New("the following arguments are required: forensicstore")
 	}
 	for _, arg := range args {
 		if _, err := os.Stat(arg); os.IsNotExist(err) {
-			return errors.Wrap(os.ErrNotExist, arg)
+			return fmt.Errorf("%s: %w", arg, os.ErrNotExist)
 		}
 	}
 	return nil

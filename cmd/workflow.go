@@ -25,7 +25,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/forensicanalysis/forensicworkflows/cmd/subcommands"
@@ -50,7 +49,7 @@ Those tasks can be defined to be run on the system itself or in a containerized 
 			// parse workflow yaml
 			workflowFile, _ := cmd.Flags().GetString("file")
 			if _, err := os.Stat(workflowFile); os.IsNotExist(err) {
-				log.Fatal(errors.Wrap(os.ErrNotExist, workflowFile))
+				log.Fatal(err, workflowFile)
 			}
 			workflow, err := daggy.Parse(workflowFile)
 			if err != nil {

@@ -63,7 +63,7 @@ func Export() *cobra.Command {
 					Header:   header,
 					Template: "", // TODO
 				}
-				printElement(rcmd, config, elements, nil)
+				printElements(rcmd, config, elements, nil)
 			}
 			return nil
 		},

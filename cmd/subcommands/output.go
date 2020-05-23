@@ -82,7 +82,7 @@ func Print(r io.Reader, cmd *cobra.Command, url string) {
 	processOutput(destination, r, format, store)
 }
 
-func printElement(cmd *cobra.Command, config *outputConfig, elements []forensicstore.JSONElement, store *forensicstore.ForensicStore) { //nolint: lll
+func printElements(cmd *cobra.Command, config *outputConfig, elements []forensicstore.JSONElement, store *forensicstore.ForensicStore) { //nolint: lll
 	destination, format, addToStore := parseOutputFlags(cmd)
 
 	if !addToStore {
@@ -233,7 +233,7 @@ func (o *outputWriter) writeElement(element forensicstore.JSONElement) {
 	if o.store != nil {
 		_, err := o.store.Insert(element)
 		if err != nil {
-			log.Println(err)
+			log.Println(err, string(element))
 		}
 	}
 

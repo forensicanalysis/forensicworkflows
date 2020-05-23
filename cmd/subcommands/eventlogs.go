@@ -111,7 +111,7 @@ func eventlogsFromStore(url string, filter daggy.Filter, cmd *cobra.Command) err
 		},
 		Template: "", // TODO
 	}
-	printElement(cmd, config, elements, store)
+	printElements(cmd, config, elements, store)
 	return nil
 }
 
@@ -140,7 +140,7 @@ func getEvents(file io.ReadSeeker) ([]forensicstore.JSONElement, error) {
 				event.Set("type", "eventlog")
 				// self.maybeExpandMessage(event)
 
-				serialized, err := json.MarshalIndent(event, " ", " ")
+				serialized, err := json.Marshal(event)
 				if err != nil {
 					return nil, err
 				}
