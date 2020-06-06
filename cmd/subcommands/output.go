@@ -271,7 +271,9 @@ func (o *outputWriter) writeFooter() {
 	case csvFormat:
 		o.csvWriter.Flush()
 	case tableFormat:
-		o.tableWriter.Render()
+		if o.tableWriter.NumLines() > 0 {
+			o.tableWriter.Render()
+		}
 	case reportFormat:
 		tmpl, _ := template.New("output").Parse(o.config.Template)
 		_ = tmpl.Execute(o.destination, o.elements)
