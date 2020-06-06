@@ -12,3 +12,4 @@ test/data/*
 *.zip
 *.json
 item.db
+config/scripts/forensicstore

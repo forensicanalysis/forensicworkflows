@@ -32,6 +32,7 @@ import (
 )
 
 const appName = "elementary"
+const pluginVersion = "v0.13.2"
 
 func appDir() string {
 	configDir, err := os.UserConfigDir()
@@ -39,7 +40,7 @@ func appDir() string {
 		configDir = ""
 	}
 
-	return filepath.Join(configDir, appName)
+	return filepath.Join(configDir, appName, pluginVersion)
 }
 
 func readAsCSV(val string) ([]string, error) {

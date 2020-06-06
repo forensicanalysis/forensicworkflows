@@ -1,1 +1,1 @@
-forensicstore==0.16.0
+forensicstore==0.16.1

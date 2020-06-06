@@ -23,6 +23,8 @@ package cmd
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -57,23 +59,34 @@ func dockerCommands() []*cobra.Command {
 	}
 
 	var commands []*cobra.Command
+	commandNames := map[string]bool{}
 	for _, imageSummary := range imageSummaries {
-		for _, name := range imageSummary.RepoTags {
-			idx := strings.LastIndex(name, "/")
-			if strings.HasPrefix(name[idx+1:], appName+"-") {
-				commands = append(commands, dockerCommand(name, imageSummary.Labels))
+		for _, dockerImage := range imageSummary.RepoTags {
+			name, err := commandName(dockerImage)
+			if err != nil {
+				continue
 			}
+
+			cmd := dockerCommand(name, dockerImage, imageSummary.Labels)
+			commands = append(commands, cmd)
+			commandNames[name] = true
+		}
+	}
+	for _, dockerImage := range dockerImages {
+		name, err := commandName(dockerImage)
+		if err != nil {
+			continue
+		}
+		if _, ok := commandNames[name]; !ok {
+			labels := map[string]string{"short": fmt.Sprintf("Use '%s install -f' to download", os.Args[0])}
+			commands = append(commands, dockerCommand(name, dockerImage, labels))
 		}
 	}
 
 	return commands
 }
 
-func dockerCommand(image string, labels map[string]string) *cobra.Command {
-	name := image[len(appName)+1:]
-	parts := strings.Split(name, ":")
-	name = parts[0]
-
+func dockerCommand(name, image string, labels map[string]string) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   name,
 		Short: "(docker: " + image + ")",
@@ -127,6 +140,17 @@ func dockerCommand(image string, labels map[string]string) *cobra.Command {
 	}
 
 	return cmd
+}
+
+func commandName(image string) (string, error) {
+	idx := strings.LastIndex(image, "/")
+	if strings.HasPrefix(image[idx+1:], appName+"-") {
+		name := image[idx+len(appName)+2:]
+		parts := strings.Split(name, ":")
+		name = parts[0]
+		return name, nil
+	}
+	return "", errors.New("no plugin")
 }
 
 func docker(image string, args []string, mountDirs map[string]string) (io.ReadCloser, error) {

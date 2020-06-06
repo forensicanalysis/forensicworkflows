@@ -22,10 +22,7 @@
 package cmd
 
 import (
-	"archive/tar"
-	"bytes"
 	"context"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -55,7 +52,7 @@ func Install() *cobra.Command {
 			auth.ServerAddress = dockerServer
 
 			if force {
-				setup(&auth)
+				setup(&auth, true)
 			}
 			return nil // fmt.Errorf("%s already exists, use --force to recreate", appDir)
 		},
@@ -75,7 +72,7 @@ func ensureSetup() {
 	appDir := appDir()
 	info, err := os.Stat(appDir)
 	if os.IsNotExist(err) {
-		setup(nil)
+		setup(nil, false)
 		return
 	}
 	if err != nil {
@@ -86,7 +83,7 @@ func ensureSetup() {
 	}
 }
 
-func setup(auth *types.AuthConfig) {
+func setup(auth *types.AuthConfig, pull bool) {
 	appDir := appDir()
 
 	// unpack scripts
@@ -105,8 +102,12 @@ func setup(auth *types.AuthConfig) {
 		}
 	}
 	if pipPath != "" {
-		log.Println(pipPath, "install", "-r", filepath.Join(appDir, "requirements.txt"))
-		pip := exec.Command(pipPath, "install", "-r", filepath.Join(appDir, "requirements.txt")) // #nosec
+		log.Println(pipPath, "install",
+			"--target", filepath.Join(appDir, "scripts"),
+			"-r", filepath.Join(appDir, "requirements.txt"))
+		pip := exec.Command(pipPath, "install",
+			"--target", filepath.Join(appDir, "scripts"),
+			"-r", filepath.Join(appDir, "requirements.txt")) // #nosec
 		err := pip.Run()
 		if err != nil {
 			log.Println("error installing python requirements:", err)
@@ -121,19 +122,14 @@ func setup(auth *types.AuthConfig) {
 	}
 
 	// pull docker images
-	for _, image := range dockerImages {
-		log.Println("pull docker image", image)
-		err = pullImage(ctx, cli, image, auth)
-		if err != nil {
-			log.Println("error pulling docker images:", err)
+	if pull {
+		for _, image := range dockerImages {
+			log.Println("pull docker image", image)
+			err = pullImage(ctx, cli, image, auth)
+			if err != nil {
+				log.Println("error pulling docker images:", err)
+			}
 		}
-	}
-
-	// build docker files
-	log.Println("build dockerfiles")
-	err = buildDockerfiles(ctx, cli, auth)
-	if err != nil {
-		log.Println("error building dockerfiles:", err)
 	}
 }
 
@@ -152,70 +148,6 @@ func unpack(appDir string) (err error) {
 		}
 	}
 	return err
-}
-
-func buildDockerfiles(ctx context.Context, cli *client.Client, auth *types.AuthConfig) error {
-	configDir, err := os.UserConfigDir()
-	if err != nil {
-		return err
-	}
-	dockerDir := filepath.Join(configDir, appName, "docker")
-	infos, err := ioutil.ReadDir(dockerDir)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return nil
-		}
-		return err
-	}
-	for _, info := range infos {
-		err = dockerfile(ctx, cli, info.Name(), filepath.Join(dockerDir, info.Name()), auth)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func dockerfile(ctx context.Context, cli *client.Client, name, dir string, auth *types.AuthConfig) error {
-	buf := new(bytes.Buffer)
-	tw := tar.NewWriter(buf)
-	defer tw.Close()
-
-	err := tarFolder(dir, tw)
-	if err != nil {
-		return err
-	}
-	dockerFileTarReader := bytes.NewReader(buf.Bytes())
-
-	var authConfigs map[string]types.AuthConfig
-	if auth.ServerAddress != "" {
-		authConfigs = map[string]types.AuthConfig{
-			auth.ServerAddress: *auth,
-		}
-	}
-
-	opt := types.ImageBuildOptions{
-		SuppressOutput: false,
-		Remove:         true,
-		ForceRemove:    true,
-		PullParent:     true,
-		Dockerfile:     "Dockerfile",
-		Context:        dockerFileTarReader,
-		Tags:           []string{appName + "-" + name},
-		AuthConfigs:    authConfigs,
-	}
-	imageBuildResponse, err := cli.ImageBuild(ctx, dockerFileTarReader, opt)
-	if err != nil {
-		return fmt.Errorf("image build failed: %w", err)
-	}
-
-	defer imageBuildResponse.Body.Close()
-	_, err = io.Copy(os.Stderr, imageBuildResponse.Body)
-	if err != nil {
-		return fmt.Errorf("unable to read image build response: %w", err)
-	}
-
-	return nil // docker("plugin"+dockerfile, "", arguments, filter, false, workflow)
 }
 
 func pullImage(ctx context.Context, cli *client.Client, image string, auth *types.AuthConfig) error {

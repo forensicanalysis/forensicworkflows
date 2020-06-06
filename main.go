@@ -44,18 +44,19 @@ func main() {
 	rootCmd := cobra.Command{
 		Use:                "forensicworkflows",
 		FParseErrWhitelist: cobra.FParseErrWhitelist{UnknownFlags: true},
-		PersistentPreRun: func(cmd *cobra.Command, args []string) {
-			if debugLog {
-				log.SetFlags(log.LstdFlags | log.LUTC | log.Lshortfile)
-				log.Println("debugLog mode enabled")
-			} else {
-				log.SetOutput(ioutil.Discard)
-			}
-		},
 	}
-	rootCmd.AddCommand(cmd.Run(), cmd.Install(), cmd.Workflow())
 	rootCmd.PersistentFlags().BoolVar(&debugLog, "debug", false, "show log messages")
 	_ = rootCmd.PersistentFlags().MarkHidden("debug")
+	_ = rootCmd.PersistentFlags().Parse(os.Args[1:])
+
+	if debugLog {
+		log.SetFlags(log.LstdFlags | log.LUTC | log.Lshortfile)
+		log.Println("debugLog mode enabled")
+	} else {
+		log.SetOutput(ioutil.Discard)
+	}
+
+	rootCmd.AddCommand(cmd.Run(), cmd.Install(), cmd.Workflow())
 
 	err := rootCmd.Execute()
 	if err != nil {
