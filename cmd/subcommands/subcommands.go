@@ -47,6 +47,7 @@ func Commands() []*cobra.Command {
 		ImportFile(),
 		// Yara(),
 		ExportTimesketch(),
+		BulkSearch(),
 	}
 }
 

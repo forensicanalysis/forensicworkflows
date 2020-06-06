@@ -80,7 +80,7 @@ func JSONImport() *cobra.Command {
 		},
 	}
 	AddOutputFlags(cmd)
-	cmd.Flags().StringVar(&file, "file", "", "forensicstore")
+	cmd.Flags().StringVar(&file, "file", "", "json file")
 	cmd.Flags().StringArrayVar(&filtersets, "filter", nil, "filter processed events")
 	return cmd
 }
