@@ -31,7 +31,7 @@ import (
 func Export() *cobra.Command {
 	var filtersets []string
 	outputCommand := &cobra.Command{
-		Use:   "export <forensicstore>...",
+		Use:   "export <forensicstore>",
 		Short: "Export selected elements",
 		Args:  RequireStore,
 		RunE: func(rcmd *cobra.Command, args []string) error {

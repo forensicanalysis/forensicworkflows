@@ -38,7 +38,7 @@ import (
 func ImportFile() *cobra.Command {
 	var files []string
 	cmd := &cobra.Command{
-		Use:   "import-file <forensicstore>...",
+		Use:   "import-file <forensicstore>",
 		Short: "Import files",
 		Args: func(cmd *cobra.Command, args []string) error {
 			if err := RequireStore(cmd, args); err != nil {

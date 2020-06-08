@@ -52,13 +52,11 @@ func Commands() []*cobra.Command {
 }
 
 func RequireStore(_ *cobra.Command, args []string) error {
-	if len(args) < 1 {
+	if len(args) != 1 {
 		return errors.New("the following arguments are required: forensicstore")
 	}
-	for _, arg := range args {
-		if _, err := os.Stat(arg); os.IsNotExist(err) {
-			return fmt.Errorf("%s: %w", arg, os.ErrNotExist)
-		}
+	if _, err := os.Stat(args[0]); os.IsNotExist(err) {
+		return fmt.Errorf("%s: %w", args[0], os.ErrNotExist)
 	}
 	return nil
 }

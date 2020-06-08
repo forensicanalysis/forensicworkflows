@@ -40,7 +40,7 @@ import (
 func Yara() *cobra.Command {
 	var rulesPath string
 	prefetchCommand := &cobra.Command{
-		Use:   "yara <forensicstore>...",
+		Use:   "yara <forensicstore>",
 		Short: "Process prefetch files",
 		Args:  RequireStore,
 		RunE: func(cmd *cobra.Command, args []string) error {

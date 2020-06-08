@@ -38,7 +38,7 @@ import (
 func Eventlogs() *cobra.Command {
 	var filtersets []string
 	eventlogsCmd := &cobra.Command{
-		Use:   "eventlogs <forensicstore>...",
+		Use:   "eventlogs <forensicstore>",
 		Short: "Process eventlogs into single events",
 		Args:  RequireStore,
 		RunE: func(cmd *cobra.Command, args []string) error {

@@ -76,7 +76,7 @@ class ScriptArgumentParser(argparse.ArgumentParser):
             formatter.add_text(self.description)
 
         # usage
-        formatter.add_usage("  forensicworkflows run %s <forensicstore>... [flags]" % self.subcommand, self._actions,
+        formatter.add_usage("  forensicworkflows run %s <forensicstore> [flags]" % self.subcommand, self._actions,
                             self._mutually_exclusive_groups, "Usage:\n")
 
         # flags

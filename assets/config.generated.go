@@ -3,7 +3,7 @@
 
 package assets
 
-var FS = map[string][]byte{ 
+var FS = map[string][]byte{
 	"/requirements.txt": []byte(`forensicstore==0.16.1
 `),
 	"/scripts/elementary-hotfixes.py": []byte(`#!/usr/bin/env python
@@ -847,7 +847,7 @@ if __name__ == '__main__':
 				0x5f, 0x20, 0x3d, 0x3d, 0x20, 0x27, 0x5f, 0x5f, 0x6d, 0x61, 0x69, 0x6e,
 				0x5f, 0x5f, 0x27, 0x3a, 0x0a, 0x20, 0x20, 0x20, 0x20, 0x6d, 0x61, 0x69,
 				0x6e, 0x28, 0x73, 0x79, 0x73, 0x2e, 0x61, 0x72, 0x67, 0x76, 0x5b, 0x31,
-				0x3a, 0x5d, 0x29, 0x0a, 
+				0x3a, 0x5d, 0x29, 0x0a,
 			},
 	"/scripts/elementary-services.py.info": []byte(`{"Use": "services", "Short": "Process windows services"}`),
 	"/scripts/elementary-software.py": []byte(`#!/usr/bin/env python
@@ -1226,7 +1226,7 @@ class ScriptArgumentParser(argparse.ArgumentParser):
             formatter.add_text(self.description)
 
         # usage
-        formatter.add_usage("  forensicworkflows run %s <forensicstore>... [flags]" % self.subcommand, self._actions,
+        formatter.add_usage("  forensicworkflows run %s <forensicstore> [flags]" % self.subcommand, self._actions,
                             self._mutually_exclusive_groups, "Usage:\n")
 
         # flags

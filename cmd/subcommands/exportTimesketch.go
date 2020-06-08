@@ -38,7 +38,7 @@ import (
 func ExportTimesketch() *cobra.Command {
 	var filtersets []string
 	outputCommand := &cobra.Command{
-		Use:   "export-timesketch <forensicstore>...",
+		Use:   "export-timesketch <forensicstore>",
 		Short: "Export in timesketch jsonl format",
 		Args:  RequireStore,
 		RunE: func(cmd *cobra.Command, args []string) error {

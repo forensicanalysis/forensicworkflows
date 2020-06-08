@@ -35,7 +35,7 @@ func JSONImport() *cobra.Command {
 	var file string
 	var filtersets []string
 	cmd := &cobra.Command{
-		Use:   "import-json <forensicstore>...",
+		Use:   "import-json <forensicstore>",
 		Short: "Import json files",
 		Args: func(cmd *cobra.Command, args []string) error {
 			err := RequireStore(cmd, args)

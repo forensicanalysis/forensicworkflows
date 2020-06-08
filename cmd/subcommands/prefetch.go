@@ -36,7 +36,7 @@ import (
 func Prefetch() *cobra.Command {
 	var filtersets []string
 	prefetchCommand := &cobra.Command{
-		Use:   "prefetch <forensicstore>...",
+		Use:   "prefetch <forensicstore>",
 		Short: "Process prefetch files",
 		Args:  RequireStore,
 		RunE: func(cmd *cobra.Command, args []string) error {
