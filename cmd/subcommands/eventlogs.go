@@ -107,7 +107,6 @@ func eventlogsFromStore(url string, filter daggy.Filter, cmd *cobra.Command) err
 			"System.Channel",
 			"System.Provider.Name",
 		},
-		Template: "", // TODO
 	}
 	printElements(cmd, config, elements, store)
 	return nil

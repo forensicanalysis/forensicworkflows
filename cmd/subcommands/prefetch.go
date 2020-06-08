@@ -112,7 +112,6 @@ func prefetchFromStore(url string, filter daggy.Filter, cmd *cobra.Command) erro
 			"FilesAccessed",
 			"RunCount",
 		},
-		Template: "",
 	}
 	printElements(cmd, config, elements, store)
 	return nil

@@ -58,8 +58,7 @@ func Export() *cobra.Command {
 					return true
 				})
 				config := &outputConfig{
-					Header:   header,
-					Template: "", // TODO
+					Header: header,
 				}
 				printElements(rcmd, config, elements, nil)
 			}

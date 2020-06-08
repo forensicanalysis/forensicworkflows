@@ -30,7 +30,6 @@ import (
 	"log"
 	"os"
 	"reflect"
-	"text/template"
 
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
@@ -45,7 +44,6 @@ const (
 	tableFormat format = iota
 	csvFormat
 	jsonlFormat
-	reportFormat
 	noneFormat
 )
 
@@ -147,8 +145,7 @@ func processOutput(w io.Writer, r io.Reader, format format, store *forensicstore
 }
 
 type outputConfig struct {
-	Header   []string `json:"header,omitempty"`
-	Template string   `json:"template,omitempty"`
+	Header []string `json:"header,omitempty"`
 }
 
 type outputWriter struct {
@@ -160,8 +157,6 @@ type outputWriter struct {
 	rawOutput   bool
 	tableWriter *tablewriter.Table
 	csvWriter   *csv.Writer
-
-	elements []forensicstore.JSONElement
 }
 
 func newOutputWriter(w io.Writer, format format, store *forensicstore.ForensicStore) *outputWriter {
@@ -251,8 +246,6 @@ func (o *outputWriter) writeElement(element forensicstore.JSONElement) {
 	switch o.format {
 	case tableFormat:
 		o.tableWriter.Append(columns)
-	case reportFormat:
-		o.elements = append(o.elements, element)
 	case csvFormat:
 		err := o.csvWriter.Write(columns)
 		if err != nil {
@@ -274,9 +267,6 @@ func (o *outputWriter) writeFooter() {
 		if o.tableWriter.NumLines() > 0 {
 			o.tableWriter.Render()
 		}
-	case reportFormat:
-		tmpl, _ := template.New("output").Parse(o.config.Template)
-		_ = tmpl.Execute(o.destination, o.elements)
 	}
 
 	if closer, ok := o.destination.(io.Closer); ok {
