@@ -67,35 +67,27 @@ def transform(obj):
     return [uninstall_entry]
 
 
-def main(args):
+def main(url):
     print(json.dumps({
         "header": ["Name", "Version", "Publisher", "InstallDate",
-                   "Source", "Location", "Uninstall", "Key", "Key Timestamp"],
-        "template": ""}))
-    parser = storeutil.ScriptArgumentParser(
-        'software',
-        description='Process uninstall entries',
-        store_arg=True,
-        filter_arg=True,
-    )
-    args, _ = parser.parse_known_args(args)
+                   "Source", "Location", "Uninstall", "Key", "Key Timestamp"]}))
 
-    for url in args.forensicstore:
-        store = forensicstore.open(url)
-        conditions = [{
-            'key': "HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\%"
-        }, {
-            'key': "HKEY_USERS\\%\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\%"
-        }]
-        combined_conditions = storeutil.merge_conditions(args.filter, conditions)
-        items = list(store.select(combined_conditions))
-        for item in items:
-            results = transform(item)
-            for result in results:
-                # store.insert(result)
-                print(json.dumps(result))
-        store.close()
+    store = forensicstore.open(url)
+    conditions = [{
+        'key': "HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\%"
+    }, {
+        'key': "HKEY_USERS\\%\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\%"
+    }]
+    for item in store.select(conditions):
+        results = transform(item)
+        for result in results:
+            print(json.dumps(result))
+    store.close()
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    parser = storeutil.ScriptArgumentParser(
+        'software', description='Process uninstall entries', store_arg=True, filter_arg=False,
+    )
+    args, _ = parser.parse_known_args(sys.argv[1:])
+    main(args.forensicstore)

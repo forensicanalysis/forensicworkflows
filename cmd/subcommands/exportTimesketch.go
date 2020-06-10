@@ -42,15 +42,7 @@ func ExportTimesketch() *cobra.Command {
 		Short: "Export in timesketch jsonl format",
 		Args:  RequireStore,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			filter := extractFilter(filtersets)
-
-			for _, url := range args {
-				err := exportStore(url, filter, cmd)
-				if err != nil {
-					return err
-				}
-			}
-			return nil
+			return exportStore(args[0], extractFilter(filtersets), cmd)
 		},
 	}
 	AddOutputFlags(outputCommand)

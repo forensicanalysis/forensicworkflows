@@ -37,44 +37,36 @@ func JSONImport() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "import-json <forensicstore>",
 		Short: "Import json files",
-		Args: func(cmd *cobra.Command, args []string) error {
-			err := RequireStore(cmd, args)
-			if err != nil {
-				return err
-			}
-			return cmd.MarkFlagRequired("file")
-		},
+		Args:  RequireStore,
 		RunE: func(_ *cobra.Command, args []string) error {
 			filter := extractFilter(filtersets)
 
-			for _, url := range args {
-				store, teardown, err := forensicstore.Open(url)
-				if err != nil {
-					return err
-				}
-				defer teardown()
-
-				b, err := ioutil.ReadFile(file) // #nosec
-				if err != nil {
-					return err
-				}
-
-				topLevel := gjson.GetBytes(b, "@this")
-				if !topLevel.IsArray() {
-					return errors.New("imported json must have a top level array containing objects")
-				}
-
-				topLevel.ForEach(func(_, element gjson.Result) bool {
-					elementType := element.Get("type")
-					if elementType.Exists() && filter.Match(forensicstore.JSONElement(element.Raw)) {
-						_, err = store.Insert(forensicstore.JSONElement(element.Raw))
-						if err != nil {
-							return false
-						}
-					}
-					return true
-				})
+			store, teardown, err := forensicstore.Open(args[0])
+			if err != nil {
+				return err
 			}
+			defer teardown()
+
+			b, err := ioutil.ReadFile(file) // #nosec
+			if err != nil {
+				return err
+			}
+
+			topLevel := gjson.GetBytes(b, "@this")
+			if !topLevel.IsArray() {
+				return errors.New("imported json must have a top level array containing objects")
+			}
+
+			topLevel.ForEach(func(_, element gjson.Result) bool {
+				elementType := element.Get("type")
+				if elementType.Exists() && filter.Match(forensicstore.JSONElement(element.Raw)) {
+					_, err = store.Insert(forensicstore.JSONElement(element.Raw))
+					if err != nil {
+						return false
+					}
+				}
+				return true
+			})
 
 			return nil
 		},
@@ -82,5 +74,6 @@ func JSONImport() *cobra.Command {
 	AddOutputFlags(cmd)
 	cmd.Flags().StringVar(&file, "file", "", "json file")
 	cmd.Flags().StringArrayVar(&filtersets, "filter", nil, "filter processed events")
+	_ = cmd.MarkFlagRequired("file")
 	return cmd
 }

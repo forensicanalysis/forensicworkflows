@@ -44,5 +44,3 @@ require (
 	www.velocidex.com/golang/evtx v0.0.1
 	www.velocidex.com/golang/go-prefetch v0.0.0-20190703150313-0469fa2f85cf
 )
-
-replace github.com/spf13/pflag => github.com/NearlyUnique/pflag v1.0.4-0.20190604125058-e20cc26a6365

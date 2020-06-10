@@ -128,36 +128,27 @@ def filetime_to_timestamp(filetime_64):
     return datetime_stamp.isoformat()
 
 
-def main(args):
-    print(json.dumps({
-        "header": ["Hotfix", "Installed", "Source", "Component"],
-        "template": ""
-    }))
-    parser = storeutil.ScriptArgumentParser(
-        'hotfixes',
-        description='Process windows hotfixes',
-        store_arg=True,
-        filter_arg=True,
-    )
-    args, _ = parser.parse_known_args(args)
-    for url in args.forensicstore:
-        LOGGER.debug("search for hotfixes in %s", url)
-        store = forensicstore.open(url)
+def main(url):
+    print(json.dumps({"header": ["Hotfix", "Installed", "Source", "Component"]}))
+    LOGGER.debug("search for hotfixes")
+    store = forensicstore.open(url)
 
-        hklmsw = "HKEY_LOCAL_MACHINE\\SOFTWARE\\"
-        conditions = [
-            {'key': hklmsw + "Microsoft\\Windows\\CurrentVersion\\Component Based Servicing\\Packages\\%"},
-            {'key': hklmsw + "WOW6432Node\\Microsoft\\Updates\\%\\%"},
-            {'key': hklmsw + "Microsoft\\Updates\\%\\%"}
-        ]
-        combined_conditions = storeutil.merge_conditions(args.filter, conditions)
-        for item in store.select(combined_conditions):
-            results = transform(item)
-            for result in results:
-                print(json.dumps(result))
-        store.close()
+    hklmsw = "HKEY_LOCAL_MACHINE\\SOFTWARE\\"
+    conditions = [
+        {'key': hklmsw + "Microsoft\\Windows\\CurrentVersion\\Component Based Servicing\\Packages\\%"},
+        {'key': hklmsw + "WOW6432Node\\Microsoft\\Updates\\%\\%"},
+        {'key': hklmsw + "Microsoft\\Updates\\%\\%"}
+    ]
+    for item in store.select(conditions):
+        for result in transform(item):
+            print(json.dumps(result))
+    store.close()
 
 
 if __name__ == '__main__':
     logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
-    main(sys.argv[1:])
+    parser = storeutil.ScriptArgumentParser(
+        'hotfixes', description='Process windows hotfixes', store_arg=True, filter_arg=False,
+    )
+    args, _ = parser.parse_known_args(sys.argv[1:])
+    main(args.forensicstore)

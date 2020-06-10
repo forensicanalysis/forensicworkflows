@@ -40,25 +40,14 @@ func ForensicStoreImport() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "import-forensicstore <forensicstore>",
 		Short: "Import forensicstore files",
-		Args: func(cmd *cobra.Command, args []string) error {
-			if err := RequireStore(cmd, args); err != nil {
-				return err
-			}
-			return cmd.MarkFlagRequired("file")
-		},
+		Args:  RequireStore,
 		RunE: func(_ *cobra.Command, args []string) error {
-			filter := extractFilter(filtersets)
-
-			for _, url := range args {
-				if err := singleImport(url, file, filter); err != nil {
-					return err
-				}
-			}
-			return nil
+			return singleImport(args[0], file, extractFilter(filtersets))
 		},
 	}
 	AddOutputFlags(cmd)
 	cmd.Flags().StringVar(&file, "file", "", "forensicstore")
+	_ = cmd.MarkFlagRequired("file")
 	cmd.Flags().StringArrayVar(&filtersets, "filter", nil, "filter processed events")
 	return cmd
 }

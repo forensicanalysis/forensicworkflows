@@ -1,1 +1,1 @@
-{"Use": "services", "Short": "Process windows services"}
+{"Use": "services <forensicstore>", "Short": "Process windows services"}

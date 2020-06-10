@@ -1,1 +1,4 @@
-{"Use": "usb", "Short": "Process windows usb artifacts"}
+{
+  "Use": "usb <forensicstore>",
+  "Short": "Process windows usb artifacts"
+}

@@ -120,31 +120,23 @@ def _servicetype_from_bitmask(mask):
     return ', '.join(types)
 
 
-def main(args):
+def main(url):
     print(json.dumps({
         "header": ['Name', 'Description', 'DisplayName', 'Group', 'Start Mode',
                    'Service Type', 'ImagePath', 'Service DLL',
-                   'Service Key Changed', 'Parameters Key Changed', 'Source Key'],
-        "template": ""}))
-    parser = storeutil.ScriptArgumentParser(
-        'services',
-        description='Process windows services',
-        store_arg=True,
-        filter_arg=True,
-    )
-    args, _ = parser.parse_known_args(args)
+                   'Service Key Changed', 'Parameters Key Changed', 'Source Key']}))
 
-    for url in args.forensicstore:
-        store = forensicstore.open(url)
-        conditions = [{'key': "HKEY_LOCAL_MACHINE\\SYSTEM\\%ControlSet%\\Services\\%"}]
-        combined_conditions = storeutil.merge_conditions(args.filter, conditions)
-        items = list(store.select(combined_conditions))
-        results = transform(items)
-        for result in results:
-            # store.insert(result)
-            print(json.dumps(result))
-        store.close()
+    store = forensicstore.open(url)
+    conditions = [{'key': "HKEY_LOCAL_MACHINE\\SYSTEM\\%ControlSet%\\Services\\%"}]
+    items = list(store.select(conditions))
+    for result in transform(items):
+        print(json.dumps(result))
+    store.close()
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    parser = storeutil.ScriptArgumentParser(
+        'services', description='Process windows services', store_arg=True, filter_arg=False,
+    )
+    args, _ = parser.parse_known_args(sys.argv[1:])
+    main(args.forensicstore)

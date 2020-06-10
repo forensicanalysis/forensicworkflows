@@ -47,12 +47,7 @@ func ImportFile() *cobra.Command {
 			return cmd.MarkFlagRequired("file")
 		},
 		RunE: func(_ *cobra.Command, args []string) error {
-			for _, url := range args {
-				if err := singleFileImport(url, files); err != nil {
-					return err
-				}
-			}
-			return nil
+			return singleFileImport(args[0], files)
 		},
 	}
 	AddOutputFlags(cmd)

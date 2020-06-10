@@ -56,8 +56,13 @@ func scriptCommands() []*cobra.Command {
 	return commands
 }
 
+type CommandTemplate struct {
+	*cobra.Command
+	Arguments JSONSchema `json:"arguments,omitempty"`
+}
+
 func scriptCommand(path string) *cobra.Command {
-	cmd := &cobra.Command{}
+	cmd := CommandTemplate{}
 
 	out, err := ioutil.ReadFile(path + ".info") // #nosec
 	if err != nil {
@@ -67,7 +72,7 @@ func scriptCommand(path string) *cobra.Command {
 			log.Println(path, err)
 		}
 	} else {
-		err = json.Unmarshal(out, cmd)
+		err = json.Unmarshal(out, &cmd)
 		if err != nil {
 			log.Println(err)
 		}
@@ -94,10 +99,9 @@ func scriptCommand(path string) *cobra.Command {
 			}
 
 			log.Println("sh", "-c", shellCommand)
+			script := exec.Command("sh", "-c", shellCommand) // #nosec
 
 			buf := &bytes.Buffer{}
-
-			script := exec.Command("sh", "-c", shellCommand) // #nosec
 			script.Stdout = buf
 			script.Stderr = log.Writer()
 			err := script.Run()
@@ -109,10 +113,10 @@ func scriptCommand(path string) *cobra.Command {
 		}
 		return nil
 	}
-	cmd.FParseErrWhitelist = cobra.FParseErrWhitelist{UnknownFlags: true}
-	cmd.SilenceUsage = true
-	cmd.SilenceErrors = true
-	cmd.SetHelpCommand(&cobra.Command{Use: "no-help", Hidden: true})
-	subcommands.AddOutputFlags(cmd)
-	return cmd
+	err = jsonschemaToFlags(cmd.Arguments, cmd.Command)
+	if err != nil {
+		log.Println(err)
+	}
+	subcommands.AddOutputFlags(cmd.Command)
+	return cmd.Command
 }

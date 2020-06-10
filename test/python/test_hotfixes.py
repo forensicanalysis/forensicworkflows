@@ -42,8 +42,7 @@ def data():
 
 def test_hotfixes(data):
     with io.StringIO() as buf, contextlib.redirect_stdout(buf):
-        hotfixes.main([os.path.join(data, "example1.forensicstore")])
-
+        hotfixes.main(os.path.join(data, "example1.forensicstore"))
         lines = buf.getvalue().split("\n")
         assert len(lines) == 14 + 2
 

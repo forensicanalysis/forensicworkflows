@@ -41,8 +41,7 @@ def data():
 
 def test_networking(data):
     with io.StringIO() as buf, contextlib.redirect_stdout(buf):
-        networking.main([os.path.join(data, "example1.forensicstore")])
-
+        networking.main(os.path.join(data, "example1.forensicstore"))
         lines = buf.getvalue().split("\n")
         assert len(lines) == 9 + 2
 

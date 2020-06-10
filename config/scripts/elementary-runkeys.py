@@ -25,7 +25,6 @@ import sys
 import forensicstore
 import storeutil
 
-
 def transform(items):
     results = []
     for item in items:
@@ -42,50 +41,43 @@ def transform(items):
     return results
 
 
-def main(args):
-    print(json.dumps({"header": ["Name", "Command", "SID", "Key"], "template": ""}))
-    parser = storeutil.ScriptArgumentParser(
-        'run-keys',
-        description='Process windows run keys',
-        store_arg=True,
-        filter_arg=True,
-    )
-    args, _ = parser.parse_known_args(args)
+def main(url):
+    print(json.dumps({"header": ["Name", "Command", "SID", "Key"]}))
 
-    for url in args.forensicstore:
-        store = forensicstore.open(url)
-        hklmsw = "HKEY_LOCAL_MACHINE\\Software\\"
-        hkusw = "HKEY_USERS\\%\\Software\\"
-        conditions = [
-            {'key': hklmsw + r"Microsoft\Windows\CurrentVersion\Policies\Explorer\Run"},
-            {'key': hklmsw + r"Microsoft\Windows\CurrentVersion\Run"},
-            {'key': hklmsw + r"Microsoft\Windows\CurrentVersion\RunOnce"},
-            {'key': hklmsw + r"Microsoft\Windows\CurrentVersion\RunOnce\Setup"},
-            {'key': hklmsw + r"Microsoft\Windows\CurrentVersion\RunOnceEx"},
-            {'key': hklmsw + r"Wow6432Node\Microsoft\Windows\CurrentVersion\Run"},
-            {'key': hklmsw + r"Wow6432Node\Microsoft\Windows\CurrentVersion\RunOnce"},
-            {'key': hklmsw + r"Wow6432Node\Microsoft\Windows\CurrentVersion\RunOnce\Setup"},
-            {'key': hklmsw + r"Wow6432Node\Microsoft\Windows\CurrentVersion\RunOnceEx"},
-            {'key': hklmsw + r"Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\Explorer\Run"},
-            {'key': hkusw + r"Microsoft\Windows\CurrentVersion\Policies\Explorer\Run"},
-            {'key': hkusw + r"Microsoft\Windows\CurrentVersion\Run"},
-            {'key': hkusw + r"Microsoft\Windows\CurrentVersion\RunOnce"},
-            {'key': hkusw + r"Microsoft\Windows\CurrentVersion\RunOnce\Setup"},
-            {'key': hkusw + r"Microsoft\Windows\CurrentVersion\RunOnceEx"},
-            {'key': hkusw + r"Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\Explorer\Run"},
-            {'key': hkusw + r"Wow6432Node\Microsoft\Windows\CurrentVersion\Run"},
-            {'key': hkusw + r"Wow6432Node\Microsoft\Windows\CurrentVersion\RunOnce"},
-            {'key': hkusw + r"Wow6432Node\Microsoft\Windows\CurrentVersion\RunOnce\Setup"},
-            {'key': hkusw + r"Wow6432Node\Microsoft\Windows\CurrentVersion\RunOnceEx"}
-        ]
-        combined_conditions = storeutil.merge_conditions(args.filter, conditions)
-        items = store.select(combined_conditions)
-        results = transform(items)
-        for result in results:
-            # store.insert(result)
-            print(json.dumps(result))
-        store.close()
+    store = forensicstore.open(url)
+    hklmsw = "HKEY_LOCAL_MACHINE\\Software\\"
+    hkusw = "HKEY_USERS\\%\\Software\\"
+    conditions = [
+        {'key': hklmsw + r"Microsoft\Windows\CurrentVersion\Policies\Explorer\Run"},
+        {'key': hklmsw + r"Microsoft\Windows\CurrentVersion\Run"},
+        {'key': hklmsw + r"Microsoft\Windows\CurrentVersion\RunOnce"},
+        {'key': hklmsw + r"Microsoft\Windows\CurrentVersion\RunOnce\Setup"},
+        {'key': hklmsw + r"Microsoft\Windows\CurrentVersion\RunOnceEx"},
+        {'key': hklmsw + r"Wow6432Node\Microsoft\Windows\CurrentVersion\Run"},
+        {'key': hklmsw + r"Wow6432Node\Microsoft\Windows\CurrentVersion\RunOnce"},
+        {'key': hklmsw + r"Wow6432Node\Microsoft\Windows\CurrentVersion\RunOnce\Setup"},
+        {'key': hklmsw + r"Wow6432Node\Microsoft\Windows\CurrentVersion\RunOnceEx"},
+        {'key': hklmsw + r"Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\Explorer\Run"},
+        {'key': hkusw + r"Microsoft\Windows\CurrentVersion\Policies\Explorer\Run"},
+        {'key': hkusw + r"Microsoft\Windows\CurrentVersion\Run"},
+        {'key': hkusw + r"Microsoft\Windows\CurrentVersion\RunOnce"},
+        {'key': hkusw + r"Microsoft\Windows\CurrentVersion\RunOnce\Setup"},
+        {'key': hkusw + r"Microsoft\Windows\CurrentVersion\RunOnceEx"},
+        {'key': hkusw + r"Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\Explorer\Run"},
+        {'key': hkusw + r"Wow6432Node\Microsoft\Windows\CurrentVersion\Run"},
+        {'key': hkusw + r"Wow6432Node\Microsoft\Windows\CurrentVersion\RunOnce"},
+        {'key': hkusw + r"Wow6432Node\Microsoft\Windows\CurrentVersion\RunOnce\Setup"},
+        {'key': hkusw + r"Wow6432Node\Microsoft\Windows\CurrentVersion\RunOnceEx"}
+    ]
+    items = store.select(conditions)
+    for result in transform(items):
+        print(json.dumps(result))
+    store.close()
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    parser = storeutil.ScriptArgumentParser(
+        'run-keys', description='Process windows run keys', store_arg=True, filter_arg=False,
+    )
+    args, _ = parser.parse_known_args(sys.argv[1:])
+    main(args.forensicstore)

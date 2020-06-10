@@ -41,16 +41,7 @@ func Prefetch() *cobra.Command {
 		Args:  RequireStore,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			log.Printf("run prefetch %s", args)
-			filter := extractFilter(filtersets)
-
-			for _, url := range args {
-				err := prefetchFromStore(url, filter, cmd)
-				if err != nil {
-					return err
-				}
-			}
-
-			return nil
+			return prefetchFromStore(args[0], extractFilter(filtersets), cmd)
 		},
 	}
 	AddOutputFlags(prefetchCommand)

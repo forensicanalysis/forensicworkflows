@@ -28,6 +28,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
 
@@ -76,11 +77,55 @@ func toCommandlineArgs(flagset *pflag.FlagSet, args []string) []string {
 		}
 		cmdArgs = append(cmdArgs, fmt.Sprintf("--%s=%s", flag.Name, value))
 	})
-	for name, flags := range flagset.UnknownFlags {
-		for _, flag := range flags {
-			cmdArgs = append(cmdArgs, fmt.Sprintf("--%s=%s", name, flag.Value))
-		}
-	}
 	cmdArgs = append(cmdArgs, args...)
 	return cmdArgs
+}
+
+type Property struct {
+	Type        string      `json:"type,omitempty"`
+	Description string      `json:"description,omitempty"`
+	Default     interface{} `json:"default,omitempty"`
+}
+
+type JSONSchema struct {
+	Properties map[string]Property `json:"properties,omitempty"`
+	Required   []string            `json:"required,omitempty"`
+}
+
+func jsonschemaToFlags(schema JSONSchema, command *cobra.Command) error {
+	for name, property := range schema.Properties {
+		switch property.Type {
+		case "string":
+			if defaultValue, ok := property.Default.(string); ok {
+				command.Flags().String(name, defaultValue, property.Description)
+			} else {
+				command.Flags().String(name, "", property.Description)
+			}
+		case "number":
+			if defaultValue, ok := property.Default.(float64); ok {
+				command.Flags().Float64(name, defaultValue, property.Description)
+			} else {
+				command.Flags().Float64(name, 0, property.Description)
+			}
+		case "integer":
+			if defaultValue, ok := property.Default.(int64); ok {
+				command.Flags().Int64(name, defaultValue, property.Description)
+			} else {
+				command.Flags().Int64(name, 0, property.Description)
+			}
+		case "boolean":
+			if defaultValue, ok := property.Default.(bool); ok {
+				command.Flags().Bool(name, defaultValue, property.Description)
+			} else {
+				command.Flags().Bool(name, false, property.Description)
+			}
+		}
+	}
+	for _, required := range schema.Required {
+		err := command.MarkFlagRequired(required)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

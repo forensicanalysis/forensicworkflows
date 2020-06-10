@@ -32,11 +32,11 @@ LOGGER = logging.getLogger(__name__)
 class USBForensicStoreExtractor:
     # pylint: disable=fixme,too-few-public-methods
 
-    def __init__(self, store, store_filter):
+    def __init__(self, store):
         self.artifact_names = ["WindowsUSBDeviceInformations", "WindowsUSBUserMountedDevices",
                                "WindowsUSBVolumeAndDriveMapping"]
         self.forensicstore = store
-        self.filter = store_filter
+        # self.filter = store_filter
 
     def get_usb_usage_data(self):
         """
@@ -50,8 +50,7 @@ class USBForensicStoreExtractor:
 
     def _get_system_usb_data(self):
         system_mounted_usb_info = {}
-        combined_conditions = storeutil.merge_conditions(self.filter, [{"artifact": "WindowsUSBVolumeAndDriveMapping"}])
-        usb_system_mounted_devices = list(self.forensicstore.select(combined_conditions))
+        usb_system_mounted_devices = list(self.forensicstore.select([{"artifact": "WindowsUSBVolumeAndDriveMapping"}]))
         if not usb_system_mounted_devices:
             return {}
         usb_system_mounted_devices = [device.get('values') for device in usb_system_mounted_devices].pop()
@@ -79,8 +78,7 @@ class USBForensicStoreExtractor:
         return system_mounted_usb_info
 
     def _get_user_usb_data(self, system_mounted_usb_info: dict):
-        combined_conditions = storeutil.merge_conditions(self.filter, [{"artifact": "WindowsUSBUserMountedDevices"}])
-        usb_user_mounted_data = self.forensicstore.select(combined_conditions)
+        usb_user_mounted_data = self.forensicstore.select([{"artifact": "WindowsUSBUserMountedDevices"}])
 
         # Categorises found system usb usage to user usb usage.
         usb_user_mounted_devices = []
@@ -97,8 +95,7 @@ class USBForensicStoreExtractor:
         return usb_user_mounted_devices
 
     def _get_all_usb_data(self, usb_user_mounted_devices: list):
-        combined_conditions = storeutil.merge_conditions(self.filter, [{"artifact": "WindowsUSBDeviceInformations"}])
-        usb_device_information = self.forensicstore.select(combined_conditions)
+        usb_device_information = self.forensicstore.select([{"artifact": "WindowsUSBDeviceInformations"}])
 
         # Combines the gathered information to create a dictionary of actual used usb devices and some meta data.
         # Also keeps track about non mounted usb devices.
@@ -130,8 +127,7 @@ class USBForensicStoreExtractor:
         return usb_user_mounted_devices
 
     def _get_first_insert_timestamps(self, device_id):
-        combined_conditions = storeutil.merge_conditions(self.filter, [{"name": "setupapi.dev.log"}])
-        items = self.forensicstore.select(combined_conditions)
+        items = self.forensicstore.select([{"name": "setupapi.dev.log"}])
         # fsf = self.forensicstore.remote_fs.open("WindowsDeviceSetup/setupapi.dev.log", mode='rb')
         for item in items:
             if "export_path" not in item:
@@ -163,31 +159,25 @@ class USBForensicStoreExtractor:
         return []
 
 
-def main(args):
+def main(url):
     print(json.dumps({
         "header": ["vendor_name", "product_name", "usb_revision", "usb_uid", "volume_guid", "user_sid"],
-        "template": ""
     }))
-    parser = storeutil.ScriptArgumentParser(
-        'usb',
-        description='Process windows usb artifacts',
-        store_arg=True,
-        filter_arg=True,
-    )
-    args, _ = parser.parse_known_args(args)
 
-    for url in args.forensicstore:
-        LOGGER.debug("process usb in %s", url)
-        store = forensicstore.open(url)
+    LOGGER.debug("process usb")
+    store = forensicstore.open(url)
 
-        usb_usage_data = USBForensicStoreExtractor(store, args.filter).get_usb_usage_data()
-        for result in usb_usage_data:
-            result["type"] = "usb-device"
-            # store.insert(result)
-            print(json.dumps(result))
-        store.close()
+    usb_usage_data = USBForensicStoreExtractor(store).get_usb_usage_data()
+    for result in usb_usage_data:
+        result["type"] = "usb-device"
+        print(json.dumps(result))
+    store.close()
 
 
 if __name__ == '__main__':
     logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
-    main(sys.argv[1:])
+    parser = storeutil.ScriptArgumentParser(
+        'usb', description='Process usb artifacts', store_arg=True, filter_arg=False,
+    )
+    args, _ = parser.parse_known_args(sys.argv[1:])
+    main(args.forensicstore)

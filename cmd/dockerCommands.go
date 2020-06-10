@@ -23,6 +23,7 @@ package cmd
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -34,7 +35,6 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/client"
 	"github.com/spf13/cobra"
 
@@ -92,45 +92,24 @@ func dockerCommand(name, image string, labels map[string]string) *cobra.Command 
 		Short: "(docker: " + image + ")",
 		Args:  subcommands.RequireStore,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			log.Println("run", cmd.Name(), args)
+			log.Println("run", cmd.Name(), args[0])
 
-			var mountPoints []string
-			if mountsList, ok := labels["mounts"]; ok {
-				mountPoints = strings.Split(mountsList, ",")
+			mounts, err := parseMounts(labels, args, cmd)
+			if err != nil {
+				return err
 			}
 
-			for _, url := range args {
-				abs, err := filepath.Abs(url)
-				if err != nil {
-					return err
-				}
-				mounts := map[string]string{
-					filepath.Dir(abs): "store",
-				}
-
-				for _, mountPoint := range mountPoints {
-					if values, ok := cmd.Flags().UnknownFlags[mountPoint]; ok && len(values) > 0 {
-						abs, err := filepath.Abs(values[0].Value)
-						if err != nil {
-							continue
-						}
-						mounts[abs] = mountPoint
-					}
-				}
-
-				args = toCommandlineArgs(cmd.Flags(), args)
-				out, err := docker(image, args, mounts)
-				if err != nil {
-					return err
-				}
-
-				subcommands.Print(out, cmd, url)
+			args = toCommandlineArgs(cmd.Flags(), args)
+			out, err := docker(image, args, mounts)
+			if err != nil {
+				return err
 			}
+
+			subcommands.Print(out, cmd, args[0])
 			return nil
 		},
 	}
-	cmd.FParseErrWhitelist = cobra.FParseErrWhitelist{UnknownFlags: true}
-	subcommands.AddOutputFlags(cmd)
+	setFlags(labels, cmd)
 
 	if use, ok := labels["use"]; ok {
 		cmd.Use = use
@@ -140,6 +119,53 @@ func dockerCommand(name, image string, labels map[string]string) *cobra.Command 
 	}
 
 	return cmd
+}
+
+func parseMounts(labels map[string]string, args []string, cmd *cobra.Command) (map[string]string, error) {
+	abs, err := filepath.Abs(args[0])
+	if err != nil {
+		return nil, err
+	}
+	mounts := map[string]string{
+		abs: "input.forensicstore",
+	}
+
+	// TODO: check if application id == "eldr"
+	_, err = os.Stat(strings.TrimSuffix(abs, ".forensicstore"))
+	if err == nil {
+		mounts[strings.TrimSuffix(abs, ".forensicstore")] = "input"
+	}
+
+	if mountsList, ok := labels["mounts"]; ok {
+		for _, mountPoint := range strings.Split(mountsList, ",") {
+			mountPointValue, err := cmd.Flags().GetString(mountPoint)
+			if err != nil {
+				continue
+			}
+			abs, err := filepath.Abs(mountPointValue)
+			if err != nil {
+				continue
+			}
+			mounts[abs] = mountPoint
+		}
+	}
+	return mounts, nil
+}
+
+func setFlags(labels map[string]string, cmd *cobra.Command) {
+	if use, ok := labels["arguments"]; ok {
+		var schema JSONSchema
+		err := json.Unmarshal([]byte(use), &schema)
+		if err != nil {
+			log.Println(err)
+		} else {
+			err := jsonschemaToFlags(schema, cmd)
+			if err != nil {
+				log.Println(err)
+			}
+		}
+	}
+	subcommands.AddOutputFlags(cmd)
 }
 
 func commandName(image string) (string, error) {
@@ -167,8 +193,8 @@ func docker(image string, args []string, mountDirs map[string]string) (io.ReadCl
 
 	resp, err := cli.ContainerCreate(
 		ctx,
-		&container.Config{Image: image, Cmd: args, Tty: true, WorkingDir: "/store"},
-		&container.HostConfig{Mounts: mounts}, // , AutoRemove: true
+		&container.Config{Image: image, Cmd: args, Tty: true, WorkingDir: "/elementary"},
+		&container.HostConfig{Binds: mounts}, // , AutoRemove: true
 		nil,
 		"",
 	)
@@ -201,16 +227,12 @@ func docker(image string, args []string, mountDirs map[string]string) (io.ReadCl
 	return out, err
 }
 
-func getMounts(mountDirs map[string]string) ([]mount.Mount, error) {
+func getMounts(mountDirs map[string]string) ([]string, error) {
 	for localDir := range mountDirs {
 		// create directory if not exists
 		_, err := os.Open(localDir) // #nosec
 		if os.IsNotExist(err) {
-			log.Println("creating directory", localDir)
-			err = os.MkdirAll(localDir, os.ModePerm)
-			if err != nil {
-				return nil, err
-			}
+			return nil, fmt.Errorf("%s does not exist", localDir)
 		} else if err != nil {
 			return nil, err
 		}
@@ -222,22 +244,10 @@ func getMounts(mountDirs map[string]string) ([]mount.Mount, error) {
 		}
 	}
 
-	/*
-		// add transit dir if import or export
-		transitPath := arguments.Get("file")
-		if transitPath != "" {
-			transitDir, transitFile := filepath.Split(transitPath)
-			if transitDir[1] == ':' {
-				transitDir = "/" + strings.ToLower(string(transitDir[0])) + filepath.ToSlash(transitDir[2:])
-			}
-			mounts = append(mounts, mount.Mount{Type: mount.TypeBind, Source: transitDir, Target: "/transit"})
-			cmd = append(cmd, "--file", transitFile)
-		}
-	*/
-
-	var mounts []mount.Mount
+	var mounts []string
 	for localDir, containerDir := range mountDirs {
-		mounts = append(mounts, mount.Mount{Type: mount.TypeBind, Source: localDir, Target: "/" + containerDir})
+		// mounts = append(mounts, mount.Mount{Type: mount.TypeBind, Source: localDir, Target: "/" + containerDir})
+		mounts = append(mounts, localDir+":/elementary/"+containerDir)
 	}
 	return mounts, nil
 }

@@ -43,15 +43,7 @@ func Eventlogs() *cobra.Command {
 		Args:  RequireStore,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			log.Printf("run eventlogs %s", args)
-			filter := extractFilter(filtersets)
-
-			for _, url := range args {
-				err := eventlogsFromStore(url, filter, cmd)
-				if err != nil {
-					return err
-				}
-			}
-			return nil
+			return eventlogsFromStore(args[0], extractFilter(filtersets), cmd)
 		},
 	}
 	AddOutputFlags(eventlogsCmd)

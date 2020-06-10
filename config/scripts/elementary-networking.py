@@ -94,33 +94,24 @@ def transform(objs):
     return results
 
 
-def main(args):
+def main(url):
     print(json.dumps({
         "header": ["GUID", "DHCP", "IPs", "SubNetMask", "NameServer",
-                   "IP Key Changed", "Network Key Changed", "Friendly Name"],
-        "template": ""
-    }))
-    parser = storeutil.ScriptArgumentParser(
-        'networking',
-        description='Process windows network interfaces',
-        store_arg=True,
-        filter_arg=True,
-    )
-    args, _ = parser.parse_known_args(args)
-
-    for url in args.forensicstore:
-        store = forensicstore.open(url)
-        conditions = [
-            {'key': r"HKEY_LOCAL_MACHINE\SYSTEM\%ControlSet%\Control\Network\{4D36E972-E325-11CE-BFC1-08002BE10318}\%"},
-            {'key': r"HKEY_LOCAL_MACHINE\SYSTEM\%ControlSet%\Services\Tcpip\Parameters\Interfaces\%"}
-        ]
-        combined_conditions = storeutil.merge_conditions(args.filter, conditions)
-        items = store.select(combined_conditions)
-        for result in transform(items):
-            # store.insert(result)
-            print(json.dumps(result))
-        store.close()
+                   "IP Key Changed", "Network Key Changed", "Friendly Name"]}))
+    store = forensicstore.open(url)
+    conditions = [
+        {'key': r"HKEY_LOCAL_MACHINE\SYSTEM\%ControlSet%\Control\Network\{4D36E972-E325-11CE-BFC1-08002BE10318}\%"},
+        {'key': r"HKEY_LOCAL_MACHINE\SYSTEM\%ControlSet%\Services\Tcpip\Parameters\Interfaces\%"}
+    ]
+    items = store.select(conditions)
+    for result in transform(items):
+        print(json.dumps(result))
+    store.close()
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    parser = storeutil.ScriptArgumentParser(
+        'networking', description='Process networking artifacts', store_arg=True, filter_arg=False,
+    )
+    args, _ = parser.parse_known_args(sys.argv[1:])
+    main(args.forensicstore)

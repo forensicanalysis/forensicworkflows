@@ -38,14 +38,8 @@ func Workflow() *cobra.Command {
 		Short: "Run a workflow",
 		Long: `process can run parallel workflows locally. Those workflows are a directed acyclic graph of tasks.
 Those tasks can be defined to be run on the system itself or in a containerized way.`,
-		Args: func(cmd *cobra.Command, args []string) error {
-			err := subcommands.RequireStore(cmd, args)
-			if err != nil {
-				return err
-			}
-			return cmd.MarkFlagRequired("file")
-		},
-		Run: func(cmd *cobra.Command, args []string) {
+		Args: subcommands.RequireStore,
+		RunE: func(cmd *cobra.Command, args []string) error {
 			// parse workflow yaml
 			workflowFile, _ := cmd.Flags().GetString("file")
 			if _, err := os.Stat(workflowFile); os.IsNotExist(err) {
@@ -62,14 +56,10 @@ Those tasks can be defined to be run on the system itself or in a containerized 
 			}
 
 			workflow.SetupGraph()
-			for _, url := range args {
-				err = workflow.Run(url, plugins)
-				if err != nil {
-					log.Fatal("run failed: ", err)
-				}
-			}
+			return workflow.Run(args[0], plugins)
 		},
 	}
 	workflowCmd.Flags().StringP("file", "f", "", "workflow definition file")
+	_ = workflowCmd.MarkFlagRequired("file")
 	return workflowCmd
 }

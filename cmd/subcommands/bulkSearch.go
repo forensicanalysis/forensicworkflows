@@ -38,13 +38,7 @@ func BulkSearch() *cobra.Command {
 	bulkSearchCommand := &cobra.Command{
 		Use:   "bulk-search <forensicstore>",
 		Short: "Bulk search indicators",
-		Args: func(cmd *cobra.Command, args []string) error {
-			err := RequireStore(cmd, args)
-			if err != nil {
-				return err
-			}
-			return cmd.MarkFlagRequired("file")
-		},
+		Args:  RequireStore,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			log.Printf("run bulk-search %s", args)
 
@@ -87,6 +81,7 @@ func BulkSearch() *cobra.Command {
 	}
 	AddOutputFlags(bulkSearchCommand)
 	bulkSearchCommand.Flags().StringVar(&file, "file", "", "file with IOCs")
+	_ = bulkSearchCommand.MarkFlagRequired("file")
 	return bulkSearchCommand
 }
 
