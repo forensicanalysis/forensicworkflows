@@ -33,7 +33,7 @@ import (
 )
 
 const appName = "elementary"
-const pluginVersion = "v0.13.2"
+const pluginVersion = "v0.14.0"
 
 func appDir() string {
 	configDir, err := os.UserConfigDir()
