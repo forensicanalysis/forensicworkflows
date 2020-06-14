@@ -27,6 +27,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -88,7 +89,7 @@ func dockerCommands() []*cobra.Command {
 
 func dockerCommand(name, image string, labels map[string]string) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   name,
+		Use:   name + " <forensicstore>",
 		Short: "(docker: " + image + ")",
 		Args:  subcommands.RequireStore,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -111,9 +112,6 @@ func dockerCommand(name, image string, labels map[string]string) *cobra.Command 
 	}
 	setFlags(labels, cmd)
 
-	if use, ok := labels["use"]; ok {
-		cmd.Use = use
-	}
 	if short, ok := labels["short"]; ok {
 		cmd.Short = short + " (docker: " + image + ")"
 	}
@@ -139,7 +137,7 @@ func parseMounts(labels map[string]string, args []string, cmd *cobra.Command) (m
 	if mountsList, ok := labels["mounts"]; ok {
 		for _, mountPoint := range strings.Split(mountsList, ",") {
 			mountPointValue, err := cmd.Flags().GetString(mountPoint)
-			if err != nil {
+			if err != nil || mountPointValue == "" {
 				continue
 			}
 			abs, err := filepath.Abs(mountPointValue)
@@ -194,7 +192,7 @@ func docker(image string, args []string, mountDirs map[string]string) (io.ReadCl
 	resp, err := cli.ContainerCreate(
 		ctx,
 		&container.Config{Image: image, Cmd: args, Tty: true, WorkingDir: "/elementary"},
-		&container.HostConfig{Binds: mounts}, // , AutoRemove: true
+		&container.HostConfig{Binds: mounts},
 		nil,
 		"",
 	)
@@ -210,20 +208,26 @@ func docker(image string, args []string, mountDirs map[string]string) (io.ReadCl
 
 	log.Println("wait for docker container")
 	statusChannel, errChannel := cli.ContainerWait(ctx, resp.ID, container.WaitConditionNotRunning)
+	var runError error
 	select {
 	case err := <-errChannel:
-		if err != nil {
-			return nil, err
+		runError = err
+	case e := <-statusChannel:
+		if e.StatusCode != 0 {
+			runError = fmt.Errorf("container returned status code %d", e.StatusCode)
 		}
-	case <-statusChannel:
 	}
 
 	log.Println("get docker container logs")
 	out, err := cli.ContainerLogs(ctx, resp.ID, types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true})
-	if err != nil {
-		return nil, err
+	if runError != nil {
+		b, _ := ioutil.ReadAll(out)
+		return nil, fmt.Errorf("%w: %s", runError, b)
 	}
-
+	if err != nil {
+		b, _ := ioutil.ReadAll(out)
+		return nil, fmt.Errorf("%w: %s", err, b)
+	}
 	return out, err
 }
 

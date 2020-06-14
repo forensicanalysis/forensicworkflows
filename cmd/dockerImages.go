@@ -22,8 +22,9 @@
 package cmd
 
 var dockerImages = []string{ // nolint: gochecknoglobals
-	"forensicanalysis/elementary-shimcache:latest",
-	"forensicanalysis/elementary-plaso:latest",
-	"forensicanalysis/elementary-import-image:latest",
-	"forensicanalysis/elementary-yara:latest",
+	"forensicanalysis/elementary-shimcache:v0.2.0",
+	"forensicanalysis/elementary-plaso:v0.2.0",
+	"forensicanalysis/elementary-import-image:v0.2.0",
+	"forensicanalysis/elementary-yara:v0.2.0",
+	"forensicanalysis/elementary-sigma:v0.2.0",
 }

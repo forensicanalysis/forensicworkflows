@@ -20,6 +20,14 @@ jobs:
         with: {go-version: '1.14'}
       - name: Checkout code
         uses: actions/checkout@v1
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
       - name: Download dependencies
         run: go mod download
       - name: Install golangci-lint & go-acc
@@ -70,6 +78,14 @@ jobs:
         if: matrix.os == 'windows-latest'
       - name: Checkout code
         uses: actions/checkout@v1
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
       - name: Download dependencies
         run: go mod download
 
@@ -140,6 +156,108 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: bash <(curl -s https://codecov.io/bash) -f coverage.xml
         # if: matrix.os == 'windows-latest'
+        shell: bash
+
+  collect:
+    name: Run Collect
+    runs-on: windows-latest
+    steps:
+      - name: Collect artifacts
+        run: |
+          curl --fail --output windows-latest.zip --location https://github.com/forensicanalysis/artifactcollector/releases/download/v0.14.2/windows-latest.zip
+          unzip windows-latest.zip
+          ./artifactcollector.exe
+          mv *.forensicstore test.forensicstore
+      - name: upload test.forensicstore
+        uses: actions/upload-artifact@v2
+        with:
+          name: test.forensicstore
+          path: test.forensicstore
+
+  process:
+    name: Run Process
+    needs: collect
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup go 1.14
+        uses: actions/setup-go@v2
+        with: {go-version: '1.14'}
+      - uses: actions/setup-python@v1
+        with: {python-version: '3.8'}
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: Setup Build
+        run: |
+          go generate
+          go install .
+          forensicworkflows install -f
+
+      - name: download test.forensicstore
+        uses: actions/download-artifact@v2
+        with:
+          name: test.forensicstore
+
+      - name: run eventlogs
+        run: forensicworkflows run eventlogs --format jsonl --add-to-store --debug test.forensicstore
+        shell: bash
+      - name: run export
+        run: forensicworkflows run export --format jsonl --debug test.forensicstore
+        shell: bash
+      - name: run export-timesketch
+        run: forensicworkflows run export-timesketch --format jsonl --debug test.forensicstore
+        shell: bash
+      - name: run hotfixes
+        run: forensicworkflows run --debug hotfixes --format jsonl test.forensicstore
+        shell: bash
+      # - name: run import-file
+      #   run: forensicworkflows run import-file --format jsonl --debug test.forensicstore
+      #   shell: bash
+      # - name: run import-forensicstore
+      #   run: forensicworkflows run import-forensicstore --format jsonl --debug test.forensicstore
+      #   shell: bash
+      # - name: run import-image
+      #   run: forensicworkflows run import-image --format jsonl --debug test.forensicstore
+      #   shell: bash
+      # - name: run import-json
+      #   run: forensicworkflows run import-json --format jsonl --debug test.forensicstore
+      #   shell: bash
+      - name: run networking
+        run: forensicworkflows run networking --format jsonl --debug test.forensicstore
+        shell: bash
+      - name: run prefetch
+        run: forensicworkflows run prefetch --format jsonl --debug test.forensicstore
+        shell: bash
+      - name: run run-keys
+        run: forensicworkflows run run-keys --format jsonl --debug test.forensicstore
+        shell: bash
+      - name: run services
+        run: forensicworkflows run services --format jsonl --debug test.forensicstore
+        shell: bash
+      - name: run shimcache
+        run: forensicworkflows run shimcache --format jsonl --debug test.forensicstore
+        shell: bash
+      - name: run sigma
+        run: forensicworkflows run sigma --format jsonl --debug test.forensicstore
+        shell: bash
+      - name: run software
+        run: forensicworkflows run software --format jsonl --debug test.forensicstore
+        shell: bash
+      - name: run usb
+        run: forensicworkflows run usb --format jsonl --debug test.forensicstore
+        shell: bash
+      - name: run yara
+        run: forensicworkflows run yara --format jsonl --debug test.forensicstore
+        shell: bash
+      - name: run plaso
+        run: forensicworkflows run plaso --format jsonl --debug test.forensicstore
         shell: bash
 
   docs:
