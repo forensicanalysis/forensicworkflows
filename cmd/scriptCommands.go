@@ -22,7 +22,6 @@
 package cmd
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -84,33 +83,33 @@ func scriptCommand(path string) *cobra.Command {
 	cmd.Short += " (script)"
 	cmd.Args = subcommands.RequireStore
 	cmd.RunE = func(cmd *cobra.Command, args []string) error {
-		log.Printf("run %s %s", cmd.Name(), args)
-		for _, url := range args {
-			shellCommand := strings.Join(append(
-				[]string{`"` + filepath.ToSlash(path) + `"`},
-				toCommandlineArgs(cmd.Flags(), []string{filepath.ToSlash(url)})...,
-			), " ")
+		log.Printf("run %s %s", cmd.Name(), args[0])
+		shellCommand := strings.Join(append(
+			[]string{`"` + filepath.ToSlash(path) + `"`},
+			toCommandlineArgs(cmd.Flags(), []string{filepath.ToSlash(args[0])})...,
+		), " ")
 
-			if strings.HasSuffix(path, ".py") {
-				name, err := exec.LookPath("python3")
-				if err == nil {
-					shellCommand = name + " " + shellCommand
-				}
+		if strings.HasSuffix(path, ".py") {
+			name, err := exec.LookPath("python3")
+			if err == nil {
+				shellCommand = name + " " + shellCommand
 			}
-
-			log.Println("sh", "-c", shellCommand)
-			script := exec.Command("sh", "-c", shellCommand) // #nosec
-
-			buf := &bytes.Buffer{}
-			script.Stdout = buf
-			script.Stderr = log.Writer()
-			err := script.Run()
-			if err != nil {
-				return fmt.Errorf("%s script failed with %s", cmd.Use, err)
-			}
-
-			subcommands.Print(buf, cmd, url)
 		}
+
+		log.Println("sh", "-c", shellCommand)
+		script := exec.Command("sh", "-c", shellCommand) // #nosec
+
+		output, teardown := subcommands.NewOutputWriterURL(cmd, args[0])
+		defer teardown()
+
+		script.Stdout = output
+		script.Stderr = log.Writer()
+		err := script.Run()
+		if err != nil {
+			return fmt.Errorf("%s script failed with %s", cmd.Use, err)
+		}
+
+		output.WriteFooter()
 		return nil
 	}
 	err = jsonschemaToFlags(cmd.Arguments, cmd.Command)

@@ -27,7 +27,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -100,13 +99,16 @@ func dockerCommand(name, image string, labels map[string]string) *cobra.Command 
 				return err
 			}
 
+			output, teardown := subcommands.NewOutputWriterURL(cmd, args[0])
+			defer teardown()
+
 			args = toCommandlineArgs(cmd.Flags(), args)
-			out, err := docker(image, args, mounts)
+			err = docker(image, args, mounts, output)
 			if err != nil {
 				return err
 			}
 
-			subcommands.Print(out, cmd, args[0])
+			output.WriteFooter()
 			return nil
 		},
 	}
@@ -177,16 +179,16 @@ func commandName(image string) (string, error) {
 	return "", errors.New("no plugin")
 }
 
-func docker(image string, args []string, mountDirs map[string]string) (io.ReadCloser, error) {
+func docker(image string, args []string, mountDirs map[string]string, w io.Writer) error {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	mounts, err := getMounts(mountDirs)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	resp, err := cli.ContainerCreate(
@@ -196,15 +198,24 @@ func docker(image string, args []string, mountDirs map[string]string) (io.ReadCl
 		nil,
 		"",
 	)
-
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	log.Println("start docker container")
 	if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
-		return nil, err
+		return err
 	}
+
+	defer cli.ContainerRemove(ctx, resp.ID, types.ContainerRemoveOptions{}) // nolint: errcheck
+
+	go func() {
+		log.Println("get docker container logs")
+		out, err := cli.ContainerLogs(ctx, resp.ID, types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true})
+		if err != nil {
+			io.Copy(w, out) // nolint: errcheck
+		}
+	}()
 
 	log.Println("wait for docker container")
 	statusChannel, errChannel := cli.ContainerWait(ctx, resp.ID, container.WaitConditionNotRunning)
@@ -217,18 +228,7 @@ func docker(image string, args []string, mountDirs map[string]string) (io.ReadCl
 			runError = fmt.Errorf("container returned status code %d", e.StatusCode)
 		}
 	}
-
-	log.Println("get docker container logs")
-	out, err := cli.ContainerLogs(ctx, resp.ID, types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true})
-	if runError != nil {
-		b, _ := ioutil.ReadAll(out)
-		return nil, fmt.Errorf("%w: %s", runError, b)
-	}
-	if err != nil {
-		b, _ := ioutil.ReadAll(out)
-		return nil, fmt.Errorf("%w: %s", err, b)
-	}
-	return out, err
+	return runError
 }
 
 func getMounts(mountDirs map[string]string) ([]string, error) {

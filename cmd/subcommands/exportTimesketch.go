@@ -65,7 +65,8 @@ func exportStore(url string, filter daggy.Filter, cmd *cobra.Command) error {
 		return nil
 	}
 
-	var events []forensicstore.JSONElement
+	output := newOutputWriterStore(cmd, store, &outputConfig{Header: []string{"message", "datetime", "timestamp_desc"}})
+
 	for _, element := range elements {
 		element := element
 		gjson.GetBytes(element, "@this").ForEach(func(key, value gjson.Result) bool {
@@ -93,14 +94,13 @@ func exportStore(url string, filter daggy.Filter, cmd *cobra.Command) error {
 					log.Println(err)
 					return true
 				}
-				events = append(events, b)
+				output.Write(b) // nolint: errcheck
 			}
 			return true
 		})
 	}
 
-	config := &outputConfig{Header: []string{"message", "datetime", "timestamp_desc"}}
-	printElements(cmd, config, events, store)
+	output.WriteFooter()
 	return nil
 }
 

@@ -37,31 +37,32 @@ func Export() *cobra.Command {
 		RunE: func(rcmd *cobra.Command, args []string) error {
 			filter := extractFilter(filtersets)
 
-			for _, url := range args {
-				store, teardown, err := forensicstore.Open(url)
-				if err != nil {
-					return err
-				}
-				defer teardown()
-
-				elements, err := store.Select(filter)
-				if err != nil {
-					return err
-				}
-				if len(elements) == 0 {
-					continue
-				}
-
-				var header []string
-				gjson.GetBytes(elements[0], "@this").ForEach(func(key, _ gjson.Result) bool {
-					header = append(header, key.String())
-					return true
-				})
-				config := &outputConfig{
-					Header: header,
-				}
-				printElements(rcmd, config, elements, nil)
+			store, teardown, err := forensicstore.Open(args[0])
+			if err != nil {
+				return err
 			}
+			defer teardown()
+
+			elements, err := store.Select(filter)
+			if err != nil {
+				return err
+			}
+			if len(elements) == 0 {
+				return nil
+			}
+
+			var header []string
+			gjson.GetBytes(elements[0], "@this").ForEach(func(key, _ gjson.Result) bool {
+				header = append(header, key.String())
+				return true
+			})
+			output := newOutputWriterStore(rcmd, store, &outputConfig{
+				Header: header,
+			})
+			for _, element := range elements {
+				output.Write(element) // nolint: errcheck
+			}
+			output.WriteFooter()
 			return nil
 		},
 	}

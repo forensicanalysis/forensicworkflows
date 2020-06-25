@@ -72,7 +72,17 @@ func eventlogsFromStore(url string, filter daggy.Filter, cmd *cobra.Command) err
 		return err
 	}
 
-	var elements []forensicstore.JSONElement
+	output := newOutputWriterStore(cmd, store, &outputConfig{
+		Header: []string{
+			"System.Computer",
+			"System.TimeCreated.SystemTime",
+			"System.EventRecordID",
+			"System.EventID.Value",
+			"System.Level",
+			"System.Channel",
+			"System.Provider.Name",
+		},
+	})
 	for _, element := range fileElements {
 		exportPath := gjson.GetBytes(element, "export_path")
 		if exportPath.Exists() && exportPath.String() != "" {
@@ -86,21 +96,12 @@ func eventlogsFromStore(url string, filter daggy.Filter, cmd *cobra.Command) err
 				return err
 			}
 
-			elements = append(elements, events...)
+			for _, event := range events {
+				output.Write(event) // nolint: errcheck
+			}
 		}
 	}
-	config := &outputConfig{
-		Header: []string{
-			"System.Computer",
-			"System.TimeCreated.SystemTime",
-			"System.EventRecordID",
-			"System.EventID.Value",
-			"System.Level",
-			"System.Channel",
-			"System.Provider.Name",
-		},
-	}
-	printElements(cmd, config, elements, store)
+	output.WriteFooter()
 	return nil
 }
 

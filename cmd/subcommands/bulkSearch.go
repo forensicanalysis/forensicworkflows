@@ -54,7 +54,7 @@ func BulkSearch() *cobra.Command {
 			}
 			defer file.Close()
 
-			var elements []forensicstore.JSONElement
+			output := newOutputWriterStore(cmd, store, &outputConfig{Header: []string{"ioc", "count"}})
 
 			scanner := bufio.NewScanner(file)
 			for scanner.Scan() {
@@ -68,14 +68,12 @@ func BulkSearch() *cobra.Command {
 				if err != nil {
 					return err
 				}
-				elements = append(elements, element)
+				output.Write(element) // nolint: errcheck
 			}
 			if err := scanner.Err(); err != nil {
 				return err
 			}
-
-			config := &outputConfig{Header: []string{"ioc", "count"}}
-			printElements(cmd, config, elements, store)
+			output.WriteFooter()
 			return nil
 		},
 	}

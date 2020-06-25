@@ -206,58 +206,58 @@ jobs:
           name: test.forensicstore
 
       - name: run eventlogs
-        run: forensicworkflows run eventlogs --format jsonl --add-to-store --debug test.forensicstore
+        run: forensicworkflows run --debug eventlogs --format csv --add-to-store test.forensicstore
         shell: bash
       - name: run export
-        run: forensicworkflows run export --format jsonl --debug test.forensicstore
+        run: forensicworkflows run --debug export --format csv test.forensicstore
         shell: bash
       - name: run export-timesketch
-        run: forensicworkflows run export-timesketch --format jsonl --debug test.forensicstore
+        run: forensicworkflows run --debug export-timesketch --format jsonl test.forensicstore
         shell: bash
       - name: run hotfixes
-        run: forensicworkflows run --debug hotfixes --format jsonl test.forensicstore
+        run: forensicworkflows run --debug --debug hotfixes --format csv test.forensicstore
         shell: bash
       # - name: run import-file
-      #   run: forensicworkflows run import-file --format jsonl --debug test.forensicstore
+      #   run: forensicworkflows run --debug import-file --format csv test.forensicstore
       #   shell: bash
       # - name: run import-forensicstore
-      #   run: forensicworkflows run import-forensicstore --format jsonl --debug test.forensicstore
+      #   run: forensicworkflows run --debug import-forensicstore --format csv test.forensicstore
       #   shell: bash
       # - name: run import-image
-      #   run: forensicworkflows run import-image --format jsonl --debug test.forensicstore
+      #   run: forensicworkflows run --debug import-image --format csv test.forensicstore
       #   shell: bash
       # - name: run import-json
-      #   run: forensicworkflows run import-json --format jsonl --debug test.forensicstore
+      #   run: forensicworkflows run --debug import-json --format csv test.forensicstore
       #   shell: bash
       - name: run networking
-        run: forensicworkflows run networking --format jsonl --debug test.forensicstore
+        run: forensicworkflows run --debug networking --format csv test.forensicstore
         shell: bash
       - name: run prefetch
-        run: forensicworkflows run prefetch --format jsonl --debug test.forensicstore
+        run: forensicworkflows run --debug prefetch --format csv test.forensicstore
         shell: bash
       - name: run run-keys
-        run: forensicworkflows run run-keys --format jsonl --debug test.forensicstore
+        run: forensicworkflows run --debug run-keys --format csv test.forensicstore
         shell: bash
       - name: run services
-        run: forensicworkflows run services --format jsonl --debug test.forensicstore
+        run: forensicworkflows run --debug services --format csv test.forensicstore
         shell: bash
       - name: run shimcache
-        run: forensicworkflows run shimcache --format jsonl --debug test.forensicstore
+        run: forensicworkflows run --debug shimcache --format csv test.forensicstore
         shell: bash
       - name: run sigma
-        run: forensicworkflows run sigma --format jsonl --debug test.forensicstore
+        run: forensicworkflows run --debug sigma --format csv test.forensicstore
         shell: bash
       - name: run software
-        run: forensicworkflows run software --format jsonl --debug test.forensicstore
+        run: forensicworkflows run --debug software --format csv test.forensicstore
         shell: bash
       - name: run usb
-        run: forensicworkflows run usb --format jsonl --debug test.forensicstore
+        run: forensicworkflows run --debug usb --format csv test.forensicstore
         shell: bash
       - name: run yara
-        run: forensicworkflows run yara --format jsonl --debug test.forensicstore
+        run: forensicworkflows run --debug yara --format csv test.forensicstore
         shell: bash
       - name: run plaso
-        run: forensicworkflows run plaso --format jsonl --debug test.forensicstore
+        run: forensicworkflows run --debug plaso --format csv test.forensicstore
         shell: bash
 
   docs:

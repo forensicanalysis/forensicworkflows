@@ -70,7 +70,18 @@ func prefetchFromStore(url string, filter daggy.Filter, cmd *cobra.Command) erro
 		return err
 	}
 
-	var elements []forensicstore.JSONElement
+	output := newOutputWriterStore(cmd, store, &outputConfig{
+		Header: []string{
+			"Executable",
+			"FileSize",
+			"Hash",
+			"Version",
+			"LastRunTimes",
+			"FilesAccessed",
+			"RunCount",
+		},
+	})
+
 	for _, element := range fileElements {
 		exportPath := gjson.GetBytes(element, "export_path")
 		if exportPath.Exists() && exportPath.String() != "" {
@@ -89,22 +100,11 @@ func prefetchFromStore(url string, filter daggy.Filter, cmd *cobra.Command) erro
 				return err
 			}
 
-			elements = append(elements, elem)
+			output.Write(elem) // nolint: errcheck
 		}
 	}
 
-	config := &outputConfig{
-		Header: []string{
-			"Executable",
-			"FileSize",
-			"Hash",
-			"Version",
-			"LastRunTimes",
-			"FilesAccessed",
-			"RunCount",
-		},
-	}
-	printElements(cmd, config, elements, store)
+	output.WriteFooter()
 	return nil
 }
 

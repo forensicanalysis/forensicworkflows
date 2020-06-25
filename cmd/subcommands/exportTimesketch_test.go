@@ -53,7 +53,7 @@ func TestExportTimesketch(t *testing.T) {
 		wantCount int
 		wantErr   bool
 	}{
-		{"export timesketch", args{example1, []string{}}, 4054, false},
+		{"export timesketch", args{example1, []string{}}, 4052, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
