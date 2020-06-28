@@ -92,19 +92,19 @@ func merge(db *forensicstore.ForensicStore, url string, filter daggy.Filter) (er
 		r := gjson.GetBytes(element, "@this")
 		r.ForEach(func(field, value gjson.Result) bool {
 			if strings.HasSuffix(field.String(), "_path") {
-				dstPath, writer, err := db.StoreFile(value.String())
+				dstPath, writer, teardownStoreFile, err := db.StoreFile(value.String())
 				if err != nil {
 					ferr = fmt.Errorf("could not store file: %w", err)
 					return false
 				}
-				reader, err := importStore.LoadFile(value.String())
+				reader, teardownLoadFile, err := importStore.LoadFile(value.String())
 				if err != nil {
 					ferr = fmt.Errorf("could not load file: %w", err)
 					return false
 				}
 				_, err = io.Copy(writer, reader)
-				_ = reader.Close()
-				_ = writer.Close()
+				_ = teardownLoadFile()
+				_ = teardownStoreFile()
 				if err != nil {
 					ferr = err
 					return false

@@ -78,17 +78,13 @@ func extractFilter(filtersets []string) daggy.Filter {
 }
 
 func fileToReader(store *forensicstore.ForensicStore, exportPath gjson.Result) (*bytes.Reader, error) {
-	file, err := store.LoadFile(exportPath.String())
+	file, teardown, err := store.LoadFile(exportPath.String())
 	if err != nil {
 		return nil, err
 	}
+	defer teardown()
 
 	b, err := ioutil.ReadAll(file)
-	if err != nil {
-		return nil, err
-	}
-
-	err = file.Close()
 	if err != nil {
 		return nil, err
 	}

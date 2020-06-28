@@ -81,11 +81,11 @@ func insertFile(store *forensicstore.ForensicStore, srcpath string) error {
 	file := forensicstore.NewFile()
 	file.Name = filepath.Base(srcpath)
 
-	dstpath, storeFile, err := store.StoreFile(srcpath)
+	dstpath, storeFile, teardown, err := store.StoreFile(srcpath)
 	if err != nil {
 		return fmt.Errorf("error storing file: %w", err)
 	}
-	defer storeFile.Close()
+	defer teardown()
 
 	srcFile, err := os.Open(srcpath) // #nosec
 	if err != nil {
