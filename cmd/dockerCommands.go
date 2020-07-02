@@ -209,16 +209,8 @@ func docker(image string, args []string, mountDirs map[string]string, w io.Write
 
 	defer cli.ContainerRemove(ctx, resp.ID, types.ContainerRemoveOptions{}) // nolint: errcheck
 
-	go func() {
-		log.Println("get docker container logs")
-		options := types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true, Follow: true}
-		out, err := cli.ContainerLogs(ctx, resp.ID, options)
-		if err != nil {
-			return
-		}
-		defer out.Close()
-		io.Copy(w, out) // nolint: errcheck
-	}()
+	go streamLogs(ctx, cli, resp.ID, w, true, false)            // nolint: errcheck
+	go streamLogs(ctx, cli, resp.ID, log.Writer(), false, true) // nolint: errcheck
 
 	log.Println("wait for docker container")
 	statusChannel, errChannel := cli.ContainerWait(ctx, resp.ID, container.WaitConditionNotRunning)
@@ -232,6 +224,17 @@ func docker(image string, args []string, mountDirs map[string]string, w io.Write
 		}
 	}
 	return runError
+}
+
+func streamLogs(ctx context.Context, cli *client.Client, id string, w io.Writer, stdout, stderr bool) error {
+	options := types.ContainerLogsOptions{ShowStderr: stderr, ShowStdout: stdout, Follow: true}
+	out, err := cli.ContainerLogs(ctx, id, options)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+	_, err = io.Copy(w, out)
+	return err
 }
 
 func getMounts(mountDirs map[string]string) ([]string, error) {

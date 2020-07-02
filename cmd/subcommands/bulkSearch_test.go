@@ -22,12 +22,14 @@
 package subcommands
 
 import (
-	"github.com/forensicanalysis/forensicworkflows/daggy"
-	"github.com/tidwall/gjson"
 	"io/ioutil"
 	"log"
 	"path/filepath"
 	"testing"
+
+	"github.com/tidwall/gjson"
+
+	"github.com/forensicanalysis/forensicworkflows/daggy"
 
 	"github.com/forensicanalysis/forensicstore"
 )

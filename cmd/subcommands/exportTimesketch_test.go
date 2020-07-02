@@ -22,10 +22,11 @@
 package subcommands
 
 import (
-	"github.com/forensicanalysis/forensicworkflows/daggy"
 	"log"
 	"path/filepath"
 	"testing"
+
+	"github.com/forensicanalysis/forensicworkflows/daggy"
 
 	"github.com/tidwall/gjson"
 
@@ -53,7 +54,7 @@ func TestExportTimesketch(t *testing.T) {
 		wantCount int
 		wantErr   bool
 	}{
-		{"export timesketch", args{example1, []string{}}, 4052, false},
+		{"export timesketch", args{example1, []string{}}, 4054, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -100,7 +100,7 @@ func prefetchFromStore(url string, filter daggy.Filter, cmd *cobra.Command) erro
 				return err
 			}
 
-			output.Write(elem) // nolint: errcheck
+			output.writeLine(elem) // nolint: errcheck
 		}
 	}
 

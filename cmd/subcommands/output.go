@@ -22,7 +22,6 @@
 package subcommands
 
 import (
-	"bufio"
 	"bytes"
 	"encoding/csv"
 	"encoding/json"
@@ -69,6 +68,8 @@ type OutputWriter struct {
 	moreElements bool
 	cmd          *cobra.Command
 
+	buffer *bytes.Buffer
+
 	tableWriter *tablewriter.Table
 	csvWriter   *csv.Writer
 }
@@ -84,6 +85,7 @@ func newOutputWriter(store *forensicstore.ForensicStore, cmd *cobra.Command) *Ou
 		format: format,
 		store:  outStore,
 		cmd:    cmd,
+		buffer: &bytes.Buffer{},
 	}
 
 	switch format {
@@ -153,15 +155,25 @@ func (o *OutputWriter) writeHeaderConfig(outConfig *outputConfig) {
 	}
 }
 
-func (o *OutputWriter) Write(element []byte) (n int, err error) {
-	scanner := bufio.NewScanner(bytes.NewReader(element))
-	for scanner.Scan() {
-		o.writeLine(scanner.Bytes()) // nolint: errcheck
+func (o *OutputWriter) Write(b []byte) (n int, err error) {
+	n = len(b)
+	for {
+		i := bytes.IndexByte(b, '\n')
+		if i < 0 { // no more newlines
+			o.buffer.Write(b)
+			break
+		}
+
+		o.writeLine(append(o.buffer.Bytes(), b[:i]...))
+		b = b[i+1:]
+		o.buffer.Reset()
 	}
-	return len(element), scanner.Err()
+	return n, nil
 }
 
 func (o *OutputWriter) writeLine(element []byte) { // nolint: gocyclo
+	element = bytes.TrimSpace(element)
+
 	if o.firstLine {
 		o.writeHeaderLine(element)
 		return
@@ -217,6 +229,8 @@ func (o *OutputWriter) getColumns(element forensicstore.JSONElement) []string {
 }
 
 func (o *OutputWriter) WriteFooter() {
+	o.writeLine(o.buffer.Bytes())
+
 	switch o.format {
 	case csvFormat:
 		o.csvWriter.Flush()
@@ -228,7 +242,8 @@ func (o *OutputWriter) WriteFooter() {
 		o.cmd.OutOrStdout().Write([]byte("]")) // nolint: errcheck
 	}
 
-	if closer, ok := o.cmd.OutOrStdout().(io.Closer); ok {
+	out := o.cmd.OutOrStdout()
+	if closer, ok := out.(io.Closer); ok && out != os.Stdout {
 		closer.Close()
 	}
 }

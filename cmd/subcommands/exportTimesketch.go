@@ -94,7 +94,7 @@ func exportStore(url string, filter daggy.Filter, cmd *cobra.Command) error {
 					log.Println(err)
 					return true
 				}
-				output.Write(b) // nolint: errcheck
+				output.writeLine(b) // nolint: errcheck
 			}
 			return true
 		})

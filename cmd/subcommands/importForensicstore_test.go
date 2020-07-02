@@ -57,7 +57,7 @@ func TestForensicstoreImportPlugin_Run(t *testing.T) {
 		wantCount int
 		wantErr   bool
 	}{
-		{"forensicstore import", args{newStorePath, []string{"--file", example1},}, 3527, false},
+		{"forensicstore import", args{newStorePath, []string{"--file", example1}}, 3527, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -68,7 +68,7 @@ func BulkSearch() *cobra.Command {
 				if err != nil {
 					return err
 				}
-				output.Write(element) // nolint: errcheck
+				output.writeLine(element) // nolint: errcheck
 			}
 			if err := scanner.Err(); err != nil {
 				return err

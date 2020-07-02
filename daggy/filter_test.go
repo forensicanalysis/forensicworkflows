@@ -22,8 +22,9 @@
 package daggy
 
 import (
-	"github.com/forensicanalysis/forensicstore"
 	"testing"
+
+	"github.com/forensicanalysis/forensicstore"
 )
 
 func TestFilter_Match(t *testing.T) {

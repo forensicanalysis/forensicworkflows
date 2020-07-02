@@ -97,7 +97,7 @@ func eventlogsFromStore(url string, filter daggy.Filter, cmd *cobra.Command) err
 			}
 
 			for _, event := range events {
-				output.Write(event) // nolint: errcheck
+				output.writeLine(event) // nolint: errcheck
 			}
 		}
 	}

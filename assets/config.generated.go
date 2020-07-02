@@ -4,7 +4,7 @@
 package assets
 
 var FS = map[string][]byte{ 
-	"/requirements.txt": []byte(`forensicstore>=0.16.3,<0.17.0
+	"/requirements.txt": []byte(`forensicstore>=0.17.0,<0.18.0
 `),
 	"/scripts/elementary-hotfixes.py": []byte(`#!/usr/bin/env python
 # Copyright (c) 2019 Siemens AG
