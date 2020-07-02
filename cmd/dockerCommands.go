@@ -211,10 +211,13 @@ func docker(image string, args []string, mountDirs map[string]string, w io.Write
 
 	go func() {
 		log.Println("get docker container logs")
-		out, err := cli.ContainerLogs(ctx, resp.ID, types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true})
+		options := types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true, Follow: true}
+		out, err := cli.ContainerLogs(ctx, resp.ID, options)
 		if err != nil {
-			io.Copy(w, out) // nolint: errcheck
+			return
 		}
+		defer out.Close()
+		io.Copy(w, out) // nolint: errcheck
 	}()
 
 	log.Println("wait for docker container")
