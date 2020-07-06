@@ -29,6 +29,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -121,16 +122,43 @@ func setup(auth *types.AuthConfig, pull bool) {
 		return
 	}
 
-	// pull docker images
 	if pull {
-		for _, image := range dockerImages {
-			log.Println("pull docker image", image)
-			err = pullImage(ctx, cli, image, auth)
-			if err != nil {
-				log.Println("error pulling docker images:", err)
+		pullImages(ctx, cli, auth)
+	}
+}
+
+func pullImages(ctx context.Context, cli *client.Client, auth *types.AuthConfig) {
+	// remove old images
+	options := types.ImageListOptions{All: true}
+	imageSummaries, err := cli.ImageList(ctx, options)
+	if err != nil {
+		log.Printf("could not list images: %s", err)
+	}
+	for _, imageSummary := range imageSummaries {
+		for _, dockerImage := range imageSummary.RepoTags {
+			if strings.HasPrefix(dockerImage, "forensicanalysis/elementary-") && !contains(dockerImages, dockerImage) {
+				_, _ = cli.ImageRemove(ctx, dockerImage, types.ImageRemoveOptions{})
 			}
 		}
 	}
+
+	// pull docker images
+	for _, image := range dockerImages {
+		log.Println("pull docker image", image)
+		err = pullImage(ctx, cli, image, auth)
+		if err != nil {
+			log.Println("error pulling docker images:", err)
+		}
+	}
+}
+
+func contains(l []string, s string) bool {
+	for _, e := range l {
+		if e == s {
+			return true
+		}
+	}
+	return false
 }
 
 func unpack(appDir string) (err error) {

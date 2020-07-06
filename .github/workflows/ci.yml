@@ -164,8 +164,8 @@ jobs:
     steps:
       - name: Collect artifacts
         run: |
-          curl --fail --output windows-latest.zip --location https://github.com/forensicanalysis/artifactcollector/releases/download/v0.14.2/windows-latest.zip
-          unzip windows-latest.zip
+          curl --fail --output windows.zip --location https://github.com/forensicanalysis/artifactcollector/releases/download/v0.15.0/windows.zip
+          unzip windows.zip
           ./artifactcollector.exe
           mv *.forensicstore test.forensicstore
       - name: upload test.forensicstore
@@ -205,60 +205,179 @@ jobs:
         with:
           name: test.forensicstore
 
-      - name: run eventlogs
-        run: forensicworkflows run --debug eventlogs --format csv --add-to-store test.forensicstore
-        shell: bash
-      - name: run export
-        run: forensicworkflows run --debug export --format csv test.forensicstore
-        shell: bash
-      - name: run export-timesketch
-        run: forensicworkflows run --debug export-timesketch --format jsonl test.forensicstore
-        shell: bash
-      - name: run hotfixes
-        run: forensicworkflows run --debug --debug hotfixes --format csv test.forensicstore
-        shell: bash
-      # - name: run import-file
-      #   run: forensicworkflows run --debug import-file --format csv test.forensicstore
-      #   shell: bash
-      # - name: run import-forensicstore
-      #   run: forensicworkflows run --debug import-forensicstore --format csv test.forensicstore
-      #   shell: bash
-      # - name: run import-image
-      #   run: forensicworkflows run --debug import-image --format csv test.forensicstore
-      #   shell: bash
       # - name: run import-json
       #   run: forensicworkflows run --debug import-json --format csv test.forensicstore
       #   shell: bash
       - name: run networking
         run: forensicworkflows run --debug networking --format csv test.forensicstore
-        shell: bash
       - name: run prefetch
         run: forensicworkflows run --debug prefetch --format csv test.forensicstore
-        shell: bash
       - name: run run-keys
         run: forensicworkflows run --debug run-keys --format csv test.forensicstore
-        shell: bash
       - name: run services
         run: forensicworkflows run --debug services --format csv test.forensicstore
-        shell: bash
       - name: run shimcache
         run: forensicworkflows run --debug shimcache --format csv test.forensicstore
-        shell: bash
-      - name: run sigma
-        run: forensicworkflows run --debug sigma --format csv test.forensicstore
-        shell: bash
-      - name: run software
-        run: forensicworkflows run --debug software --format csv test.forensicstore
-        shell: bash
-      - name: run usb
-        run: forensicworkflows run --debug usb --format csv test.forensicstore
-        shell: bash
+
       - name: run yara
         run: forensicworkflows run --debug yara --format csv test.forensicstore
-        shell: bash
-      - name: run plaso
-        run: forensicworkflows run --debug plaso --format csv test.forensicstore
-        shell: bash
+
+  case1:
+    name: Test Case 1 (import-file, eventlogs, sigma)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup go 1.14
+        uses: actions/setup-go@v2
+        with: {go-version: '1.14'}
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: Setup Build
+        run: |
+          go generate
+          go install .
+          forensicworkflows install -f
+      - name: Install forensicstore
+        run: go get github.com/forensicanalysis/forensicstore/cmd/forensicstore
+
+      - run: curl --fail --output master.zip --location https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES/archive/master.zip
+      - run: unzip master.zip
+      - run: forensicstore create case1.forensicstore
+      - run: forensicworkflows run --debug import-file --file EVTX-ATTACK-SAMPLES-master case1.forensicstore
+      - run: forensicworkflows run --debug eventlogs --format none --add-to-store case1.forensicstore
+      - run: forensicworkflows run --debug sigma case1.forensicstore
+
+  case2:
+    name: Test Case 2 (import-image, hotfixes)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup go 1.14
+        uses: actions/setup-go@v2
+        with: {go-version: '1.14'}
+      - uses: actions/setup-python@v1
+        with: {python-version: '3.8'}
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: Setup Build
+        run: |
+          go generate
+          go install .
+          forensicworkflows install -f
+      - name: Install forensicstore
+        run: go get github.com/forensicanalysis/forensicstore/cmd/forensicstore
+
+      - run: forensicstore create case2.forensicstore
+      - run: curl --fail --output win10_mock.zip --location https://download.artifacthub.org/windows/win10_mock.zip
+      - run: unzip win10_mock.zip
+      - run: forensicworkflows run --debug import-image --input-dir . --input-file win10_mock.vhd case2.forensicstore
+      - run: forensicworkflows run --debug hotfixes --format csv case2.forensicstore
+
+  case3:
+    name: Test Case 3 (import-forensicstore, plaso)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup go 1.14
+        uses: actions/setup-go@v2
+        with: {go-version: '1.14'}
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: Setup Build
+        run: |
+          go generate
+          go install .
+          forensicworkflows install -f
+      - name: Install forensicstore
+        run: go get github.com/forensicanalysis/forensicstore/cmd/forensicstore
+
+      - run: curl --fail --output example2.forensicstore --location https://download.artifacthub.org/forensics/example2.forensicstore
+      - run: forensicstore create case3.forensicstore
+      - run: forensicworkflows run --debug import-forensicstore --file example2.forensicstore case3.forensicstore
+      - run: forensicworkflows run --debug plaso case3.forensicstore
+
+  case4:
+    name: Test Case 4 (usb, export)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup go 1.14
+        uses: actions/setup-go@v2
+        with: {go-version: '1.14'}
+      - uses: actions/setup-python@v1
+        with: {python-version: '3.8'}
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: Setup Build
+        run: |
+          go generate
+          go install .
+          forensicworkflows install -f
+      - name: Install forensicstore
+        run: go get github.com/forensicanalysis/forensicstore/cmd/forensicstore
+
+      - run: curl --fail --output usb.forensicstore --location https://download.artifacthub.org/forensics/usb.forensicstore
+      - run: forensicworkflows run --debug usb --format csv usb.forensicstore
+      - run: forensicworkflows run --debug export --format csv usb.forensicstore
+
+  case5:
+    name: Test Case 5 (software, export-timesketch)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup go 1.14
+        uses: actions/setup-go@v2
+        with: {go-version: '1.14'}
+      - uses: actions/setup-python@v1
+        with: {python-version: '3.8'}
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: Setup Build
+        run: |
+          go generate
+          go install .
+          forensicworkflows install -f
+      - name: Install forensicstore
+        run: go get github.com/forensicanalysis/forensicstore/cmd/forensicstore
+
+      - run: curl --fail --output example2.forensicstore --location https://download.artifacthub.org/forensics/example2.forensicstore
+      - run: forensicworkflows run --debug software --add-to-store --format csv example2.forensicstore
+      - run: forensicworkflows run --debug export-timesketch --filter type=uninstall_entry --format jsonl example2.forensicstore
 
   docs:
     name: Documentation
