@@ -29,6 +29,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
@@ -251,6 +252,14 @@ func (o *OutputWriter) WriteFooter() {
 func AddOutputFlags(cmd *cobra.Command) {
 	cmd.Flags().String("output", "", "choose an output file")
 	cmd.Flags().String("format", "table", "choose output format [csv, jsonl, table, json, none]")
+
+	if cmd.Annotations != nil {
+		if properties, ok := cmd.Annotations["plugin_property_flags"]; ok {
+			if strings.Contains(properties, "ex") {
+				return
+			}
+		}
+	}
 	cmd.Flags().Bool("add-to-store", false, "additionally save output to store")
 }
 

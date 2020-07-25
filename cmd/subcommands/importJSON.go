@@ -70,8 +70,8 @@ func JSONImport() *cobra.Command {
 
 			return nil
 		},
+		Annotations: map[string]string{"plugin_property_flags": "di|im"},
 	}
-	AddOutputFlags(cmd)
 	cmd.Flags().StringVar(&file, "file", "", "json file")
 	cmd.Flags().StringArrayVar(&filtersets, "filter", nil, "filter processed events")
 	_ = cmd.MarkFlagRequired("file")

@@ -44,8 +44,8 @@ func ForensicStoreImport() *cobra.Command {
 		RunE: func(_ *cobra.Command, args []string) error {
 			return singleImport(args[0], file, extractFilter(filtersets))
 		},
+		Annotations: map[string]string{"plugin_property_flags": "di|im"},
 	}
-	AddOutputFlags(cmd)
 	cmd.Flags().StringVar(&file, "file", "", "forensicstore")
 	_ = cmd.MarkFlagRequired("file")
 	cmd.Flags().StringArrayVar(&filtersets, "filter", nil, "filter processed events")

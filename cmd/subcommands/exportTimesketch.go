@@ -44,6 +44,7 @@ func ExportTimesketch() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return exportStore(args[0], extractFilter(filtersets), cmd)
 		},
+		Annotations: map[string]string{"plugin_property_flags": "ex"},
 	}
 	AddOutputFlags(outputCommand)
 	outputCommand.Flags().StringArrayVar(&filtersets, "filter", nil, "filter processed events")

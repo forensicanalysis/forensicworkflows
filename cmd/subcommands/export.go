@@ -65,6 +65,7 @@ func Export() *cobra.Command {
 			output.WriteFooter()
 			return nil
 		},
+		Annotations: map[string]string{"plugin_property_flags": "ex"},
 	}
 	AddOutputFlags(outputCommand)
 	outputCommand.Flags().StringArrayVar(&filtersets, "filter", nil, "filter processed events")

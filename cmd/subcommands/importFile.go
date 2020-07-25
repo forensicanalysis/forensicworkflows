@@ -49,8 +49,8 @@ func ImportFile() *cobra.Command {
 		RunE: func(_ *cobra.Command, args []string) error {
 			return singleFileImport(args[0], files)
 		},
+		Annotations: map[string]string{"plugin_property_flags": "di|im"},
 	}
-	AddOutputFlags(cmd)
 	cmd.Flags().StringArrayVar(&files, "file", []string{}, "forensicstore")
 	return cmd
 }

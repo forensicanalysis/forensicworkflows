@@ -67,7 +67,7 @@ func dockerCommands() []*cobra.Command {
 				continue
 			}
 
-			cmd := dockerCommand(name, dockerImage, imageSummary.Labels)
+			cmd := DockerCommand(name, dockerImage, imageSummary.Labels)
 			commands = append(commands, cmd)
 			commandNames[name] = true
 		}
@@ -79,14 +79,14 @@ func dockerCommands() []*cobra.Command {
 		}
 		if _, ok := commandNames[name]; !ok {
 			labels := map[string]string{"short": fmt.Sprintf("Use '%s install -f' to download", os.Args[0])}
-			commands = append(commands, dockerCommand(name, dockerImage, labels))
+			commands = append(commands, DockerCommand(name, dockerImage, labels))
 		}
 	}
 
 	return commands
 }
 
-func dockerCommand(name, image string, labels map[string]string) *cobra.Command {
+func DockerCommand(name, image string, labels map[string]string) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   name + " <forensicstore>",
 		Short: "(docker: " + image + ")",
@@ -112,11 +112,22 @@ func dockerCommand(name, image string, labels map[string]string) *cobra.Command 
 			return nil
 		},
 	}
-	setFlags(labels, cmd)
 
 	if short, ok := labels["short"]; ok {
 		cmd.Short = short + " (docker: " + image + ")"
 	}
+
+	addOutput := true
+	if properties, ok := labels["properties"]; ok {
+		if cmd.Annotations == nil {
+			cmd.Annotations = map[string]string{}
+		}
+		if strings.Contains(properties, "di") { // TODO: use constant
+			addOutput = false
+		}
+		cmd.Annotations["plugin_property_flags"] = properties
+	}
+	setFlags(labels, cmd, addOutput)
 
 	return cmd
 }
@@ -152,7 +163,7 @@ func parseMounts(labels map[string]string, args []string, cmd *cobra.Command) (m
 	return mounts, nil
 }
 
-func setFlags(labels map[string]string, cmd *cobra.Command) {
+func setFlags(labels map[string]string, cmd *cobra.Command, addOutput bool) {
 	if use, ok := labels["arguments"]; ok {
 		var schema JSONSchema
 		err := json.Unmarshal([]byte(use), &schema)
@@ -165,7 +176,9 @@ func setFlags(labels map[string]string, cmd *cobra.Command) {
 			}
 		}
 	}
-	subcommands.AddOutputFlags(cmd)
+	if addOutput {
+		subcommands.AddOutputFlags(cmd)
+	}
 }
 
 func commandName(image string) (string, error) {
