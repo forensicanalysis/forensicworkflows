@@ -20,7 +20,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.4.0 // indirect
 	github.com/hashicorp/logutils v1.0.0
-	github.com/hashicorp/terraform v0.12.24
+	github.com/hashicorp/terraform v0.12.29
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/kr/pretty v0.2.0 // indirect
 	github.com/morikuni/aec v1.0.0 // indirect
