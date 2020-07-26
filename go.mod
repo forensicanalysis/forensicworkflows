@@ -13,7 +13,7 @@ require (
 	github.com/docker/docker v1.4.2-0.20191108192604-36ffe9edc2b3
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
-	github.com/forensicanalysis/forensicstore v0.17.0
+	github.com/forensicanalysis/forensicstore v0.17.1
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/protobuf v1.4.0 // indirect
 	github.com/gorilla/mux v1.7.4 // indirect
