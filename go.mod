@@ -6,7 +6,7 @@ require (
 	crawshaw.io/sqlite v0.2.5
 	github.com/Azure/go-ansiterm v0.0.0-20170929234023-d6e3b3328b78 // indirect
 	github.com/Microsoft/go-winio v0.4.14 // indirect
-	github.com/Velocidex/ordereddict v0.0.0-20200419183704-bc44e4ef79c7
+	github.com/Velocidex/ordereddict v0.0.0-20200723153557-9460a6764ab8
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/containerd/containerd v1.3.4 // indirect
 	github.com/docker/distribution v2.7.1+incompatible // indirect
