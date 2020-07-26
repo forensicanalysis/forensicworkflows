@@ -38,7 +38,7 @@ require (
 	google.golang.org/genproto v0.0.0-20200417142217-fb6d0575620b // indirect
 	google.golang.org/grpc v1.28.1 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
-	gopkg.in/yaml.v2 v2.2.8
+	gopkg.in/yaml.v2 v2.3.0
 	gotest.tools v2.2.0+incompatible // indirect
 	www.velocidex.com/golang/evtx v0.0.1
 	www.velocidex.com/golang/go-prefetch v0.0.0-20200722101157-37e4751dd5ca
