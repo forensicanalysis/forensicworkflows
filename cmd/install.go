@@ -116,7 +116,7 @@ func setup(auth *types.AuthConfig, pull bool) {
 	}
 
 	ctx := context.Background()
-	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	cli, err := client.NewEnvClient()
 	if err != nil {
 		log.Println("error setting up docker client:", err)
 		return
@@ -137,7 +137,7 @@ func pullImages(ctx context.Context, cli *client.Client, auth *types.AuthConfig)
 	for _, imageSummary := range imageSummaries {
 		for _, dockerImage := range imageSummary.RepoTags {
 			if strings.HasPrefix(dockerImage, "forensicanalysis/elementary-") && !contains(dockerImages, dockerImage) {
-				_, _ = cli.ImageRemove(ctx, dockerImage, types.ImageRemoveOptions{})
+				_, _ = cli.ImageRemove(ctx, dockerImage, types.ImageRemoveOptions{Force: true})
 			}
 		}
 	}

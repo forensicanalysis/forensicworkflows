@@ -46,7 +46,7 @@ func dockerCommands() []*cobra.Command {
 	timeoutCtx, cancel := context.WithTimeout(ctx, time.Second) // TODO: adjust time
 	defer cancel()
 
-	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	cli, err := client.NewEnvClient()
 	if err != nil {
 		return nil
 	}
@@ -194,7 +194,7 @@ func commandName(image string) (string, error) {
 
 func docker(image string, args []string, mountDirs map[string]string, w io.Writer) error {
 	ctx := context.Background()
-	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	cli, err := client.NewEnvClient()
 	if err != nil {
 		return err
 	}
@@ -226,17 +226,14 @@ func docker(image string, args []string, mountDirs map[string]string, w io.Write
 	go streamLogs(ctx, cli, resp.ID, log.Writer(), false, true) // nolint: errcheck
 
 	log.Println("wait for docker container")
-	statusChannel, errChannel := cli.ContainerWait(ctx, resp.ID, container.WaitConditionNotRunning)
-	var runError error
-	select {
-	case err := <-errChannel:
-		runError = err
-	case e := <-statusChannel:
-		if e.StatusCode != 0 {
-			runError = fmt.Errorf("container returned status code %d", e.StatusCode)
-		}
+	statusCode, err := cli.ContainerWait(ctx, resp.ID)
+	if err != nil {
+		return err
 	}
-	return runError
+	if statusCode != 0 {
+		return fmt.Errorf("container returned status code %d", statusCode)
+	}
+	return nil
 }
 
 func streamLogs(ctx context.Context, cli *client.Client, id string, w io.Writer, stdout, stderr bool) error {

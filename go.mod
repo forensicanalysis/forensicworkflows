@@ -10,7 +10,7 @@ require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/containerd/containerd v1.3.4 // indirect
 	github.com/docker/distribution v2.7.1+incompatible // indirect
-	github.com/docker/docker v1.4.2-0.20191108192604-36ffe9edc2b3
+	github.com/docker/docker v1.13.1
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
 	github.com/forensicanalysis/forensicstore v0.17.1

@@ -198,7 +198,7 @@ jobs:
         run: |
           go generate
           go install .
-          forensicworkflows install -f
+          forensicworkflows install -f --debug
 
       - name: download test.forensicstore
         uses: actions/download-artifact@v2
