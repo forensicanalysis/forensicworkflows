@@ -28,7 +28,6 @@ require (
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
 	github.com/opencontainers/image-spec v1.0.1 // indirect
 	github.com/otiai10/copy v1.2.0
-	github.com/sebdah/goldie v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.5.0 // indirect
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5
@@ -42,5 +41,5 @@ require (
 	gopkg.in/yaml.v2 v2.2.8
 	gotest.tools v2.2.0+incompatible // indirect
 	www.velocidex.com/golang/evtx v0.0.1
-	www.velocidex.com/golang/go-prefetch v0.0.0-20190703150313-0469fa2f85cf
+	www.velocidex.com/golang/go-prefetch v0.0.0-20200722101157-37e4751dd5ca
 )
