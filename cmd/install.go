@@ -36,6 +36,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/forensicanalysis/forensicworkflows/assets"
+	"github.com/forensicanalysis/forensicworkflows/commands"
 )
 
 // Install required assets.
@@ -70,7 +71,7 @@ func ensureSetup() {
 	if err != nil {
 		log.Printf("config dir not found: %s, using current directory", err)
 	}
-	appDir := appDir()
+	appDir := commands.AppDir()
 	info, err := os.Stat(appDir)
 	if os.IsNotExist(err) {
 		setup(nil, false)
@@ -85,7 +86,7 @@ func ensureSetup() {
 }
 
 func setup(auth *types.AuthConfig, pull bool) {
-	appDir := appDir()
+	appDir := commands.AppDir()
 
 	// unpack scripts
 	err := unpack(appDir)
@@ -136,14 +137,15 @@ func pullImages(ctx context.Context, cli *client.Client, auth *types.AuthConfig)
 	}
 	for _, imageSummary := range imageSummaries {
 		for _, dockerImage := range imageSummary.RepoTags {
-			if strings.HasPrefix(dockerImage, "forensicanalysis/elementary-") && !contains(dockerImages, dockerImage) {
+			isElementary := strings.HasPrefix(dockerImage, "forensicanalysis/elementary-")
+			if isElementary && !contains(commands.DockerImages(), dockerImage) {
 				_, _ = cli.ImageRemove(ctx, dockerImage, types.ImageRemoveOptions{Force: true})
 			}
 		}
 	}
 
 	// pull docker images
-	for _, image := range dockerImages {
+	for _, image := range commands.DockerImages() {
 		log.Println("pull docker image", image)
 		err = pullImage(ctx, cli, image, auth)
 		if err != nil {

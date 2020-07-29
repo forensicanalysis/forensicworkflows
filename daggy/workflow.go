@@ -22,126 +22,32 @@
 package daggy
 
 import (
-	"fmt"
-	"reflect"
-	"sort"
-	"strings"
-	"sync"
+	"io/ioutil"
 
-	"github.com/hashicorp/terraform/dag"
-	"github.com/hashicorp/terraform/tfdiags"
-	"github.com/spf13/cobra"
+	"github.com/google/uuid"
+	"gopkg.in/yaml.v2"
 )
 
 // A Task is a single element in a workflow yml file.
 type Task struct {
+	ID        uuid.UUID              `yaml:"id"`
 	Command   string                 `yaml:"command"`
 	Arguments map[string]interface{} `yaml:"arguments"`
-	Requires  []string               `yaml:"requires"`
 }
 
 // Workflow can be used to parse workflow yml files.
 type Workflow struct {
-	Tasks map[string]Task `yaml:"tasks"`
-	graph *dag.AcyclicGraph
-	mux   sync.Mutex
+	Tasks []Task `yaml:"tasks"`
 }
 
-// SetupGraph creates a direct acyclic graph of tasks.
-func (workflow *Workflow) SetupGraph() {
-	// Create the dag
-	setupLogging()
-	graph := dag.AcyclicGraph{}
-	tasks := map[string]Task{}
-	for name, task := range workflow.Tasks {
-		graph.Add(name)
-		tasks[name] = task
-	}
-
-	// add edges / requirements
-	for name, task := range workflow.Tasks {
-		for _, requirement := range task.Requires {
-			graph.Connect(dag.BasicEdge(requirement, name))
-		}
-	}
-
-	workflow.graph = &graph
-}
-
-// Run walks the direct acyclic graph to execute each task.
-func (workflow *Workflow) Run(storeDir string, plugins map[string]*cobra.Command) error {
-	w := &dag.Walker{Callback: func(v dag.Vertex) tfdiags.Diagnostics {
-		task := workflow.Tasks[v.(string)]
-
-		if plugin, ok := plugins[task.Command]; ok {
-			workflow.mux.Lock() // serialize tasks
-			err := workflow.runTask(plugin, task, storeDir)
-			workflow.mux.Unlock()
-			if err != nil {
-				return tfdiags.Diagnostics{tfdiags.Sourceless(tfdiags.Error, fmt.Sprint(v.(string)), err.Error())}
-			}
-			return nil
-		}
-		return tfdiags.Diagnostics{tfdiags.Sourceless(tfdiags.Error, task.Command, "command not found")}
-	}}
-	w.Update(workflow.graph)
-	return w.Wait().Err()
-}
-
-func (workflow *Workflow) runTask(plugin *cobra.Command, task Task, storeDir string) error {
-	var args []string
-	for flag, value := range task.Arguments {
-		args = append(args, toCmdline(flag, value)...)
-	}
-	args = append(args, storeDir)
-
-	err := plugin.ParseFlags(args)
+// Parse reads a workflow file.
+func Parse(workflowFile string) (*Workflow, error) {
+	// parse the yaml definition
+	data, err := ioutil.ReadFile(workflowFile) // #nosec
 	if err != nil {
-		return err
+		return nil, err
 	}
-
-	// plugin.SetArgs(args)
-	if plugin.RunE == nil {
-		return fmt.Errorf("plugin %s cannot be run", plugin.Name())
-	}
-	return plugin.RunE(plugin, plugin.Flags().Args())
-}
-
-func toCmdline(name string, i interface{}) []string {
-	switch reflect.TypeOf(i).Kind() {
-	case reflect.Slice:
-		var s []string
-		v := reflect.ValueOf(i)
-		for i := 0; i < v.Len(); i++ {
-			s = append(s, "--"+name, toCmdline2(v.Index(i)))
-		}
-		return s
-	default:
-		return []string{"--" + name, fmt.Sprint(i)}
-	}
-}
-
-func toCmdline2(v reflect.Value) string {
-	for v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface {
-		v = v.Elem()
-	}
-	switch v.Kind() {
-	case reflect.Slice:
-		var parts []string
-		for i := 0; i < v.Len(); i++ {
-			parts = append(parts, toCmdline2(v.Index(i)))
-		}
-		sort.Strings(parts)
-		return strings.Join(parts, ",")
-	case reflect.Map:
-		var parts []string
-		for _, k := range v.MapKeys() {
-			i := v.MapIndex(k)
-			parts = append(parts, fmt.Sprintf("%s=%s", k, i))
-		}
-		sort.Strings(parts)
-		return strings.Join(parts, ",")
-	default:
-		return fmt.Sprint(v.Interface())
-	}
+	workflow := Workflow{}
+	err = yaml.Unmarshal(data, &workflow)
+	return &workflow, err
 }

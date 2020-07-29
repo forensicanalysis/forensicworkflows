@@ -13,6 +13,7 @@ require (
 	github.com/docker/go-units v0.4.0 // indirect
 	github.com/forensicanalysis/forensicstore v0.17.1
 	github.com/google/go-cmp v0.4.0 // indirect
+	github.com/google/uuid v1.1.1
 	github.com/hashicorp/go-multierror v1.1.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.4.0 // indirect
 	github.com/hashicorp/logutils v1.0.0

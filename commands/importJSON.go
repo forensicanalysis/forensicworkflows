@@ -19,7 +19,7 @@
 //
 // Author(s): Jonas Plum
 
-package subcommands
+package commands
 
 import (
 	"errors"
@@ -31,7 +31,7 @@ import (
 	"github.com/forensicanalysis/forensicstore"
 )
 
-func JSONImport() *cobra.Command {
+func jsonImport() *cobra.Command {
 	var file string
 	var filtersets []string
 	cmd := &cobra.Command{

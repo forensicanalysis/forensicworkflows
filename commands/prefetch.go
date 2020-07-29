@@ -19,7 +19,7 @@
 //
 // Author(s): Jonas Plum
 
-package subcommands
+package commands
 
 import (
 	"encoding/json"
@@ -27,13 +27,13 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
-	"www.velocidex.com/golang/go-prefetch"
+	goprefetch "www.velocidex.com/golang/go-prefetch"
 
 	"github.com/forensicanalysis/forensicstore"
 	"github.com/forensicanalysis/forensicworkflows/daggy"
 )
 
-func Prefetch() *cobra.Command {
+func prefetch() *cobra.Command {
 	var filtersets []string
 	prefetchCommand := &cobra.Command{
 		Use:   "prefetch <forensicstore>",
@@ -44,7 +44,7 @@ func Prefetch() *cobra.Command {
 			return prefetchFromStore(args[0], extractFilter(filtersets), cmd)
 		},
 	}
-	AddOutputFlags(prefetchCommand)
+	addOutputFlags(prefetchCommand)
 	prefetchCommand.Flags().StringArrayVar(&filtersets, "filter", nil, "filter processed events")
 	return prefetchCommand
 }
@@ -90,7 +90,7 @@ func prefetchFromStore(url string, filter daggy.Filter, cmd *cobra.Command) erro
 				return err
 			}
 
-			prefetchInfo, err := prefetch.LoadPrefetch(buff)
+			prefetchInfo, err := goprefetch.LoadPrefetch(buff)
 			if err != nil {
 				return err
 			}
@@ -108,7 +108,7 @@ func prefetchFromStore(url string, filter daggy.Filter, cmd *cobra.Command) erro
 	return nil
 }
 
-func prefetchToElement(prefetchInfo *prefetch.PrefetchInfo) (forensicstore.JSONElement, error) {
+func prefetchToElement(prefetchInfo *goprefetch.PrefetchInfo) (forensicstore.JSONElement, error) {
 	return json.Marshal(map[string]interface{}{
 		"Executable":    prefetchInfo.Executable,
 		"FileSize":      prefetchInfo.FileSize,

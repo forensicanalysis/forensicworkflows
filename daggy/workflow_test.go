@@ -64,7 +64,7 @@ func cleanup(folders ...string) (err error) {
 	return nil
 }
 
-func Test_processJob(t *testing.T) {
+func Test_processTask(t *testing.T) {
 	log.Println("Start setup")
 	storeDir, err := setup()
 	if err != nil {
@@ -74,8 +74,7 @@ func Test_processJob(t *testing.T) {
 	defer cleanup(storeDir)
 
 	type args struct {
-		taskName string
-		task     Task
+		task Task
 	}
 	tests := []struct {
 		name      string
@@ -85,24 +84,23 @@ func Test_processJob(t *testing.T) {
 		wantCount int
 		wantErr   bool
 	}{
-		{"dummy plugin", "example1.forensicstore", args{"testtask", Task{Command: "example"}}, "example", 0, false},
-		{"command not existing", "example1.forensicstore", args{"testtask", Task{Command: "foo"}}, "", 0, true},
-		// {"bash fail", "example1.forensicstore", args{"test bash", Task{Command: "false"}}, "", 0, true},
-		// {"docker", "example1.forensicstore", args{"testtask", Task{Command: "alpine"}}, "", 0, false},
+		{"dummy plugin", "example1.forensicstore", args{Task{Command: "example"}}, "example", 0, false},
+		{"command not existing", "example1.forensicstore", args{Task{Command: "foo"}}, "", 0, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			workflow := Workflow{Tasks: map[string]Task{tt.args.taskName: tt.args.task}}
-			workflow.SetupGraph()
+			workflow := &Workflow{Tasks: []Task{tt.args.task}}
 
-			plugins := map[string]*cobra.Command{"example": &cobra.Command{
+			plugins := []*cobra.Command{{
 				Use: "example",
 				RunE: func(cmd *cobra.Command, args []string) error {
 					return nil
 				},
 			}}
 
-			if err := workflow.Run(filepath.Join(storeDir, tt.storeName), plugins); (err != nil) != tt.wantErr {
+			engine := New(plugins)
+
+			if err := engine.Run(workflow, filepath.Join(storeDir, tt.storeName)); (err != nil) != tt.wantErr {
 				t.Errorf("runTask() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
@@ -131,8 +129,8 @@ func Test_processJob(t *testing.T) {
 func Test_toCmdline(t *testing.T) {
 	var i interface{}
 	i = []map[string]string{
-		map[string]string{"foo": "bar", "bar": "baz"},
-		map[string]string{"a": "b"},
+		{"foo": "bar", "bar": "baz"},
+		{"a": "b"},
 	}
 
 	type args struct {

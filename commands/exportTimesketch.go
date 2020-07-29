@@ -19,7 +19,7 @@
 //
 // Author(s): Jonas Plum
 
-package subcommands
+package commands
 
 import (
 	"encoding/json"
@@ -35,7 +35,7 @@ import (
 	"github.com/forensicanalysis/forensicworkflows/daggy"
 )
 
-func ExportTimesketch() *cobra.Command {
+func exportTimesketch() *cobra.Command {
 	var filtersets []string
 	outputCommand := &cobra.Command{
 		Use:   "export-timesketch <forensicstore>",
@@ -46,7 +46,7 @@ func ExportTimesketch() *cobra.Command {
 		},
 		Annotations: map[string]string{"plugin_property_flags": "ex"},
 	}
-	AddOutputFlags(outputCommand)
+	addOutputFlags(outputCommand)
 	outputCommand.Flags().StringArrayVar(&filtersets, "filter", nil, "filter processed events")
 	return outputCommand
 }

@@ -24,7 +24,7 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/forensicanalysis/forensicworkflows/cmd/subcommands"
+	"github.com/forensicanalysis/forensicworkflows/commands"
 )
 
 // Run is a subcommand to run a single task.
@@ -35,14 +35,6 @@ func Run() *cobra.Command {
 		Use:   "run",
 		Short: "Run single task",
 	}
-	command.AddCommand(allCommands()...)
+	command.AddCommand(commands.All()...)
 	return command
-}
-
-func allCommands() []*cobra.Command {
-	var commands []*cobra.Command
-	commands = append(commands, subcommands.Commands()...)
-	commands = append(commands, dockerCommands()...)
-	commands = append(commands, scriptCommands()...)
-	return commands
 }

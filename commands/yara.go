@@ -19,7 +19,7 @@
 //
 // Author(s): Jonas Plum
 
-package subcommands
+package commands
 
 /*
 import (
@@ -78,7 +78,7 @@ func Yara() *cobra.Command {
 			return nil
 		},
 	}
-	AddOutputFlags(prefetchCommand)
+	addOutputFlags(prefetchCommand)
 	prefetchCommand.Flags().StringVar(&rulesPath, "rules", "", "yara rule directory")
 	return prefetchCommand
 }

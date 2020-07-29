@@ -19,7 +19,7 @@
 //
 // Author(s): Jonas Plum
 
-package cmd
+package commands
 
 import (
 	"context"
@@ -37,8 +37,6 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 	"github.com/spf13/cobra"
-
-	"github.com/forensicanalysis/forensicworkflows/cmd/subcommands"
 )
 
 func dockerCommands() []*cobra.Command {
@@ -67,30 +65,30 @@ func dockerCommands() []*cobra.Command {
 				continue
 			}
 
-			cmd := DockerCommand(name, dockerImage, imageSummary.Labels)
+			cmd := dockerCommand(name, dockerImage, imageSummary.Labels)
 			commands = append(commands, cmd)
 			commandNames[name] = true
 		}
 	}
-	for _, dockerImage := range dockerImages {
+	for _, dockerImage := range DockerImages() {
 		name, err := commandName(dockerImage)
 		if err != nil {
 			continue
 		}
 		if _, ok := commandNames[name]; !ok {
 			labels := map[string]string{"short": fmt.Sprintf("Use '%s install -f' to download", os.Args[0])}
-			commands = append(commands, DockerCommand(name, dockerImage, labels))
+			commands = append(commands, dockerCommand(name, dockerImage, labels))
 		}
 	}
 
 	return commands
 }
 
-func DockerCommand(name, image string, labels map[string]string) *cobra.Command {
+func dockerCommand(name, image string, labels map[string]string) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   name + " <forensicstore>",
 		Short: "(docker: " + image + ")",
-		Args:  subcommands.RequireStore,
+		Args:  RequireStore,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			log.Println("run", cmd.Name(), args[0])
 
@@ -99,11 +97,11 @@ func DockerCommand(name, image string, labels map[string]string) *cobra.Command 
 				return err
 			}
 
-			output, teardown := subcommands.NewOutputWriterURL(cmd, args[0])
+			output, teardown := newOutputWriterURL(cmd, args[0])
 			defer teardown()
 
 			args = toCommandlineArgs(cmd.Flags(), args)
-			err = docker(image, args, mounts, output)
+			err = dockerCreate(image, args, mounts, output)
 			if err != nil {
 				return err
 			}
@@ -165,7 +163,7 @@ func parseMounts(labels map[string]string, args []string, cmd *cobra.Command) (m
 
 func setFlags(labels map[string]string, cmd *cobra.Command, addOutput bool) {
 	if use, ok := labels["arguments"]; ok {
-		var schema JSONSchema
+		var schema jsonSchema
 		err := json.Unmarshal([]byte(use), &schema)
 		if err != nil {
 			log.Println(err)
@@ -177,7 +175,7 @@ func setFlags(labels map[string]string, cmd *cobra.Command, addOutput bool) {
 		}
 	}
 	if addOutput {
-		subcommands.AddOutputFlags(cmd)
+		addOutputFlags(cmd)
 	}
 }
 
@@ -192,7 +190,7 @@ func commandName(image string) (string, error) {
 	return "", errors.New("no plugin")
 }
 
-func docker(image string, args []string, mountDirs map[string]string, w io.Writer) error {
+func dockerCreate(image string, args []string, mountDirs map[string]string, w io.Writer) error {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {

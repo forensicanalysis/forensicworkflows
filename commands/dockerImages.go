@@ -19,12 +19,14 @@
 //
 // Author(s): Jonas Plum
 
-package cmd
+package commands
 
-var dockerImages = []string{ // nolint: gochecknoglobals
-	"docker.io/forensicanalysis/elementary-shimcache:v0.3.6",
-	"docker.io/forensicanalysis/elementary-plaso:v0.3.6",
-	"docker.io/forensicanalysis/elementary-import-image:v0.3.6",
-	"docker.io/forensicanalysis/elementary-yara:v0.3.6",
-	"docker.io/forensicanalysis/elementary-sigma:v0.3.6",
+func DockerImages() []string {
+	return []string{
+		"docker.io/forensicanalysis/elementary-shimcache:v0.3.6",
+		"docker.io/forensicanalysis/elementary-plaso:v0.3.6",
+		"docker.io/forensicanalysis/elementary-import-image:v0.3.6",
+		"docker.io/forensicanalysis/elementary-yara:v0.3.6",
+		"docker.io/forensicanalysis/elementary-sigma:v0.3.6",
+	}
 }

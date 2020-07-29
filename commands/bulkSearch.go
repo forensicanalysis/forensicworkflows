@@ -19,7 +19,7 @@
 //
 // Author(s): Jonas Plum
 
-package subcommands
+package commands
 
 import (
 	"bufio"
@@ -33,7 +33,7 @@ import (
 	"github.com/forensicanalysis/forensicstore"
 )
 
-func BulkSearch() *cobra.Command {
+func bulkSearch() *cobra.Command {
 	var file string
 	bulkSearchCommand := &cobra.Command{
 		Use:   "bulk-search <forensicstore>",
@@ -77,7 +77,7 @@ func BulkSearch() *cobra.Command {
 			return nil
 		},
 	}
-	AddOutputFlags(bulkSearchCommand)
+	addOutputFlags(bulkSearchCommand)
 	bulkSearchCommand.Flags().StringVar(&file, "file", "", "file with IOCs")
 	_ = bulkSearchCommand.MarkFlagRequired("file")
 	return bulkSearchCommand

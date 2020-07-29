@@ -19,7 +19,7 @@
 //
 // Author(s): Jonas Plum
 
-package subcommands
+package commands
 
 import (
 	"log"
@@ -56,7 +56,7 @@ func TestPrefetchPlugin_Run(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			command := Prefetch()
+			command := prefetch()
 
 			command.Flags().Set("format", "none")
 			command.Flags().Set("add-to-store", "true")

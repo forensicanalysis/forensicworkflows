@@ -19,7 +19,7 @@
 //
 // Author(s): Jonas Plum
 
-package subcommands
+package commands
 
 import (
 	"crypto/md5"  // #nosec
@@ -35,7 +35,7 @@ import (
 	"github.com/forensicanalysis/forensicstore"
 )
 
-func ImportFile() *cobra.Command {
+func importFile() *cobra.Command {
 	var files []string
 	cmd := &cobra.Command{
 		Use:   "import-file <forensicstore>",

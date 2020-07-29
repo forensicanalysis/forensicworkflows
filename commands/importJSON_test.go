@@ -19,7 +19,7 @@
 //
 // Author(s): Jonas Plum
 
-package subcommands
+package commands
 
 import (
 	"log"
@@ -30,16 +30,16 @@ import (
 	"github.com/forensicanalysis/forensicworkflows/daggy"
 )
 
-func TestEventlogsPlugin_Run(t *testing.T) {
+func TestJSONImportPlugin_Run(t *testing.T) {
 	log.Println("Start setup")
-	storeDir, err := setup("example2.forensicstore")
+	storeDir, err := setup("example1.forensicstore", "import.json")
 	if err != nil {
 		t.Fatal(err)
 	}
 	log.Println("Setup done")
 	defer cleanup(storeDir)
 
-	example2 := filepath.Join(storeDir, "example2.forensicstore")
+	example := filepath.Join(storeDir, "example1.forensicstore")
 
 	type args struct {
 		url  string
@@ -51,11 +51,11 @@ func TestEventlogsPlugin_Run(t *testing.T) {
 		wantCount int
 		wantErr   bool
 	}{
-		{"Eventlogs Test", args{example2, nil}, 806, false},
+		{"json", args{example, []string{"--file", filepath.Join(storeDir, "import.json")}}, 1, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			command := Eventlogs()
+			command := jsonImport()
 
 			command.Flags().Set("format", "none")
 			command.Flags().Set("add-to-store", "true")
@@ -63,21 +63,21 @@ func TestEventlogsPlugin_Run(t *testing.T) {
 			err = command.Execute()
 
 			if (err != nil) != tt.wantErr {
-				t.Fatalf("Run() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Run() error = %v, wantErr %v", err, tt.wantErr)
 			}
-
 			store, teardown, err := forensicstore.Open(tt.args.url)
 			if err != nil {
-				t.Fatalf("forensicstore.Open() error = %v, wantErr %v", err, tt.wantErr)
+				t.Fatal(err)
 			}
 			defer teardown()
 
-			elements, err := store.Select(daggy.Filter{{"type": "eventlog"}})
+			elements, err := store.Select(daggy.Filter{{"type": "import"}})
 			if err != nil {
-				t.Fatalf("store.Select() error = %v, wantErr %v", err, tt.wantErr)
+				t.Fatal(err)
 			}
+
 			if len(elements) != tt.wantCount {
-				t.Fatalf("len(elements) = %v, wantCount %v", len(elements), tt.wantCount)
+				t.Errorf("Run() error, wrong number of resuls = %d, want %d", len(elements), tt.wantCount)
 			}
 		})
 	}

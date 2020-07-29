@@ -19,49 +19,51 @@
 //
 // Author(s): Jonas Plum
 
-package subcommands
+package commands
 
 import (
+	"io/ioutil"
 	"log"
 	"path/filepath"
 	"testing"
 
+	"github.com/tidwall/gjson"
+
+	"github.com/forensicanalysis/forensicworkflows/daggy"
+
 	"github.com/forensicanalysis/forensicstore"
 )
 
-func TestForensicstoreImportPlugin_Run(t *testing.T) {
+func TestBulkSearch(t *testing.T) {
 	log.Println("Start setup")
-	storeDir, err := setup()
+	storeDir, err := setup("example1.forensicstore")
 	if err != nil {
 		t.Fatal(err)
 	}
 	log.Println("Setup done")
 	defer cleanup(storeDir)
 
-	newStorePath := filepath.Join(storeDir, "example.forensicstore")
 	example1 := filepath.Join(storeDir, "example1.forensicstore")
 
-	_, teardown, err := forensicstore.New(newStorePath)
-	if err != nil {
-		t.Fatal(err)
-	}
-	teardown()
+	iocFile := filepath.Join(storeDir, "ioc.txt")
+	ioutil.WriteFile(iocFile, []byte("exe"), 0755)
 
 	type args struct {
 		url  string
 		args []string
 	}
 	tests := []struct {
-		name      string
-		args      args
-		wantCount int
-		wantErr   bool
+		name        string
+		args        args
+		wantResults int
+		wantCount   int64
+		wantErr     bool
 	}{
-		{"forensicstore import", args{newStorePath, []string{"--file", example1}}, 3527, false},
+		{"ioc search", args{example1, []string{"--file", iocFile}}, 1, 529, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			command := ForensicStoreImport()
+			command := bulkSearch()
 
 			command.Flags().Set("format", "none")
 			command.Flags().Set("add-to-store", "true")
@@ -77,13 +79,18 @@ func TestForensicstoreImportPlugin_Run(t *testing.T) {
 				t.Fatal(err)
 			}
 			defer teardown()
-			elements, err := store.All()
+			elements, err := store.Select(daggy.Filter{{"type": "bulksearch"}})
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			if len(elements) != tt.wantCount {
-				t.Errorf("Run() error, wrong number of resuls = %d, want %d", len(elements), tt.wantCount)
+			if len(elements) != tt.wantResults {
+				t.Errorf("Run() error, wrong number of resuls = %d, want %d", len(elements), tt.wantResults)
+			}
+
+			count := gjson.GetBytes(elements[0], "count").Int()
+			if count != tt.wantCount {
+				t.Errorf("Run() error, wrong count of resuls = %d, want %d", count, tt.wantCount)
 			}
 		})
 	}

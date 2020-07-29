@@ -19,7 +19,7 @@
 //
 // Author(s): Jonas Plum
 
-package subcommands
+package commands
 
 import (
 	"encoding/json"
@@ -35,7 +35,7 @@ import (
 	"github.com/forensicanalysis/forensicworkflows/daggy"
 )
 
-func Eventlogs() *cobra.Command {
+func eventlogs() *cobra.Command {
 	var filtersets []string
 	eventlogsCmd := &cobra.Command{
 		Use:   "eventlogs <forensicstore>",
@@ -46,7 +46,7 @@ func Eventlogs() *cobra.Command {
 			return eventlogsFromStore(args[0], extractFilter(filtersets), cmd)
 		},
 	}
-	AddOutputFlags(eventlogsCmd)
+	addOutputFlags(eventlogsCmd)
 	eventlogsCmd.Flags().StringArrayVar(&filtersets, "filter", nil, "filter processed events")
 	return eventlogsCmd
 }

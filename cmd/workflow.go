@@ -22,12 +22,15 @@
 package cmd
 
 import (
+	"encoding/json"
 	"log"
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/tidwall/sjson"
 
-	"github.com/forensicanalysis/forensicworkflows/cmd/subcommands"
+	"github.com/forensicanalysis/forensicstore"
+	"github.com/forensicanalysis/forensicworkflows/commands"
 	"github.com/forensicanalysis/forensicworkflows/daggy"
 )
 
@@ -38,28 +41,51 @@ func Workflow() *cobra.Command {
 		Short: "Run a workflow",
 		Long: `process can run parallel workflows locally. Those workflows are a directed acyclic graph of tasks.
 Those tasks can be defined to be run on the system itself or in a containerized way.`,
-		Args: subcommands.RequireStore,
+		Args: commands.RequireStore,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// parse workflow yaml
 			workflowFile, _ := cmd.Flags().GetString("file")
 			if _, err := os.Stat(workflowFile); os.IsNotExist(err) {
 				log.Fatal(err, workflowFile)
 			}
+
+			engine := daggy.New(commands.All())
 			workflow, err := daggy.Parse(workflowFile)
 			if err != nil {
-				log.Fatal("parsing failed: ", err)
+				return err
 			}
 
-			plugins := map[string]*cobra.Command{}
-			for _, plugin := range allCommands() {
-				plugins[plugin.Name()] = plugin
+			if err := insertTasks(args[0], workflow); err != nil {
+				return err
 			}
 
-			workflow.SetupGraph()
-			return workflow.Run(args[0], plugins)
+			return engine.Run(workflow, args[0])
 		},
 	}
 	workflowCmd.Flags().StringP("file", "f", "", "workflow definition file")
 	_ = workflowCmd.MarkFlagRequired("file")
 	return workflowCmd
+}
+
+func insertTasks(storeURL string, workflow *daggy.Workflow) error {
+	store, teardown, err := forensicstore.New(storeURL)
+	if err != nil {
+		return err
+	}
+	defer teardown()
+	for _, task := range workflow.Tasks {
+		jsonTask, err := json.Marshal(task)
+		if err != nil {
+			return err
+		}
+		jsonTask, err = sjson.SetBytes(jsonTask, "type", "task")
+		if err != nil {
+			return err
+		}
+		_, err = store.Insert(jsonTask)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

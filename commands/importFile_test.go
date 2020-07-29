@@ -19,7 +19,7 @@
 //
 // Author(s): Jonas Plum
 
-package subcommands
+package commands
 
 import (
 	"log"
@@ -64,7 +64,7 @@ func TestImportFile(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			command := ImportFile()
+			command := importFile()
 
 			command.Flags().Set("format", "none")
 			command.Flags().Set("add-to-store", "true")

@@ -19,7 +19,7 @@
 //
 // Author(s): Jonas Plum
 
-package subcommands
+package commands
 
 import (
 	"fmt"
@@ -34,7 +34,7 @@ import (
 	"github.com/forensicanalysis/forensicworkflows/daggy"
 )
 
-func ForensicStoreImport() *cobra.Command {
+func forensicStoreImport() *cobra.Command {
 	var file string
 	var filtersets []string
 	cmd := &cobra.Command{

@@ -19,27 +19,29 @@
 //
 // Author(s): Jonas Plum
 
-package subcommands
+package commands
 
 import (
+	"bufio"
+	"fmt"
 	"log"
+	"os"
 	"path/filepath"
 	"testing"
 
-	"github.com/forensicanalysis/forensicstore"
-	"github.com/forensicanalysis/forensicworkflows/daggy"
+	"github.com/tidwall/gjson"
 )
 
-func TestJSONImportPlugin_Run(t *testing.T) {
+func TestExportTimesketch(t *testing.T) {
 	log.Println("Start setup")
-	storeDir, err := setup("example1.forensicstore", "import.json")
+	storeDir, err := setup()
 	if err != nil {
 		t.Fatal(err)
 	}
 	log.Println("Setup done")
 	defer cleanup(storeDir)
 
-	example := filepath.Join(storeDir, "example1.forensicstore")
+	example1 := filepath.Join(storeDir, "example1.forensicstore")
 
 	type args struct {
 		url  string
@@ -51,33 +53,63 @@ func TestJSONImportPlugin_Run(t *testing.T) {
 		wantCount int
 		wantErr   bool
 	}{
-		{"json", args{example, []string{"--file", filepath.Join(storeDir, "import.json")}}, 1, false},
+		{"export timesketch", args{example1, []string{}}, 1746, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			command := JSONImport()
+			command := exportTimesketch()
 
-			command.Flags().Set("format", "none")
-			command.Flags().Set("add-to-store", "true")
+			command.Flags().Set("format", "jsonl")
+			command.Flags().Set("output", filepath.Join(storeDir, "out.jsonl"))
 			command.SetArgs(append(tt.args.args, tt.args.url))
 			err = command.Execute()
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Run() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			store, teardown, err := forensicstore.Open(tt.args.url)
+
+			file, err := os.Open(filepath.Join(storeDir, "out.jsonl"))
 			if err != nil {
 				t.Fatal(err)
 			}
-			defer teardown()
-
-			elements, err := store.Select(daggy.Filter{{"type": "import"}})
+			fileScanner := bufio.NewScanner(file)
+			lineCount := 0
+			for fileScanner.Scan() {
+				if lineCount < 10 {
+					fmt.Println(fileScanner.Text())
+				}
+				lineCount++
+			}
+			err = file.Close()
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			if len(elements) != tt.wantCount {
-				t.Errorf("Run() error, wrong number of resuls = %d, want %d", len(elements), tt.wantCount)
+			if lineCount != tt.wantCount {
+				t.Errorf("Run() error, wrong number of resuls = %d, want %d", lineCount, tt.wantCount)
+			}
+		})
+	}
+}
+
+func Test_jsonToText(t *testing.T) {
+	type args struct {
+		element gjson.Result
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{"dict", args{gjson.Get(`{"a": "b"}`, "@this")}, "a: b"},
+		{"list", args{gjson.Get(`["a", "b"]`, "@this")}, "a, b"},
+		{"complex 1", args{gjson.Get(`{"a": ["b", "c"]}`, "@this")}, "a: b, c"},
+		{"complex 2", args{gjson.Get(`{"a": ["b", "c"], "x": [1, 2]}`, "@this")}, "a: b, c; x: 1, 2"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := jsonToText(&tt.args.element); got != tt.want {
+				t.Errorf("jsonToText() = %v, want %v", got, tt.want)
 			}
 		})
 	}

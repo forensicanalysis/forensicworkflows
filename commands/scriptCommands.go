@@ -19,7 +19,7 @@
 //
 // Author(s): Jonas Plum
 
-package cmd
+package commands
 
 import (
 	"encoding/json"
@@ -32,12 +32,10 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-
-	"github.com/forensicanalysis/forensicworkflows/cmd/subcommands"
 )
 
 func scriptCommands() []*cobra.Command {
-	scriptDir := filepath.Join(appDir(), "scripts")
+	scriptDir := filepath.Join(AppDir(), "scripts")
 
 	infos, err := ioutil.ReadDir(scriptDir)
 	if err != nil {
@@ -55,13 +53,13 @@ func scriptCommands() []*cobra.Command {
 	return commands
 }
 
-type CommandTemplate struct {
+type commandTemplate struct {
 	*cobra.Command
-	Arguments JSONSchema `json:"arguments,omitempty"`
+	Arguments jsonSchema `json:"arguments,omitempty"`
 }
 
 func scriptCommand(path string) *cobra.Command {
-	cmd := CommandTemplate{}
+	cmd := commandTemplate{}
 
 	out, err := ioutil.ReadFile(path + ".info") // #nosec
 	if err != nil {
@@ -81,7 +79,7 @@ func scriptCommand(path string) *cobra.Command {
 		cmd.Use = filepath.Base(path)
 	}
 	cmd.Short += " (script)"
-	cmd.Args = subcommands.RequireStore
+	cmd.Args = RequireStore
 	cmd.RunE = func(cmd *cobra.Command, args []string) error {
 		log.Printf("run %s %s", cmd.Name(), args[0])
 		shellCommand := strings.Join(append(
@@ -99,7 +97,7 @@ func scriptCommand(path string) *cobra.Command {
 		log.Println("sh", "-c", shellCommand)
 		script := exec.Command("sh", "-c", shellCommand) // #nosec
 
-		output, teardown := subcommands.NewOutputWriterURL(cmd, args[0])
+		output, teardown := newOutputWriterURL(cmd, args[0])
 		defer teardown()
 
 		script.Stdout = output
@@ -116,6 +114,6 @@ func scriptCommand(path string) *cobra.Command {
 	if err != nil {
 		log.Println(err)
 	}
-	subcommands.AddOutputFlags(cmd.Command)
+	addOutputFlags(cmd.Command)
 	return cmd.Command
 }

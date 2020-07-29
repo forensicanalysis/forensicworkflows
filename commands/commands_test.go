@@ -19,7 +19,7 @@
 //
 // Author(s): Jonas Plum
 
-package subcommands
+package commands
 
 import (
 	"io/ioutil"
@@ -36,10 +36,10 @@ func setup(subdirs ...string) (string, error) {
 	}
 
 	if len(subdirs) == 0 {
-		err = copy.Copy(filepath.Join("..", "..", "test", "data"), tempDir)
+		err = copy.Copy(filepath.Join("..", "test", "data"), tempDir)
 	} else {
 		for _, subdir := range subdirs {
-			err = copy.Copy(filepath.Join("..", "..", "test", "data", subdir), filepath.Join(tempDir, subdir))
+			err = copy.Copy(filepath.Join("..", "test", "data", subdir), filepath.Join(tempDir, subdir))
 		}
 	}
 	if err != nil {

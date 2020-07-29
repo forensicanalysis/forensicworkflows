@@ -19,7 +19,7 @@
 //
 // Author(s): Jonas Plum
 
-package subcommands
+package commands
 
 import (
 	"github.com/spf13/cobra"
@@ -28,7 +28,7 @@ import (
 	"github.com/forensicanalysis/forensicstore"
 )
 
-func Export() *cobra.Command {
+func export() *cobra.Command {
 	var filtersets []string
 	outputCommand := &cobra.Command{
 		Use:   "export <forensicstore>",
@@ -67,7 +67,7 @@ func Export() *cobra.Command {
 		},
 		Annotations: map[string]string{"plugin_property_flags": "ex"},
 	}
-	AddOutputFlags(outputCommand)
+	addOutputFlags(outputCommand)
 	outputCommand.Flags().StringArrayVar(&filtersets, "filter", nil, "filter processed events")
 	return outputCommand
 }
